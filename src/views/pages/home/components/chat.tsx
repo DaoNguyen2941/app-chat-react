@@ -1,0 +1,185 @@
+import { useState, useEffect, useRef } from 'react';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Avatar from '@mui/material/Avatar';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import SendIcon from '@mui/icons-material/Send';
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+import { getChatDataService, getVirtualChatDataService, readMessageService } from '../../../../services/chatService';
+import { IChatData, Imessage, IChat } from '../../../../commom/type/chat.type';
+import { postMessageService } from '../../../../services/chatService';
+import { useAppDispatch } from '../../../../hooks/reduxHook';
+import { setChatOpent } from '../../../../store/socketSlice';
+
+export default function Chat({ chatId }: { chatId: string }) {
+    const queryClient = useQueryClient();
+    const [message, setMessage] = useState('')
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const dispatch = useAppDispatch()
+
+    const { data: chatData } = useQuery<IChatData, Error>({
+        queryKey: ['chatData', chatId.slice(1)],
+        queryFn: async () => {
+            const response = await getChatDataService(chatId);
+            return response.data;
+        },
+    });
+
+    const { mutate: readMessage } = useMutation({
+        mutationFn: () => readMessageService(chatId),
+        onSuccess: () => {
+            const idChat = chatId.slice(1)
+            queryClient.setQueryData(["listChat"], (oldData: IChat[] | []) =>
+                oldData
+                    ? oldData.map(chat =>
+                        chat.id === idChat ? { ...chat, unreadCount: 0 } : chat
+                    )
+                    : oldData
+            );
+        },
+    });
+
+
+    useEffect(() => {
+        dispatch(setChatOpent(chatId.slice(1)));
+        const listChat: IChat[] = queryClient.getQueryData(['listChat']) || [];
+        const presentChat = listChat.find(chat => chat.id === chatId.slice(1));
+        if (presentChat?.unreadCount && presentChat.unreadCount > 0) {
+            readMessage()
+        }
+    }, [chatId]);
+
+    const { mutate: sendMessage, isPending } = useMutation({
+        mutationFn: (keyword: string) => {
+            return postMessageService(chatId, keyword)
+        },
+        onSuccess(res) {
+            queryClient.setQueryData(["chatData", chatId.slice(1)], (oldData: IChatData) => ({
+                ...oldData,
+                message: [...(oldData?.message || []), res.data],
+            }));
+        },
+    })
+
+    const handleSendMessage = () => {
+        if (!message.trim()) return;
+        sendMessage(message);
+        setMessage("");
+    };
+
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [chatData?.message]); // Mỗi khi tin nhắn thay đổi, tự động cuộn
+
+    return (
+        <Box
+            sx={{
+                py: 2,
+                px: 4,
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100%',
+                borderLeft: '1px solid #ddd',
+                borderRight: '1px solid #ddd',
+            }}
+        >
+            {/* Header */}
+            <Typography
+                variant="h6"
+                component="div"
+                sx={{ pb: 2, borderBottom: '1px solid #ddd', textAlign: 'center' }}
+            >
+                {/* Chat with  {pathname} */}
+                <ListItem>
+                    <ListItemAvatar>
+                        <Avatar src={chatData?.user?.avatar} />
+                    </ListItemAvatar>
+                    <ListItemText
+                        primary={chatData?.user?.account}
+                    //   secondary="Jan 9, 2014"
+                    />
+                </ListItem>
+            </Typography>
+
+            {/* Messages List */}
+            <Box
+                sx={{
+                    flex: 1,
+                    overflowY: 'auto',
+                    my: 2,
+                    p: 2,
+                    borderRadius: '8px',
+                    // boxShadow: '0 0 10px rgba(0,0,0,0.1)',
+                }}
+            >
+                {chatData?.message.map((message) => (
+                    <Box
+                        key={message?.id}
+                        sx={{
+                            display: 'flex',
+                            flexDirection: message.author?.id === chatData?.user?.id ? 'row' : 'row-reverse',
+                            alignItems: 'center',
+                            mb: 2,
+                        }}
+                    >
+                        <Avatar sx={{ mx: 1 }} src={message.author.avatar} />
+                        <Box
+                            sx={{
+                                p: 1,
+                                borderRadius: '10px',
+                                backgroundColor: message?.author?.id === chatData?.user?.id ? '#f8d7da' : '#d1e7dd',
+                                maxWidth: '70%',
+                            }}
+                        >
+                            <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                                {message.author?.account}
+                            </Typography>
+                            <Typography variant="body1">{message.content}</Typography>
+                            <Typography variant="caption" sx={{ display: 'block', textAlign: 'right' }}>
+                                {/* {message.time} */}
+                            </Typography>
+                        </Box>
+                    </Box>
+                ))}
+                <div ref={messagesEndRef} />
+            </Box>
+
+            {/* Input Box */}
+            <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+                <Box
+                    component="input"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Type your message..."
+                    sx={{
+                        flex: 1,
+                        p: 1,
+                        border: '1px solid #ddd',
+                        borderRadius: '8px',
+                        outline: 'none',
+                        fontSize: '1rem',
+                    }}
+                />
+                <Box
+                    component="button"
+                    onClick={handleSendMessage}
+                    sx={{
+                        ml: 2,
+                        px: 3,
+                        py: 1,
+                        backgroundColor: '#007bff',
+                        color: '#fff',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        border: 'none',
+                        '&:hover': { backgroundColor: '#0056b3' },
+                    }}
+                >
+                    <SendIcon />
+                </Box>
+            </Box>
+        </Box>
+    );
+}
