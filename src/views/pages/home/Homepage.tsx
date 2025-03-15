@@ -237,8 +237,9 @@ export default function HomePage(props: DemoProps) {
     queryKey: ['listChat'],
     queryFn: GetListChatService,
     refetchOnWindowFocus: false,
-    // staleTime: 1000 * 60 * 10, 
-    initialData: [],
+    // staleTime: 1000 * 60 * 5,
+    refetchInterval: 1000 * 60 * 5
+    // initialData: [],
   });
 
   useEffect(() => {
@@ -278,7 +279,7 @@ export default function HomePage(props: DemoProps) {
   const router = useDemoRouter('welcome');
   const demoWindow = window !== undefined ? window() : undefined;
   // Tạo navigation từ danh sách người dùng
-  const navigation = listChat.map((chat: IChat) => ({
+  const navigation = listChat?.map((chat: IChat) => ({
     segment: chat?.id,
     title: chat?.user.account,
     icon: (
@@ -289,7 +290,7 @@ export default function HomePage(props: DemoProps) {
         sx={{
           '& .MuiBadge-dot': {
             backgroundColor:
-              chat.id ? '#44b700' :
+              chat.status === 'online' ? '#44b700' :
                 '#555',
           },
         }}

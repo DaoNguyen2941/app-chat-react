@@ -133,10 +133,22 @@ export default function Chat({ chatId }: { chatId: string }) {
                                 maxWidth: '70%',
                             }}
                         >
-                            <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                            <Typography variant="body2"
+                                // sx={{ fontWeight: 'bold' }}
+                                sx={{ fontWeight: 'bold',
+                                     textAlign: message?.author?.id === chatData?.user?.id ?'left' : 'right ',
+                                      display: 'block' }}
+                            >
                                 {message.author?.account}
                             </Typography>
-                            <Typography variant="body1">{message.content}</Typography>
+                            <Typography
+                                variant="body1"
+                                sx={{ wordBreak: 'break-word',
+                                    textAlign: message?.author?.id === chatData?.user?.id ? 'left' : 'right ',
+                                  }}
+                            >
+                                {message.content}
+                            </Typography>
                             <Typography variant="caption" sx={{ display: 'block', textAlign: 'right' }}>
                                 {/* {message.time} */}
                             </Typography>

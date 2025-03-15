@@ -3,7 +3,8 @@ import { IUserType } from "./user.type";
 export interface IChat {
     id: string;
     user:IUserType;
-    unreadCount: number
+    unreadCount: number;
+    status: 'online' | 'offline'
 }
 
 export interface Imessage {
