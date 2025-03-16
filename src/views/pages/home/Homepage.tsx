@@ -239,7 +239,6 @@ export default function HomePage(props: DemoProps) {
     refetchOnWindowFocus: false,
     // staleTime: 1000 * 60 * 5,
     refetchInterval: 1000 * 60 * 5
-    // initialData: [],
   });
 
   useEffect(() => {

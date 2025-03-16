@@ -12,12 +12,35 @@ import { IChatData, Imessage, IChat } from '../../../../commom/type/chat.type';
 import { postMessageService } from '../../../../services/chatService';
 import { useAppDispatch } from '../../../../hooks/reduxHook';
 import { setChatOpent } from '../../../../store/socketSlice';
+import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 
 export default function Chat({ chatId }: { chatId: string }) {
     const queryClient = useQueryClient();
     const [message, setMessage] = useState('')
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const dispatch = useAppDispatch()
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const inputRef = useRef<HTMLInputElement>(null); // Ref cho ô nhập tin nhắn
+    const emojiBoxRef = useRef<HTMLDivElement | null>(null); // Ref cho Box chứa EmojiPicker
+
+
+    const handleEmojiClick = (emojiData: EmojiClickData) => {
+        if (inputRef.current) {
+            const input = inputRef.current;
+            const start = input.selectionStart || 0;
+            const end = input.selectionEnd || 0;
+
+            // Chèn emoji vào vị trí con trỏ
+            const newMessage = message.slice(0, start) + emojiData.emoji + message.slice(end);
+            setMessage(newMessage);
+
+            // Đặt lại con trỏ ngay sau emoji vừa chèn
+            setTimeout(() => {
+                input.focus();
+                input.setSelectionRange(start + emojiData.emoji.length, start + emojiData.emoji.length);
+            }, 0);
+        }
+    };
 
     const { data: chatData } = useQuery<IChatData, Error>({
         queryKey: ['chatData', chatId.slice(1)],
@@ -48,6 +71,8 @@ export default function Chat({ chatId }: { chatId: string }) {
         const presentChat = listChat.find(chat => chat.id === chatId.slice(1));
         if (presentChat?.unreadCount && presentChat.unreadCount > 0) {
             readMessage()
+        } return () => {
+            readMessage()
         }
     }, [chatId]);
 
@@ -67,6 +92,15 @@ export default function Chat({ chatId }: { chatId: string }) {
         if (!message.trim()) return;
         sendMessage(message);
         setMessage("");
+        if (showEmojiPicker) {
+            setShowEmojiPicker(false)
+        }
+    };
+
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === "Enter") {
+            handleSendMessage()
+        }
     };
 
     useEffect(() => {
@@ -135,17 +169,20 @@ export default function Chat({ chatId }: { chatId: string }) {
                         >
                             <Typography variant="body2"
                                 // sx={{ fontWeight: 'bold' }}
-                                sx={{ fontWeight: 'bold',
-                                     textAlign: message?.author?.id === chatData?.user?.id ?'left' : 'right ',
-                                      display: 'block' }}
+                                sx={{
+                                    fontWeight: 'bold',
+                                    textAlign: message?.author?.id === chatData?.user?.id ? 'left' : 'right ',
+                                    display: 'block'
+                                }}
                             >
                                 {message.author?.account}
                             </Typography>
                             <Typography
                                 variant="body1"
-                                sx={{ wordBreak: 'break-word',
+                                sx={{
+                                    wordBreak: 'break-word',
                                     textAlign: message?.author?.id === chatData?.user?.id ? 'left' : 'right ',
-                                  }}
+                                }}
                             >
                                 {message.content}
                             </Typography>
@@ -159,39 +196,68 @@ export default function Chat({ chatId }: { chatId: string }) {
             </Box>
 
             {/* Input Box */}
-            <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-                <Box
-                    component="input"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Type your message..."
-                    sx={{
-                        flex: 1,
-                        p: 1,
-                        border: '1px solid #ddd',
-                        borderRadius: '8px',
-                        outline: 'none',
-                        fontSize: '1rem',
-                    }}
-                />
-                <Box
-                    component="button"
-                    onClick={handleSendMessage}
-                    sx={{
-                        ml: 2,
-                        px: 3,
-                        py: 1,
-                        backgroundColor: '#007bff',
-                        color: '#fff',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        border: 'none',
-                        '&:hover': { backgroundColor: '#0056b3' },
-                    }}
-                >
-                    <SendIcon />
-                </Box>
+          <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
+            {/* Ô nhập tin nhắn */}
+            <Box
+                component="input"
+                ref={inputRef} // Gán ref
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Type your message..."
+                sx={{
+                    flex: 1,
+                    p: 1,
+                    border: "1px solid #ddd",
+                    borderRadius: "8px",
+                    outline: "none",
+                    fontSize: "1rem",
+                }}
+            />
+
+            {/* Nút mở emoji picker */}
+            <Box
+                component="button"
+                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                sx={{
+                    ml: 2,
+                    px: 2,
+                    py: 1,
+                    backgroundColor: "#f0f0f0",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    border: "none",
+                }}
+            >
+                😊
             </Box>
+
+            {/* Emoji picker */}
+            {showEmojiPicker && (
+                <Box sx={{ position: "absolute", bottom: "50px", right: "10px" }}>
+                    <EmojiPicker onEmojiClick={handleEmojiClick} />
+                </Box>
+            )}
+
+            {/* Nút gửi tin nhắn */}
+            <Box
+                component="button"
+                onClick={ handleSendMessage}
+                sx={{
+                    ml: 2,
+                    px: 3,
+                    py: 1,
+                    backgroundColor: "#007bff",
+                    color: "#fff",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    border: "none",
+                    "&:hover": { backgroundColor: "#0056b3" },
+                }}
+            >
+                <SendIcon />
+            </Box>
+        </Box>
         </Box>
     );
 }

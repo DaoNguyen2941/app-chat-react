@@ -1,4 +1,5 @@
 export const host = "http://localhost:3001";
+export const hostsocket = "http://localhost:3001";
 
 export const loginApi = `${host}/auth/login`;
 export const registerApi = `${host}/auth/register`;

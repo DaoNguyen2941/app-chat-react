@@ -1,5 +1,5 @@
 import { io, Socket } from "socket.io-client";
-import { host } from "./apiRouter";
+import { hostsocket } from "./apiRouter";
 import { setSocketId, updateSocketStatus, connectSocket, disconnectSocket } from "../store/socketSlice";
 import { setNumberInvitation, notification } from "../store/notificationSlice"
 import { store } from "../store/index";
@@ -52,6 +52,8 @@ class SocketClient {
         // Xử lý lỗi kết nối
         this.socket.on("connect_error", async (error: any) => {
             console.error("🚨 Lỗi kết nối:");
+            console.log(error);
+            
             if (error.message.includes("jwt expired")) { // Kiểm tra lỗi do token hết hạn
                 try {
                     console.warn("🔄 Token hết hạn, thử refresh...");
@@ -85,6 +87,8 @@ class SocketClient {
     private listenToNewMessages() {
         if (!this.socket?.hasListeners("new-message")) {            
             this.socket?.on("new-message", (data: { messageData: Imessage, chatId: string }) => {
+                console.log('new message');
+                
                 const { messageData, chatId } = data;
                 const chatISOpent = store.getState().socket.chatIsOpent
                 queryClient.setQueryData(["chatData", chatId], (oldData: IChatData) => ({
@@ -155,5 +159,5 @@ class SocketClient {
     };
 }
 
-const socketClient = new SocketClient(`${host}`); // Thay bằng URL server của bạn
+const socketClient = new SocketClient(`${hostsocket}`); // Thay bằng URL server của bạn
 export default socketClient;
