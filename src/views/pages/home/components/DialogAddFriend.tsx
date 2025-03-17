@@ -25,14 +25,14 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { SearchUserService } from '../../../../services/userService';
 import { useDebounce } from '../../../../hooks/debouncehook';
-import { QueryClient, QueryClientProvider, useMutation } from '@tanstack/react-query';
+import { QueryClient, useQueryClient, useMutation } from '@tanstack/react-query';
 import { IUserType, ISearchUser, IFriendStatus } from '../../../../commom/type/user.type';
 import type { Navigation, Router } from '@toolpad/core/AppProvider';
 import { IChat } from '../../../../commom/type/chat.type';
 import { makeFriendService, acceptedFriend, deleteFriend } from '../../../../services/friendService';
 import { useAppSelector } from '../../../../hooks/reduxHook';
 import { userData } from '../../../../store/userSlice';
-
+import { createChatService } from '../../../../services/chatService';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -76,6 +76,7 @@ const AddFriend: React.FC<ToolbarActionsSearchProps> = ({ setChatList, router })
     const [users, setUsers] = useState<ISearchUser[]>([]);
     const debouncedQuery = useDebounce(search, 500);
     const dataUser = useAppSelector(userData)
+    const queryClient = useQueryClient();
 
     const { mutate: makeFriend, isPending: pendingMakeFriend, isSuccess: makeFriendSuccess, } = useMutation({
         mutationFn: (userId: string) => {
@@ -132,17 +133,44 @@ const AddFriend: React.FC<ToolbarActionsSearchProps> = ({ setChatList, router })
         }
     });
 
-    // const sendmessage = (user: IUserType) => {
-    //     setOpen(false);
-    //     const newChat: IChat = {
-    //         id: `virtualchat-${user.id}`,
-    //         user: user
-    //     };
-    //     // queryClient.setQueryData<Array<IChat>>('listChat', (oldData) => [ newChat,...(oldData|| [])]);
-    //     setChatList((prevChatList) => [newChat, ...prevChatList]);
-    //     setSearch('')
-    //     router.navigate(`${newChat.id}`);
-    // }
+      const { mutate: reqCreateChat } = useMutation({
+        mutationFn: (userId: string) => {
+          const listChat: IChat[] = queryClient.getQueryData(['listChat']) || [];
+          const existingChatIndex = listChat.findIndex(chatData => chatData.user.id === userId);
+          if (existingChatIndex !== -1) {
+            const existingChat = listChat[existingChatIndex];
+            const updatedChatList = [existingChat, ...listChat.filter((_, index) => index !== existingChatIndex)];
+            queryClient.setQueryData(['listChat'], updatedChatList);
+            setOpen(false);
+            router.navigate(existingChat.id);
+            throw new Error("Chat already exists");
+          }
+    
+          return createChatService(userId);
+        },
+        onSuccess: (res) => {
+          if (!res) return;
+          const chatData: IChat = res.data;
+          queryClient.setQueryData(['listChat'], (oldChats: IChat[] = []) => {
+            return [chatData, ...oldChats]; // Đảm bảo oldChats luôn là mảng
+          });
+          setOpen(false);
+          router.navigate(chatData.id);
+        },
+      });
+
+    const handleCreateChat = (userId: string) => {
+        const listChat: IChat[] = queryClient.getQueryData(['listChat']) || []
+        const existingChat = listChat.find(chat => chat.user.id === userId);
+    
+        if (existingChat) {
+          const updatedList = [existingChat, ...listChat.filter(chat => chat.user.id !== userId)];
+          queryClient.setQueryData(['listChat'], updatedList);
+          router.navigate(`${existingChat.id}`)
+        } else {
+          reqCreateChat(userId);
+        }
+      }
 
     const { mutate: searcUser, isPending: pendingShearch, isError: searchUserError, isSuccess: searchSuccess } = useMutation({
         mutationFn: (keyword: string) => {
@@ -271,7 +299,7 @@ const AddFriend: React.FC<ToolbarActionsSearchProps> = ({ setChatList, router })
                                             <Button
                                                 size="small"
                                                 variant="outlined"
-                                                // onClick={() => sendmessage(user)}
+                                                onClick={() => handleCreateChat(user.id)}
                                             >
                                                 {/* <ForumIcon /> */}
                                                 <b>Nhắn tin</b>

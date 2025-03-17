@@ -4,7 +4,8 @@ export interface IChat {
     id: string;
     user:IUserType;
     unreadCount: number;
-    status: 'online' | 'offline'
+    status: 'online' | 'offline';
+    lastSeen: Date | null
 }
 
 export interface Imessage {

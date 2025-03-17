@@ -42,6 +42,24 @@ import FriendFunction from './components/DialogFriend';
 import { useSetToken } from '../../../hooks/authHook';
 import { setAuth } from '../../../store/authSlice';
 import { deleteUserData } from '../../../store/userSlice';
+import TimeAgo from './components/TimeAgo';
+import { formatDistanceToNow } from "date-fns";
+import ListItem from '@mui/material/ListItem';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/vi";
+
+dayjs.extend(relativeTime);
+dayjs.locale("vi");
+
+const timeAgo = (time: Date | null): string |null => {
+  if (time) {
+    return dayjs(time).fromNow()
+  }
+  return null
+}
+
 // Styled Badge for online status (green dot)
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-dot': {
@@ -280,7 +298,12 @@ export default function HomePage(props: DemoProps) {
   // Tạo navigation từ danh sách người dùng
   const navigation = listChat?.map((chat: IChat) => ({
     segment: chat?.id,
-    title: chat?.user.account,
+    title:
+      (<div>
+      <p>{chat?.user.account}</p>
+      <TimeAgo timestamp = {chat.lastSeen}/>
+      </div>
+      ),
     icon: (
       <StyledBadge
         overlap="circular"
@@ -294,6 +317,7 @@ export default function HomePage(props: DemoProps) {
           },
         }}
       >
+    
         <Avatar alt={chat.user.name}
           src={chat.user.avatar}
         />

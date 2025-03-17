@@ -13,6 +13,7 @@ import { postMessageService } from '../../../../services/chatService';
 import { useAppDispatch } from '../../../../hooks/reduxHook';
 import { setChatOpent } from '../../../../store/socketSlice';
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
+import TimeAgo from './TimeAgo';
 
 export default function Chat({ chatId }: { chatId: string }) {
     const queryClient = useQueryClient();
@@ -21,7 +22,6 @@ export default function Chat({ chatId }: { chatId: string }) {
     const dispatch = useAppDispatch()
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null); // Ref cho ô nhập tin nhắn
-    const emojiBoxRef = useRef<HTMLDivElement | null>(null); // Ref cho Box chứa EmojiPicker
 
 
     const handleEmojiClick = (emojiData: EmojiClickData) => {
@@ -71,9 +71,7 @@ export default function Chat({ chatId }: { chatId: string }) {
         const presentChat = listChat.find(chat => chat.id === chatId.slice(1));
         if (presentChat?.unreadCount && presentChat.unreadCount > 0) {
             readMessage()
-        } return () => {
-            readMessage()
-        }
+        } 
     }, [chatId]);
 
     const { mutate: sendMessage, isPending } = useMutation({
@@ -186,8 +184,13 @@ export default function Chat({ chatId }: { chatId: string }) {
                             >
                                 {message.content}
                             </Typography>
-                            <Typography variant="caption" sx={{ display: 'block', textAlign: 'right' }}>
-                                {/* {message.time} */}
+                            <Typography variant="caption" 
+                            sx={{ 
+                                display: 'block', 
+                                textAlign: message?.author?.id === chatData?.user?.id ? 'left' : 'right ',
+
+                                 }}>
+                               <TimeAgo timestamp={message.created_At}/>
                             </Typography>
                         </Box>
                     </Box>

@@ -10,7 +10,11 @@ import {
 
 export const readMessageService = async (chatId: string) => {
     try {        
+        console.log(chatId);
+        
         const url = patchReadMessages.replace("/:id", chatId);
+        console.log(url);
+        
         const response = await http.patch(url)
         return response
     } catch (error) {

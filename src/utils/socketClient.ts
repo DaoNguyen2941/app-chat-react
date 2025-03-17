@@ -9,7 +9,7 @@ import { IDecodedToken } from "../commom/type/type";
 import { refreshTokenService } from "../services/authService";
 import { IChatData, Imessage, IChat } from "../commom/type/chat.type";
 import { queryClient } from "../services/cacheService";
-
+import { readMessageService } from "../services/chatService";
 class SocketClient {
     private socket: Socket | null = null;
     private readonly baseURL: string;
@@ -53,7 +53,7 @@ class SocketClient {
         this.socket.on("connect_error", async (error: any) => {
             console.error("🚨 Lỗi kết nối:");
             console.log(error);
-            
+
             if (error.message.includes("jwt expired")) { // Kiểm tra lỗi do token hết hạn
                 try {
                     console.warn("🔄 Token hết hạn, thử refresh...");
@@ -84,26 +84,35 @@ class SocketClient {
         this.listenToNewMessages();
     };
 
-    private listenToNewMessages() {
-        if (!this.socket?.hasListeners("new-message")) {            
-            this.socket?.on("new-message", (data: { messageData: Imessage, chatId: string }) => {
-                console.log('new message');
-                
-                const { messageData, chatId } = data;
+    private listenToNewMessages () {
+        if (!this.socket?.hasListeners("new-message")) {
+            this.socket?.on("new-message", (data: { messageData: Imessage, chatId: string, isNewChat: boolean }) => {
+                const { messageData, chatId, isNewChat } = data;
                 const chatISOpent = store.getState().socket.chatIsOpent
-                queryClient.setQueryData(["chatData", chatId], (oldData: IChatData) => ({
-                    ...oldData,
-                    message: [...(oldData?.message || []), messageData],
-                }));
-                if (chatISOpent !== chatId) {
-                    console.log('test');
-                    queryClient.setQueryData(["listChat"], (oldData: IChat[] | []) =>
-                        oldData
-                            ? oldData.map(chat =>
-                                chat.id === chatId ? { ...chat, unreadCount: (chat.unreadCount || 0) + 1 } : chat
-                            )
-                            : oldData
-                    );
+
+                if (isNewChat) {
+                    queryClient.refetchQueries({ queryKey: ['listChat'] });
+                } else {
+                    if (chatISOpent !== chatId) {
+                        queryClient.setQueryData(["listChat"], (oldData: IChat[] | []) =>
+                            oldData
+                                ? oldData.map(chat =>
+                                    chat.id === chatId ? { ...chat, unreadCount: (chat.unreadCount || 0) + 1 } : chat
+                                )
+                                : oldData
+                        );
+                    } else {
+                        queryClient.setQueryData(["chatData", chatId], (oldData: IChatData) => ({
+                            ...oldData,
+                            message: [...(oldData?.message || []), messageData],
+                        }));
+                        console.log('chat id :' + chatId);
+                        try {
+                            readMessageService(`/${chatId}`)
+                        } catch (error) {
+                            throw error
+                        }
+                    }
                 }
             });
         }
@@ -124,9 +133,9 @@ class SocketClient {
             this.connect();
             return;
         }
-    
+
         this.socket.auth = { token: token };
-    
+
         // Kiểm tra nếu socket đã disconnect thì kết nối lại
         if (this.socket.disconnected) {
             console.warn("🔄 Token được cập nhật, kết nối lại WebSocket...");
