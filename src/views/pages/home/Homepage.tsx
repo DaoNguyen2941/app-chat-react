@@ -21,6 +21,7 @@ import { useAppDispatch } from '../../../hooks/reduxHook';
 import { userData } from '../../../store/userSlice';
 import { useAppSelector } from '../../../hooks/reduxHook';
 import { Link, useNavigate } from 'react-router-dom';
+import AvatarGroup from '@mui/material/AvatarGroup';
 import {
   Account,
   AccountPreview,
@@ -46,20 +47,6 @@ import TimeAgo from './components/TimeAgo';
 import { formatDistanceToNow } from "date-fns";
 import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import "dayjs/locale/vi";
-
-dayjs.extend(relativeTime);
-dayjs.locale("vi");
-
-const timeAgo = (time: Date | null): string |null => {
-  if (time) {
-    return dayjs(time).fromNow()
-  }
-  return null
-}
-
 // Styled Badge for online status (green dot)
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-dot': {
@@ -91,14 +78,13 @@ interface DemoProps {
 }
 
 interface ToolbarActionsSearchProps {
-  setChatList: React.Dispatch<React.SetStateAction<any[]>>;
   router: Router;
 }
 
-const ToolbarActionsSearch: React.FC<ToolbarActionsSearchProps> = ({ setChatList, router }) => {
+const ToolbarActionsSearch: React.FC<ToolbarActionsSearchProps> = ({ router }) => {
   return (
     <Stack direction="row">
-      <AddFriend setChatList={setChatList} router={router} />
+      <AddFriend  router={router} />
       <FriendFunction router={router} />
       <ThemeSwitcher />
     </Stack>
@@ -246,7 +232,6 @@ function SidebarFooterAccount({ mini }: SidebarFooterProps) {
 export default function HomePage(props: DemoProps) {
   const { window } = props;
   const dispatch = useAppDispatch()
-  const [chatList, setChatList] = useState<IChat[] | []>([]);
   const dataUser = useAppSelector(userData)
   const navigate = useNavigate();
   const setToken = useSetToken
@@ -297,14 +282,18 @@ export default function HomePage(props: DemoProps) {
   const demoWindow = window !== undefined ? window() : undefined;
   // Tạo navigation từ danh sách người dùng
   const navigation = listChat?.map((chat: IChat) => ({
-    segment: chat?.id,
-    title:
+    segment: chat.IsGroup ? `group/${chat.id}` : `${chat?.id}`,
+    title: chat.IsGroup ?
       (<div>
-      <p>{chat?.user.account}</p>
-      <TimeAgo timestamp = {chat.lastSeen}/>
+        <p>{chat?.chatGroup.name}</p>
+        <TimeAgo timestamp={chat.lastSeen} />
+      </div>
+      ) : (<div>
+        <p>{chat?.user.account}</p>
+        <TimeAgo timestamp={chat.lastSeen} />
       </div>
       ),
-    icon: (
+    icon: chat.IsGroup ? (
       <StyledBadge
         overlap="circular"
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -317,7 +306,27 @@ export default function HomePage(props: DemoProps) {
           },
         }}
       >
-    
+
+        <AvatarGroup max={3}>
+          {chat.chatGroup.members.map((m: {avatar:string}) =>
+            <Avatar alt="" src={m.avatar} />
+          )}
+        </AvatarGroup>
+      </StyledBadge>
+    ) : (
+      <StyledBadge
+        overlap="circular"
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        variant="dot"
+        sx={{
+          '& .MuiBadge-dot': {
+            backgroundColor:
+              chat.status === 'online' ? '#44b700' :
+                '#555',
+          },
+        }}
+      >
+
         <Avatar alt={chat.user.name}
           src={chat.user.avatar}
         />
@@ -344,13 +353,13 @@ export default function HomePage(props: DemoProps) {
       <DashboardLayout
         // slots={{ toolbarAccount: () => null, sidebarFooter: SidebarFooterAccount }}
         slots={{
-          toolbarActions: () => <ToolbarActionsSearch setChatList={setChatList} router={router} />,
+          toolbarActions: () => <ToolbarActionsSearch  router={router} />,
           toolbarAccount: () => null,
           sidebarFooter: SidebarFooterAccount,
         }}
       >
         {router.pathname === '/welcome' ?
-          <WelCome /> : <Chat chatId={router.pathname} />
+          <WelCome /> : <Chat chatId={router.pathname}/>
         }
       </DashboardLayout>
     </AppProvider>

@@ -10,16 +10,20 @@ import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { getChatDataService, getVirtualChatDataService, readMessageService } from '../../../../services/chatService';
 import { IChatData, Imessage, IChat } from '../../../../commom/type/chat.type';
 import { postMessageService } from '../../../../services/chatService';
-import { useAppDispatch } from '../../../../hooks/reduxHook';
 import { setChatOpent } from '../../../../store/socketSlice';
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import TimeAgo from './TimeAgo';
+import AvatarGroup from '@mui/material/AvatarGroup';
+import { useAppDispatch } from '../../../../hooks/reduxHook';
+import { useAppSelector } from '../../../../hooks/reduxHook';
+import { userData } from '../../../../store/userSlice';
 
 export default function Chat({ chatId }: { chatId: string }) {
+    const dispatch = useAppDispatch()
+    const dataUser = useAppSelector(userData)
     const queryClient = useQueryClient();
     const [message, setMessage] = useState('')
     const messagesEndRef = useRef<HTMLDivElement>(null);
-    const dispatch = useAppDispatch()
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null); // Ref cho ô nhập tin nhắn
 
@@ -56,9 +60,10 @@ export default function Chat({ chatId }: { chatId: string }) {
             const idChat = chatId.slice(1)
             queryClient.setQueryData(["listChat"], (oldData: IChat[] | []) =>
                 oldData
-                    ? oldData.map(chat =>
-                        chat.id === idChat ? { ...chat, unreadCount: 0 } : chat
-                    )
+                    ? oldData.map(chat => {
+                        const chatIdToCompare = chat.IsGroup ? idChat.slice(6) : idChat;
+                        return chat.id === chatIdToCompare ? { ...chat, unreadCount: 0 } : chat;
+                    })
                     : oldData
             );
         },
@@ -66,12 +71,20 @@ export default function Chat({ chatId }: { chatId: string }) {
 
 
     useEffect(() => {
-        dispatch(setChatOpent(chatId.slice(1)));
         const listChat: IChat[] = queryClient.getQueryData(['listChat']) || [];
-        const presentChat = listChat.find(chat => chat.id === chatId.slice(1));
+        console.log(chatId);
+        let presentChat
+        if (chatId.includes('group')) {
+            dispatch(setChatOpent(chatId.slice(7)));
+            presentChat = listChat.find(chat => chat.id === chatId.slice(7));
+        } else {
+            dispatch(setChatOpent(chatId.slice(1)));
+            presentChat = listChat.find(chat => chat.id === chatId.slice(1));
+        }
+        console.log(presentChat);
         if (presentChat?.unreadCount && presentChat.unreadCount > 0) {
             readMessage()
-        } 
+        }
     }, [chatId]);
 
     const { mutate: sendMessage, isPending } = useMutation({
@@ -126,10 +139,18 @@ export default function Chat({ chatId }: { chatId: string }) {
                 {/* Chat with  {pathname} */}
                 <ListItem>
                     <ListItemAvatar>
-                        <Avatar src={chatData?.user?.avatar} />
+                        {chatData?.isGroup ? (
+                            <AvatarGroup max={3}>
+                                {chatData?.members?.map((m: { avatar: string }) =>
+                                    <Avatar alt="" src={m.avatar} />
+                                )}
+                            </AvatarGroup>
+                        ) : (
+                            <Avatar src={chatData?.user?.avatar} />
+                        )}
                     </ListItemAvatar>
                     <ListItemText
-                        primary={chatData?.user?.account}
+                        primary={chatData?.user?.account || chatData?.name}
                     //   secondary="Jan 9, 2014"
                     />
                 </ListItem>
@@ -146,12 +167,12 @@ export default function Chat({ chatId }: { chatId: string }) {
                     // boxShadow: '0 0 10px rgba(0,0,0,0.1)',
                 }}
             >
-                {chatData?.message.map((message) => (
+                {chatData?.message?.map((message) => (
                     <Box
                         key={message?.id}
                         sx={{
                             display: 'flex',
-                            flexDirection: message.author?.id === chatData?.user?.id ? 'row' : 'row-reverse',
+                            flexDirection: message.author?.id === dataUser.id ? 'row-reverse' : 'row',
                             alignItems: 'center',
                             mb: 2,
                         }}
@@ -184,13 +205,13 @@ export default function Chat({ chatId }: { chatId: string }) {
                             >
                                 {message.content}
                             </Typography>
-                            <Typography variant="caption" 
-                            sx={{ 
-                                display: 'block', 
-                                textAlign: message?.author?.id === chatData?.user?.id ? 'left' : 'right ',
+                            <Typography variant="caption"
+                                sx={{
+                                    display: 'block',
+                                    textAlign: message?.author?.id === chatData?.user?.id ? 'left' : 'right ',
 
-                                 }}>
-                               <TimeAgo timestamp={message.created_At}/>
+                                }}>
+                                <TimeAgo timestamp={message.created_At} />
                             </Typography>
                         </Box>
                     </Box>
@@ -199,68 +220,68 @@ export default function Chat({ chatId }: { chatId: string }) {
             </Box>
 
             {/* Input Box */}
-          <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-            {/* Ô nhập tin nhắn */}
-            <Box
-                component="input"
-                ref={inputRef} // Gán ref
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Type your message..."
-                sx={{
-                    flex: 1,
-                    p: 1,
-                    border: "1px solid #ddd",
-                    borderRadius: "8px",
-                    outline: "none",
-                    fontSize: "1rem",
-                }}
-            />
+            <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
+                {/* Ô nhập tin nhắn */}
+                <Box
+                    component="input"
+                    ref={inputRef} // Gán ref
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Type your message..."
+                    sx={{
+                        flex: 1,
+                        p: 1,
+                        border: "1px solid #ddd",
+                        borderRadius: "8px",
+                        outline: "none",
+                        fontSize: "1rem",
+                    }}
+                />
 
-            {/* Nút mở emoji picker */}
-            <Box
-                component="button"
-                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                sx={{
-                    ml: 2,
-                    px: 2,
-                    py: 1,
-                    backgroundColor: "#f0f0f0",
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                    border: "none",
-                }}
-            >
-                😊
-            </Box>
-
-            {/* Emoji picker */}
-            {showEmojiPicker && (
-                <Box sx={{ position: "absolute", bottom: "50px", right: "10px" }}>
-                    <EmojiPicker onEmojiClick={handleEmojiClick} />
+                {/* Nút mở emoji picker */}
+                <Box
+                    component="button"
+                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                    sx={{
+                        ml: 2,
+                        px: 2,
+                        py: 1,
+                        backgroundColor: "#f0f0f0",
+                        borderRadius: "8px",
+                        cursor: "pointer",
+                        border: "none",
+                    }}
+                >
+                    😊
                 </Box>
-            )}
 
-            {/* Nút gửi tin nhắn */}
-            <Box
-                component="button"
-                onClick={ handleSendMessage}
-                sx={{
-                    ml: 2,
-                    px: 3,
-                    py: 1,
-                    backgroundColor: "#007bff",
-                    color: "#fff",
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                    border: "none",
-                    "&:hover": { backgroundColor: "#0056b3" },
-                }}
-            >
-                <SendIcon />
+                {/* Emoji picker */}
+                {showEmojiPicker && (
+                    <Box sx={{ position: "absolute", bottom: "50px", right: "10px" }}>
+                        <EmojiPicker onEmojiClick={handleEmojiClick} />
+                    </Box>
+                )}
+
+                {/* Nút gửi tin nhắn */}
+                <Box
+                    component="button"
+                    onClick={handleSendMessage}
+                    sx={{
+                        ml: 2,
+                        px: 3,
+                        py: 1,
+                        backgroundColor: "#007bff",
+                        color: "#fff",
+                        borderRadius: "8px",
+                        cursor: "pointer",
+                        border: "none",
+                        "&:hover": { backgroundColor: "#0056b3" },
+                    }}
+                >
+                    <SendIcon />
+                </Box>
             </Box>
-        </Box>
-        </Box>
+        </Box >
     );
 }

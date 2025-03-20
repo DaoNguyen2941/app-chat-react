@@ -10,11 +10,11 @@ import {
 
 export const readMessageService = async (chatId: string) => {
     try {        
-        console.log(chatId);
+        console.log('readMessageService');
         
+        console.log(chatId);
         const url = patchReadMessages.replace("/:id", chatId);
         console.log(url);
-        
         const response = await http.patch(url)
         return response
     } catch (error) {
@@ -34,6 +34,7 @@ export const postMessageService = async (chatId: string, connect: string) => {
 export const GetListChatService = async () => {
     try {
         const response = await http.get(getListChatsApi);
+        console.log(response.data);
         return response.data
     } catch (error) {
         throw error;
@@ -44,6 +45,8 @@ export const getChatDataService = async (chatid: string) => {
     try {
         const url = getChatDataById.replace("/:id", chatid);
         const response = await http.get(url)
+        console.log(response);
+        
         return response
     } catch (error) {
         throw error;

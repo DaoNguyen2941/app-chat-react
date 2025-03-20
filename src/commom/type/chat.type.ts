@@ -6,6 +6,11 @@ export interface IChat {
     unreadCount: number;
     status: 'online' | 'offline';
     lastSeen: Date | null
+    IsGroup:boolean,
+    chatGroup: {
+        members: {avatar: string}[],
+        name: string
+    }
 }
 
 export interface Imessage {
@@ -17,6 +22,10 @@ export interface Imessage {
 
 export interface IChatData {
     id: string;
-    user: IUserType;
+    user: IUserType | null;
     message: Imessage[];
+    isGroup: boolean;
+    members: IUserType[] | null;
+    name: string | null;
+
 }

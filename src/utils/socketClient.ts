@@ -86,8 +86,8 @@ class SocketClient {
 
     private listenToNewMessages () {
         if (!this.socket?.hasListeners("new-message")) {
-            this.socket?.on("new-message", (data: { messageData: Imessage, chatId: string, isNewChat: boolean }) => {
-                const { messageData, chatId, isNewChat } = data;
+            this.socket?.on("new-message", (data: { messageData: Imessage, chatId: string, isNewChat: boolean, isGroup: boolean }) => {
+                const { messageData, chatId, isNewChat,isGroup } = data;
                 const chatISOpent = store.getState().socket.chatIsOpent
 
                 if (isNewChat) {
@@ -96,21 +96,33 @@ class SocketClient {
                     if (chatISOpent !== chatId) {
                         queryClient.setQueryData(["listChat"], (oldData: IChat[] | []) =>
                             oldData
-                                ? oldData.map(chat =>
-                                    chat.id === chatId ? { ...chat, unreadCount: (chat.unreadCount || 0) + 1 } : chat
-                                )
+                                ? [
+                                    ...oldData.filter(chat => chat.id === chatId).map(chat => ({
+                                        ...chat,
+                                        unreadCount: (chat.unreadCount || 0) + 1
+                                    })),
+                                    ...oldData.filter(chat => chat.id !== chatId)
+                                ]
                                 : oldData
                         );
                     } else {
-                        queryClient.setQueryData(["chatData", chatId], (oldData: IChatData) => ({
-                            ...oldData,
-                            message: [...(oldData?.message || []), messageData],
-                        }));
-                        console.log('chat id :' + chatId);
                         try {
-                            readMessageService(`/${chatId}`)
+                            if(isGroup) {
+                                queryClient.setQueryData(["chatData", `group/${chatId}`], (oldData: IChatData) => ({
+                                    ...oldData,
+                                    message: [...(oldData?.message || []), messageData],
+                                }));
+                                readMessageService(`/group/${chatId}`)
+                            } else {
+                                queryClient.setQueryData(["chatData", chatId], (oldData: IChatData) => ({
+                                    ...oldData,
+                                    message: [...(oldData?.message || []), messageData],
+                                }));
+                                readMessageService(`/${chatId}`)
+                            }
                         } catch (error) {
-                            throw error
+                           console.log(error);
+                           
                         }
                     }
                 }

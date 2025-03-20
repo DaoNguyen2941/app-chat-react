@@ -50,7 +50,6 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 interface ToolbarActionsSearchProps {
-    setChatList: React.Dispatch<React.SetStateAction<any[]>>;
     router: Router;
 }
 
@@ -70,7 +69,7 @@ const getFriendStatusText = (user: ISearchUser, dataUser: { id: string, account:
     return "";
 };
 
-const AddFriend: React.FC<ToolbarActionsSearchProps> = ({ setChatList, router }) => {
+const AddFriend: React.FC<ToolbarActionsSearchProps> = ({ router }) => {
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState('');
     const [users, setUsers] = useState<ISearchUser[]>([]);

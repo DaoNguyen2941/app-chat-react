@@ -61,5 +61,4 @@ export const {
 
 export const userData = (state: RootState) => state.userData;
 
-
 export default userSlice.reducer;
