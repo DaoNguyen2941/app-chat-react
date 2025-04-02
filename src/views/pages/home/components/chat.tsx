@@ -19,6 +19,8 @@ import { useAppSelector } from '../../../../hooks/reduxHook';
 import { userData } from '../../../../store/userSlice';
 
 export default function Chat({ chatId }: { chatId: string }) {
+    console.log(chatId);
+    
     const dispatch = useAppDispatch()
     const dataUser = useAppSelector(userData)
     const queryClient = useQueryClient();
@@ -140,7 +142,7 @@ export default function Chat({ chatId }: { chatId: string }) {
                 <ListItem>
                     <ListItemAvatar>
                         {chatData?.isGroup ? (
-                            <AvatarGroup max={3}>
+                            <AvatarGroup max={3}  spacing="small">
                                 {chatData?.members?.map((m: { avatar: string }) =>
                                     <Avatar alt="" src={m.avatar} />
                                 )}

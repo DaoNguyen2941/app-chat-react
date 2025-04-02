@@ -15,10 +15,10 @@ export const socketMiddleware: Middleware = (store) => next => (action) => {
     }
 
     if (typedAction.type === "socket/disconnectSocket") {
-        // Ngắt kết nối WebSocket
-        socketClient.disconnect();
         store.dispatch(updateSocketStatus(false));
         store.dispatch(setSocketId('')); 
+        // Ngắt kết nối WebSocket
+        socketClient.disconnect();
     }
 
     return next(action);

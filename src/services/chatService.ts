@@ -5,7 +5,8 @@ import {
     getChatVirtualApi,
     createChatApi,
     postMessageApi,
-    patchReadMessages
+    patchReadMessages,
+    createChatGroupApi2,
 } from "../utils/apiRouter";
 
 export const readMessageService = async (chatId: string) => {
@@ -66,6 +67,15 @@ export const getVirtualChatDataService = async (userId: string) => {
 export const createChatService = async (receiverId: string) => {
     try {
         const response = await http.post(createChatApi, { receiverId })
+        return response
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const createChatGroupService = async (members: string[],name: string) => {
+    try {
+        const response = await http.post(createChatGroupApi2, { members: members, name: name })
         return response
     } catch (error) {
         throw error;

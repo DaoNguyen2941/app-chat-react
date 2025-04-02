@@ -2,16 +2,17 @@ import http from "../utils/httpclient";
 import socketClient from "../utils/socketClient";
 import { AxiosResponse, AxiosError } from 'axios';
 import { IFormLogin } from "../views/pages/login/intreface";
-import { loginApi, registerApi, verifyOtpApi, refreshTokenAPI } from "../utils/apiRouter";
+import { loginApi, registerApi, verifyOtpApi, refreshTokenAPI, logoutApi } from "../utils/apiRouter";
 import { IFormRegister } from "../views/pages/register/intreface";
 import { IFormOtp } from "../views/pages/register/intreface";
 
-export const refreshTokenService = async (): Promise<AxiosResponse | null > => {
+export const refreshTokenService = async (): Promise<AxiosResponse | null> => {
     try {
         const response = await http.get(refreshTokenAPI);
-        const newToken = response.data.token
-        socketClient.updateToken(newToken)
-        // socketClient.emit('updateToken', newToken)
+        const newToken = response.data.token    
+        if (newToken) {
+            socketClient.updateToken(newToken);
+        }    
         return response;
     } catch (error) {
         throw error;
@@ -21,7 +22,17 @@ export const refreshTokenService = async (): Promise<AxiosResponse | null > => {
 export const loginService = async (account: IFormLogin): Promise<AxiosResponse> => {
     try {
         const response = await http.post(loginApi, account)
+        console.log(response);
+        
         return response
+    } catch (err) {
+        throw err;
+    }
+}
+
+export const logOutService = async () => {
+    try {
+        await http.post(logoutApi)
     } catch (err) {
         throw err;
     }

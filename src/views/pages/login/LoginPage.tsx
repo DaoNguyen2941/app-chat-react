@@ -15,58 +15,62 @@ import { useSetToken } from '../../../hooks/authHook';
 import { useAppDispatch } from '../../../hooks/reduxHook';
 import { setAuth } from '../../../store/authSlice';
 import { setUserData } from '../../../store/userSlice';
-import { connectSocket, disconnectSocket } from "../../../store/socketSlice"; // Import các action
-
+import { toast } from 'react-toastify'; 
+import { useEffect } from 'react';
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const setToken = useSetToken
-  const dispatch = useAppDispatch()
+  const setToken = useSetToken; 
+  const dispatch = useAppDispatch();
 
-
+  // Schema validation
   const schema = yup.object().shape({
-    account: yup.string().required('không được để trống account!'),
-    password: yup.string().required('Không được để trống password!')
+    account: yup.string().required('Không được để trống account!'),
+    password: yup.string().required('Không được để trống password!'),
   });
 
+  // Default values
   const defaultValues: IFormLogin = {
     account: '',
     password: '',
-  }
+  };
 
+  // useForm hook
   const {
     control,
     setError,
     reset,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
   } = useForm<IFormLogin>({
     defaultValues,
     mode: 'onSubmit',
-    resolver: yupResolver(schema)
+    resolver: yupResolver(schema),
   });
 
-  const { mutate, isError, isSuccess, error } = useMutation({
-    mutationFn: (value: IFormLogin) => {
-      return loginService(value)
-    },
+  useEffect(() => {
+    console.log("🔄 Component LoginPage render lại!");
+  });
 
-    onSuccess(res) {
-      setToken(res.data.token)
-      dispatch(setAuth({ isAuth: true }))
-      dispatch(setUserData(res.data.user))
-      navigate("/home");
-      reset();
+  // Mutation để gọi API login
+  const { mutate, error } = useMutation({
+    mutationFn: (value: IFormLogin) => loginService(value),
+    onSuccess: (res) => {
+      setToken(res.data.token);
+      dispatch(setAuth({ isAuth: true }));
+      dispatch(setUserData(res.data.user));
+      navigate('/home');
+      reset(); 
     },
-    onError: (error) => {
-      
-    }
-  })
+  });
 
-  const onSubmit: SubmitHandler<IFormLogin> = async (data: IFormLogin) => {
+  const onSubmit: SubmitHandler<IFormLogin> = (data) => {
     mutate(data);
-    reset();
   };
 
+  const errorMessage =
+    isAxiosError<IRequestErr>(error) && error.response?.status === 401
+      ? 'Tài khoản hoặc mật khẩu không chính xác'
+      : errors.account?.message || errors.password?.message;
 
   return (
     <div
@@ -81,37 +85,31 @@ const LoginPage: React.FC = () => {
     >
       <div className="bg-white p-8 rounded-lg shadow-lg w-96">
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
-        <div > 
-          {isAxiosError<IRequestErr>(error) && error.response?.status === 401 ? (
-            <MessageErr message={"thông tin tài khoản không chính xác"} />
-          ) : null}
-          {errors ? (
-            <MessageErr message={
-              errors.account?.message ||
-              errors.password?.message
-            } />
-          ) : null}
-        </div>
+
+        {/* Hiển thị lỗi */}
+        {errorMessage && <MessageErr message={errorMessage} />}
+
+        {/* Form Login */}
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4">
-            <label htmlFor="account" className="block text-sm font-medium text-gray-700">Account</label>
+            <label htmlFor="account" className="block text-sm font-medium text-gray-700">
+              Account
+            </label>
             <Controller
               name="account"
               control={control}
-              render={({ field }) =>
-                <Input field={field} type="text" placeholder="account" />
-              }
+              render={({ field }) => <Input field={field} type="text" placeholder="account" />}
             />
           </div>
 
           <div className="mb-4">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              Password
+            </label>
             <Controller
               name="password"
               control={control}
-              render={({ field }) =>
-                <Input field={field} type="password" placeholder="password" />
-              }
+              render={({ field }) => <Input field={field} type="password" placeholder="password" />}
             />
           </div>
 
@@ -123,22 +121,16 @@ const LoginPage: React.FC = () => {
           </button>
         </form>
 
-        {/* Nút chuyển đến trang đăng ký */}
+        {/* Chuyển đến trang đăng ký */}
         <div className="mt-4 text-center">
-          <Link  to="/register"
-            className="text-blue-500 hover:underline"
-          >
+          <Link to="/register" className="text-blue-500 hover:underline">
             Don't have an account? Sign Up
           </Link>
         </div>
 
-        {/* Nút chuyển đến trang quên mật khẩu */}
+        {/* Quên mật khẩu */}
         <div className="mt-2 text-center">
-          <button
-            className="text-blue-500 hover:underline"
-          >
-            Forgot password?
-          </button>
+          <button className="text-blue-500 hover:underline">Forgot password?</button>
         </div>
       </div>
     </div>

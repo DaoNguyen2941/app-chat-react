@@ -16,10 +16,8 @@ import { IDataFriendType, FriendStatus } from '../../../../commom/type/friend.ty
 import { useAppSelector, useAppDispatch } from '../../../../hooks/reduxHook';
 import { notification, setNumberInvitation, exceptOneAnnouncement } from '../../../../store/notificationSlice';
 import { createChatService, GetListChatService } from '../../../../services/chatService';
-import { useDemoRouter } from '@toolpad/core/internal';
 import { IChat } from '../../../../commom/type/chat.type';
 import type { Navigation, Router } from '@toolpad/core/AppProvider';
-import { create } from 'domain';
 
 interface NavigationFriendsProps {
   setOpentDialog: React.Dispatch<React.SetStateAction<boolean>>;

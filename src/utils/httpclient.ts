@@ -4,7 +4,7 @@ import { jwtDecode, JwtPayload } from "jwt-decode";
 import { refreshTokenService } from "../services/authService";
 import { UseCheckExpirationToken } from "../hooks/authHook";
 import { IDecodedToken } from "../commom/type/type";
-
+import { logOutService } from "../services/authService";
 
 const isTokenExpired = (token: string): boolean => {
     try {
@@ -17,9 +17,10 @@ const isTokenExpired = (token: string): boolean => {
     }
 };
 
-const handleLogout = () => {
+const handleLogout = async () => {
     console.warn("⚠️ Refresh token hết hạn hoặc không hợp lệ. Đăng xuất...");
     localStorage.removeItem('token');
+   await logOutService()
     window.location.href = '/login';
 };
 
@@ -59,8 +60,13 @@ class HttpClient {
             (response: AxiosResponse) => response,
             async (error) => {
                 const originalRequest = error.config;
-
+                console.log(error);
+                
                 if (!originalRequest || error.response?.status !== 401) {
+                    return Promise.reject(error);
+                }
+
+                if (originalRequest.url?.includes("/auth/login")) {
                     return Promise.reject(error);
                 }
 

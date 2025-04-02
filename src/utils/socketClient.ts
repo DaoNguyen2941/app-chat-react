@@ -10,6 +10,9 @@ import { refreshTokenService } from "../services/authService";
 import { IChatData, Imessage, IChat } from "../commom/type/chat.type";
 import { queryClient } from "../services/cacheService";
 import { readMessageService } from "../services/chatService";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 class SocketClient {
     private socket: Socket | null = null;
     private readonly baseURL: string;
@@ -82,13 +85,31 @@ class SocketClient {
         store.dispatch(connectSocket());
         this.listenToNotificationsFromFriends();
         this.listenToNewMessages();
+        this.listentoNewGroupChat()
     };
 
-    private listenToNewMessages () {
+    private listentoNewGroupChat() {
+        if (!this.socket?.hasListeners("new-group-chat")) {
+            this.socket?.on('new-group-chat', (data: { message: string }) => {
+                console.log(data.message);
+                queryClient.refetchQueries({ queryKey: ['listChat'] });
+            })
+        }
+    }
+
+    private listenToInveteGroup() {
+        if (!this.socket?.hasListeners("invete-group")) {
+            this.socket?.on('invete-group', (data: { message: string }) => {
+                console.log(data.message);
+            })
+        }
+    }
+
+    private listenToNewMessages() {
         if (!this.socket?.hasListeners("new-message")) {
             this.socket?.on("new-message", (data: { messageData: Imessage, chatId: string, isNewChat: boolean, isGroup: boolean }) => {
-                const { messageData, chatId, isNewChat,isGroup } = data;
-                const chatISOpent = store.getState().socket.chatIsOpent
+                const { messageData, chatId, isNewChat, isGroup } = data;
+                const chatISOpent = store.getState().socket.chatIsOpent;
 
                 if (isNewChat) {
                     queryClient.refetchQueries({ queryKey: ['listChat'] });
@@ -96,33 +117,22 @@ class SocketClient {
                     if (chatISOpent !== chatId) {
                         queryClient.setQueryData(["listChat"], (oldData: IChat[] | []) =>
                             oldData
-                                ? [
-                                    ...oldData.filter(chat => chat.id === chatId).map(chat => ({
-                                        ...chat,
-                                        unreadCount: (chat.unreadCount || 0) + 1
-                                    })),
-                                    ...oldData.filter(chat => chat.id !== chatId)
-                                ]
+                                ? oldData.map(chat =>
+                                    chat.id === chatId ? { ...chat, unreadCount: (chat.unreadCount || 0) + 1 } : chat
+                                )
                                 : oldData
                         );
                     } else {
                         try {
-                            if(isGroup) {
-                                queryClient.setQueryData(["chatData", `group/${chatId}`], (oldData: IChatData) => ({
-                                    ...oldData,
-                                    message: [...(oldData?.message || []), messageData],
-                                }));
-                                readMessageService(`/group/${chatId}`)
-                            } else {
-                                queryClient.setQueryData(["chatData", chatId], (oldData: IChatData) => ({
-                                    ...oldData,
-                                    message: [...(oldData?.message || []), messageData],
-                                }));
-                                readMessageService(`/${chatId}`)
-                            }
+                            queryClient.setQueryData(["chatData", isGroup ? `group/${chatId}` : chatId], (oldData: IChatData | undefined) => ({
+                                ...oldData,
+                                message: [...(oldData?.message || []), messageData],
+                            }));
+
+                            readMessageService(isGroup ? `/group/${chatId}` : `/${chatId}`);
                         } catch (error) {
-                           console.log(error);
-                           
+                            console.error("Error updating chat data:", error);
+                            toast.error("Có lỗi khi cập nhật tin nhắn mới.");
                         }
                     }
                 }

@@ -10,7 +10,7 @@ import { createTheme } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
 import AddFriend from './components/DialogAddFriend';
 import { ThemeSwitcher, } from '@toolpad/core/DashboardLayout';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { GetListChatService } from '../../../services/chatService';
 import Divider from '@mui/material/Divider';
 import { DashboardLayout, SidebarFooterProps } from '@toolpad/core/DashboardLayout';
@@ -22,6 +22,8 @@ import { userData } from '../../../store/userSlice';
 import { useAppSelector } from '../../../hooks/reduxHook';
 import { Link, useNavigate } from 'react-router-dom';
 import AvatarGroup from '@mui/material/AvatarGroup';
+import SettingsIcon from '@mui/icons-material/Settings';
+import Diversity3Icon from '@mui/icons-material/Diversity3';
 import {
   Account,
   AccountPreview,
@@ -44,9 +46,9 @@ import { useSetToken } from '../../../hooks/authHook';
 import { setAuth } from '../../../store/authSlice';
 import { deleteUserData } from '../../../store/userSlice';
 import TimeAgo from './components/TimeAgo';
-import { formatDistanceToNow } from "date-fns";
-import ListItem from '@mui/material/ListItem';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
+import DialogCreateGroup from './components/DialogCreateGroup';
+import { logOutService } from '../../../services/authService';
+
 // Styled Badge for online status (green dot)
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-dot': {
@@ -84,66 +86,52 @@ interface ToolbarActionsSearchProps {
 const ToolbarActionsSearch: React.FC<ToolbarActionsSearchProps> = ({ router }) => {
   return (
     <Stack direction="row">
-      <AddFriend  router={router} />
+      <AddFriend router={router} />
       <FriendFunction router={router} />
+      <DialogCreateGroup />
       <ThemeSwitcher />
     </Stack>
   );
 };
 
-const accounts = [
+const selects = [
   {
-    id: 1,
-    name: 'Bharat Kashyap',
-    email: 'bharatkashyap@outlook.com',
-    image: 'https://avatars.githubusercontent.com/u/19550456',
-    projects: [
-      {
-        id: 3,
-        title: 'Project X',
-      },
-    ],
+    key: 1,
+    primary: 'Tạo nhóm',
+    Icon: <Diversity3Icon />
   },
   {
-    id: 2,
-    name: 'Bharat MUI',
-    email: 'bharat@mui.com',
-    color: '#8B4513', // Brown color
-    projects: [{ id: 4, title: 'Project A' }],
+    key: 2,
+    primary: 'Thiết lập tài khoản',
+    Icon: <SettingsIcon />
   },
+
 ];
 
 function SidebarFooterAccountPopover() {
+  console.log("SidebarFooterAccountPopover rendered");
+
+
+  const handleClick = (key: number) => {
+    if (key === 1) {
+    }
+  };
+
   return (
     <Stack direction="column">
-      <Typography variant="body2" mx={2} mt={1}>
-        Accounts
-      </Typography>
+      <Typography variant="body2" mx={2} mt={1}></Typography>
       <MenuList>
-        {accounts.map((account) => (
+        {selects.map((select) => (
           <MenuItem
-            key={account.id}
-            component="button"
+            key={select.key} // Dùng id thay vì index
+            onClick={() => handleClick(select.key)}
             sx={{
               justifyContent: 'flex-start',
               width: '100%',
               columnGap: 2,
             }}
           >
-            <ListItemIcon>
-              <Avatar
-                sx={{
-                  width: 32,
-                  height: 32,
-                  fontSize: '0.95rem',
-                  bgcolor: account.color,
-                }}
-                src={account.image ?? ''}
-                alt={account.name ?? ''}
-              >
-                {account.name[0]}
-              </Avatar>
-            </ListItemIcon>
+            <ListItemIcon>{select.Icon}</ListItemIcon>
             <ListItemText
               sx={{
                 display: 'flex',
@@ -151,8 +139,7 @@ function SidebarFooterAccountPopover() {
                 alignItems: 'flex-start',
                 width: '100%',
               }}
-              primary={account.name}
-              secondary={account.email}
+              primary={select.primary}
               primaryTypographyProps={{ variant: 'body2' }}
               secondaryTypographyProps={{ variant: 'caption' }}
             />
@@ -166,6 +153,7 @@ function SidebarFooterAccountPopover() {
     </Stack>
   );
 }
+
 
 function AccountSidebarPreview(props: AccountPreviewProps & { mini: boolean }) {
   const { handleClick, open, mini } = props;
@@ -186,6 +174,7 @@ const createPreviewComponent = (mini: boolean) => {
   }
   return PreviewComponent;
 };
+
 function SidebarFooterAccount({ mini }: SidebarFooterProps) {
   const PreviewComponent = React.useMemo(() => createPreviewComponent(mini), [mini]);
   return (
@@ -198,7 +187,7 @@ function SidebarFooterAccount({ mini }: SidebarFooterProps) {
         popover: {
           transformOrigin: { horizontal: 'left', vertical: 'bottom' },
           anchorOrigin: { horizontal: 'right', vertical: 'bottom' },
-          disableAutoFocus: true,
+          disableAutoFocus: false,
           slotProps: {
             paper: {
               elevation: 0,
@@ -231,105 +220,91 @@ function SidebarFooterAccount({ mini }: SidebarFooterProps) {
 
 export default function HomePage(props: DemoProps) {
   const { window } = props;
-  const dispatch = useAppDispatch()
-  const dataUser = useAppSelector(userData)
+  const dispatch = useAppDispatch();
+  const dataUser = useAppSelector(userData);
   const navigate = useNavigate();
-  const setToken = useSetToken
+  const setToken = useSetToken;
 
-  const { data: listChat, error, isLoading } = useQuery({
+  // Lấy danh sách chat
+  const { data: listChat } = useQuery({
     queryKey: ['listChat'],
     queryFn: GetListChatService,
     refetchOnWindowFocus: false,
-    // staleTime: 1000 * 60 * 5,
-    refetchInterval: 1000 * 60 * 5
+    refetchInterval: 1000 * 60 * 5, // 5 phút
   });
 
+  // Chỉ kết nối socket khi component mount
   useEffect(() => {
     dispatch(connectSocket());
-  }, [listChat])
-
-  const [session, setSession] = React.useState<Session | null>({
-    user: {
-      name: dataUser.account,
-      // email: dataUser.account,
-      image: dataUser.avatar,
-    },
-  });
-
-  const authentication = React.useMemo(() => {
-    return {
-      signIn: () => {
-        // setSession({
-        //   user: {
-        //     name: dataUser.account,
-        //     email: dataUser.account,
-        //     image: dataUser.avatar,
-        //   },
-        // });
-      },
-      signOut: () => {
-        setSession(null);
-        setToken('');
-        dispatch(setAuth({ isAuth: false }))
-        dispatch(disconnectSocket())
-        dispatch(deleteUserData())
-        navigate("/login");
-      },
+    return () => {
+      dispatch(disconnectSocket());
     };
   }, []);
 
-  const router = useDemoRouter('welcome');
-  const demoWindow = window !== undefined ? window() : undefined;
-  // Tạo navigation từ danh sách người dùng
-  const navigation = listChat?.map((chat: IChat) => ({
+  // Logout
+  const { mutate: logOut } = useMutation({
+    mutationFn: logOutService,
+    onSuccess: () => {
+      setSession(null);
+      setToken('');
+      dispatch(setAuth({ isAuth: false }));
+      dispatch(disconnectSocket());
+      dispatch(deleteUserData());
+      navigate('/login');
+    },
+    
+  });
+
+  // Kiểm tra dataUser trước khi set
+  const [session, setSession] = React.useState<Session | null>(
+    dataUser?.account ? {
+      user: {
+        name: dataUser.account,
+        image: dataUser.avatar,
+      },
+    } : null
+  );
+
+  // Xử lý authentication
+  const authentication = React.useMemo(() => ({
+    signIn: () => {
+      // setSession({
+      //   user: {
+      //     name: dataUser.account,
+      //     email: dataUser.account,
+      //     image: dataUser.avatar,
+      //   },
+      // });
+    },
+    signOut: () => logOut(),
+  }), [logOut]);
+
+  const router = useDemoRouter('/');
+  const demoWindow = window ? window() : undefined;
+
+  // Tạo danh sách chat
+  const listChats = listChat?.map((chat: IChat) => ({
     segment: chat.IsGroup ? `group/${chat.id}` : `${chat?.id}`,
-    title: chat.IsGroup ?
-      (<div>
-        <p>{chat?.chatGroup.name}</p>
+    title: (
+      <div>
+        <p>{chat.IsGroup ? chat?.chatGroup.name : chat?.user.account}</p>
         <TimeAgo timestamp={chat.lastSeen} />
       </div>
-      ) : (<div>
-        <p>{chat?.user.account}</p>
-        <TimeAgo timestamp={chat.lastSeen} />
-      </div>
-      ),
-    icon: chat.IsGroup ? (
+    ),
+    icon: (
       <StyledBadge
         overlap="circular"
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         variant="dot"
-        sx={{
-          '& .MuiBadge-dot': {
-            backgroundColor:
-              chat.status === 'online' ? '#44b700' :
-                '#555',
-          },
-        }}
+        sx={{ '& .MuiBadge-dot': { backgroundColor: chat.status === 'online' ? '#44b700' : '#555' } }}
       >
-
-        <AvatarGroup max={3}>
-          {chat.chatGroup.members.map((m: {avatar:string}) =>
-            <Avatar alt="" src={m.avatar} />
-          )}
-        </AvatarGroup>
-      </StyledBadge>
-    ) : (
-      <StyledBadge
-        overlap="circular"
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        variant="dot"
-        sx={{
-          '& .MuiBadge-dot': {
-            backgroundColor:
-              chat.status === 'online' ? '#44b700' :
-                '#555',
-          },
-        }}
-      >
-
-        <Avatar alt={chat.user.name}
-          src={chat.user.avatar}
-        />
+        {chat.IsGroup ? (
+          <AvatarGroup max={3} spacing={24}>
+            {chat.chatGroup.members.map((m: { avatar: string }) => <Avatar key={m.avatar} alt="" src={m.avatar} />)}
+          </AvatarGroup>
+        ) : (
+          <Avatar alt={chat.user.name} src={chat.user.avatar} />
+        )}
       </StyledBadge>
     ),
     action: chat.unreadCount > 0 ? <Chip label={chat.unreadCount} color="error" size="small" /> : null,
@@ -339,28 +314,20 @@ export default function HomePage(props: DemoProps) {
     <AppProvider
       session={session}
       authentication={authentication}
-      navigation={navigation}
+      navigation={listChats}
       router={router}
       theme={demoTheme}
       window={demoWindow}
-      branding={
-        {
-          logo: null,
-          title: 'ViVUChat',
-        }
-      }
+      branding={{ logo: null, title: 'ViVUChat' }}
     >
       <DashboardLayout
-        // slots={{ toolbarAccount: () => null, sidebarFooter: SidebarFooterAccount }}
         slots={{
-          toolbarActions: () => <ToolbarActionsSearch  router={router} />,
+          toolbarActions: () => <ToolbarActionsSearch router={router} />,
           toolbarAccount: () => null,
           sidebarFooter: SidebarFooterAccount,
         }}
       >
-        {router.pathname === '/welcome' ?
-          <WelCome /> : <Chat chatId={router.pathname}/>
-        }
+        {router.pathname === '/' ? <WelCome /> : <Chat chatId={router.pathname} />}
       </DashboardLayout>
     </AppProvider>
   );
