@@ -22,18 +22,10 @@ import ListItemButton from '@mui/material/ListItemButton';
 import { useState } from "react";
 import { useEffect } from "react";
 import List from '@mui/material/List';
-import { getListFriend } from '../../../../services/friendService';
-import { createChatGroupService } from "../../../../services/chatService";
-import { IDataFriendType, FriendStatus } from '../../../../commom/type/friend.type';
+import { getListFriend } from "../../../../../services/friendService";
+import { createChatGroupService } from "../../../../../services/chatService"; 
+import { IDataFriendType, FriendStatus } from '../../../../../commom/type/friend.type';
 import { QueryClient, useQueryClient, useMutation } from '@tanstack/react-query';
-
-// Giả lập danh sách bạn bè
-const friends = [
-    { id: 1, name: "Nguyễn Văn A" },
-    { id: 2, name: "Trần Thị B" },
-    { id: 3, name: "Lê Văn C" },
-    { id: 4, name: "Hoàng Minh D" },
-];
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -50,7 +42,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     },
 }));
 
-export default function CreateGroupDialog() {
+export default function DialogCreateGroup() {
     const [open, setOpen] = React.useState(false);
     const [search, setSearch] = React.useState("");
     const [selectedFriends, setSelectedFriends] = useState<string[]>([]);

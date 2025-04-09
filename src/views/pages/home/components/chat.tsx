@@ -12,15 +12,13 @@ import { IChatData, Imessage, IChat } from '../../../../commom/type/chat.type';
 import { postMessageService } from '../../../../services/chatService';
 import { setChatOpent } from '../../../../store/socketSlice';
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
-import TimeAgo from './TimeAgo';
+import TimeAgo from './elements/TimeAgo';
 import AvatarGroup from '@mui/material/AvatarGroup';
 import { useAppDispatch } from '../../../../hooks/reduxHook';
 import { useAppSelector } from '../../../../hooks/reduxHook';
 import { userData } from '../../../../store/userSlice';
 
-export default function Chat({ chatId }: { chatId: string }) {
-    console.log(chatId);
-    
+export default function Chat({ chatId }: { chatId: string }) {    
     const dispatch = useAppDispatch()
     const dataUser = useAppSelector(userData)
     const queryClient = useQueryClient();
@@ -74,7 +72,6 @@ export default function Chat({ chatId }: { chatId: string }) {
 
     useEffect(() => {
         const listChat: IChat[] = queryClient.getQueryData(['listChat']) || [];
-        console.log(chatId);
         let presentChat
         if (chatId.includes('group')) {
             dispatch(setChatOpent(chatId.slice(7)));
@@ -83,7 +80,6 @@ export default function Chat({ chatId }: { chatId: string }) {
             dispatch(setChatOpent(chatId.slice(1)));
             presentChat = listChat.find(chat => chat.id === chatId.slice(1));
         }
-        console.log(presentChat);
         if (presentChat?.unreadCount && presentChat.unreadCount > 0) {
             readMessage()
         }

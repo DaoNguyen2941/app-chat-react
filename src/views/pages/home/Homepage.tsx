@@ -8,7 +8,7 @@ import Chip from '@mui/material/Chip';
 import Chat from './components/chat';
 import { createTheme } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
-import AddFriend from './components/DialogAddFriend';
+import AddFriend from './components/Dialog/DialogAddFriend';
 import { ThemeSwitcher, } from '@toolpad/core/DashboardLayout';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { GetListChatService } from '../../../services/chatService';
@@ -16,7 +16,7 @@ import Divider from '@mui/material/Divider';
 import { DashboardLayout, SidebarFooterProps } from '@toolpad/core/DashboardLayout';
 import { useState, useEffect } from 'react';
 import { IChat } from '../../../commom/type/chat.type';
-import WelCome from './components/welCome';
+import WelCome from '../../components/welCome';
 import { useAppDispatch } from '../../../hooks/reduxHook';
 import { userData } from '../../../store/userSlice';
 import { useAppSelector } from '../../../hooks/reduxHook';
@@ -31,24 +31,24 @@ import {
   SignOutButton,
   AccountPreviewProps,
 } from '@toolpad/core/Account';
-import type {
-  Navigation, Router
-} from '@toolpad/core/AppProvider';
-import Box from '@mui/material/Box';
+import type {Router} from '@toolpad/core/AppProvider';
 import Typography from '@mui/material/Typography';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import { connectSocket, disconnectSocket } from "../../../store/socketSlice"; // Import các action
-import FriendFunction from './components/DialogFriend';
+import { connectSocket, disconnectSocket } from "../../../store/socketSlice"; 
+import FriendFunction from './components/Dialog/DialogFriend';
 import { useSetToken } from '../../../hooks/authHook';
 import { setAuth } from '../../../store/authSlice';
 import { deleteUserData } from '../../../store/userSlice';
-import TimeAgo from './components/TimeAgo';
-import DialogCreateGroup from './components/DialogCreateGroup';
+import TimeAgo from './components/elements/TimeAgo';
+import DialogCreateGroup from './components/Dialog/DialogCreateGroup';
 import { logOutService } from '../../../services/authService';
-
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import ChatPopoverAction from './components/elements/ChatPopoverAction';
 // Styled Badge for online status (green dot)
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-dot': {
@@ -58,6 +58,8 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
     borderRadius: '50%', // Đảm bảo chấm luôn tròn
   },
 }));
+
+
 
 const demoTheme = createTheme({
   cssVariables: {
@@ -252,8 +254,8 @@ export default function HomePage(props: DemoProps) {
       dispatch(deleteUserData());
       navigate('/login');
     },
-    
   });
+
 
   // Kiểm tra dataUser trước khi set
   const [session, setSession] = React.useState<Session | null>(
@@ -307,7 +309,7 @@ export default function HomePage(props: DemoProps) {
         )}
       </StyledBadge>
     ),
-    action: chat.unreadCount > 0 ? <Chip label={chat.unreadCount} color="error" size="small" /> : null,
+    action: chat.unreadCount > 0 ? <Chip label={chat.unreadCount} color="error" size="small" /> : <ChatPopoverAction/>,
   }));
 
   return (
