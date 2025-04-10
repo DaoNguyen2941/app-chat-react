@@ -26,7 +26,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { SearchUserService } from '../../../../../services/userService';
 import { useDebounce } from '../../../../../hooks/debouncehook';
 import { QueryClient, useQueryClient, useMutation } from '@tanstack/react-query';
-import { IUserType, ISearchUser, IFriendStatus } from '../../../../../commom/type/user.type';
+import { ISearchUser, IFriendStatus } from '../../../../../commom/type/user.type';
 import type { Navigation, Router } from '@toolpad/core/AppProvider';
 import { IChat } from '../../../../../commom/type/chat.type';
 import { makeFriendService, acceptedFriend, deleteFriend } from '../../../../../services/friendService';

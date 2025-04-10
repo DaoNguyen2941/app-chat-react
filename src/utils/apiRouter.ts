@@ -12,10 +12,10 @@ export const createChatGroupApi = `${host}/chat/group` ;
 export const createChatGroupApi2 = `${host}/chat/group/api2` ;
 export const getListChatsApi = `${host}/chat/list` ;
 export const getChatDataById = `${host}/chat/:id`;
+export const deleteChatApi = `${host}/chat/:id/`;
 export const getChatVirtualApi = `${host}/chat/virtual/:userId` ;
 export const postMessageApi = `${host}/chat/:id/message`;
 export const patchReadMessages = `${host}/chat/:id/unreadCount`
-
 
 export const searchUserApi = `${host}/user/search/:keyword`;
 

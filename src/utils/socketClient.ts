@@ -190,5 +190,5 @@ class SocketClient {
     };
 }
 
-const socketClient = new SocketClient(`${hostsocket}`); // Thay bằng URL server của bạn
+const socketClient = new SocketClient(`${hostsocket}`);
 export default socketClient;

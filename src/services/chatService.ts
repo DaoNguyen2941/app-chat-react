@@ -7,15 +7,22 @@ import {
     postMessageApi,
     patchReadMessages,
     createChatGroupApi2,
+    deleteChatApi,
 } from "../utils/apiRouter";
 
+export const deleteChatService = async (chatId: string, isGroup: boolean) => {
+    try {
+        const url = deleteChatApi.replace(":id", chatId) + `?isGroup=${isGroup}`;
+        const response = await http.delete(url)
+        return response
+    } catch (error) {
+        throw error;
+    }
+}
+
 export const readMessageService = async (chatId: string) => {
-    try {        
-        console.log('readMessageService');
-        
-        console.log(chatId);
+    try {                
         const url = patchReadMessages.replace("/:id", chatId);
-        console.log(url);
         const response = await http.patch(url)
         return response
     } catch (error) {
@@ -35,7 +42,6 @@ export const postMessageService = async (chatId: string, connect: string) => {
 export const GetListChatService = async () => {
     try {
         const response = await http.get(getListChatsApi);
-        console.log(response.data);
         return response.data
     } catch (error) {
         throw error;
@@ -45,9 +51,7 @@ export const GetListChatService = async () => {
 export const getChatDataService = async (chatid: string) => {
     try {
         const url = getChatDataById.replace("/:id", chatid);
-        const response = await http.get(url)
-        console.log(response);
-        
+        const response = await http.get(url)        
         return response
     } catch (error) {
         throw error;

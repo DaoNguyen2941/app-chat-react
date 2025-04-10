@@ -45,9 +45,6 @@ import { deleteUserData } from '../../../store/userSlice';
 import TimeAgo from './components/elements/TimeAgo';
 import DialogCreateGroup from './components/Dialog/DialogCreateGroup';
 import { logOutService } from '../../../services/authService';
-import IconButton from '@mui/material/IconButton';
-import Menu from '@mui/material/Menu';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ChatPopoverAction from './components/elements/ChatPopoverAction';
 // Styled Badge for online status (green dot)
 const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -309,7 +306,8 @@ export default function HomePage(props: DemoProps) {
         )}
       </StyledBadge>
     ),
-    action: chat.unreadCount > 0 ? <Chip label={chat.unreadCount} color="error" size="small" /> : <ChatPopoverAction/>,
+    action: chat.unreadCount > 0 ? <Chip label={chat.unreadCount} color="error" size="small" /> 
+    : <ChatPopoverAction chatId={chat.id} isGroup={chat.IsGroup} router={router}/>,
   }));
 
   return (
