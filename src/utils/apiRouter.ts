@@ -18,10 +18,13 @@ export const postMessageApi = `${host}/chat/:id/message`;
 export const patchReadMessages = `${host}/chat/:id/unreadCount`
 
 export const searchUserApi = `${host}/user/search/:keyword`;
+export const identifyApi = `${host}/user/identify`;
+export const getOtpForgotPasswordApi = `${host}/user/identify/forgot-password/otp/:token`;
+export const OTPConfirmationResetPasswordApi = `${host}/user/identify/forgot-password/otp/validate/:token`;
+export const resetPasswordApi = `${host}/user/identify/forgot-password/reset`;
 
 export const postMakeFriendApi = `${host}/friend`;
 export const patchAcceptedFriendApi = `${host}/friend/requests/:id/accepted`;
 export const getListFriendApi = `${host}/friend/lists`
 export const deleteFriendApi = `${host}/friend/requests/:id`;
 export const getListReqFriendApi = `${host}/friend/requests/lists`;
-

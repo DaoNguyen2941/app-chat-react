@@ -2,17 +2,74 @@ import http from "../utils/httpclient";
 import socketClient from "../utils/socketClient";
 import { AxiosResponse, AxiosError } from 'axios';
 import { IFormLogin } from "../views/pages/login/intreface";
-import { loginApi, registerApi, verifyOtpApi, refreshTokenAPI, logoutApi } from "../utils/apiRouter";
+import {
+    loginApi,
+    registerApi,
+    verifyOtpApi,
+    refreshTokenAPI,
+    logoutApi,
+    identifyApi,
+    getOtpForgotPasswordApi,
+    OTPConfirmationResetPasswordApi,
+    resetPasswordApi,
+} from "../utils/apiRouter";
 import { IFormRegister } from "../views/pages/register/intreface";
 import { IFormOtp } from "../views/pages/register/intreface";
+import { IFormIdentify } from "../views/pages/forgotPassword/ForgotPassword";
+import { IFormResetPassword } from "../views/pages/forgotPassword/ResetPassword";
+
+export const resetPasswordService = async (formData: IFormResetPassword): Promise<AxiosResponse> => {
+    if (formData.password !== formData.confirmPassword) {
+        throw new Error('Mật khẩu và xác nhận mật khẩu không khớp');
+    }
+    try {
+        const response = await http.post(resetPasswordApi, {
+            password: formData.password,
+        });
+        return response;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const confirmOtpResetPasswordService = async (tocken: string, otp: string): Promise<AxiosResponse> => {
+    try {
+        const url = OTPConfirmationResetPasswordApi.replace(":token", tocken);
+        const response = await http.post(url, {OTP: otp});
+        return response
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const getOtpForgotPasswordService = async (tocken: string): Promise<AxiosResponse> => {
+    try {
+        const url = getOtpForgotPasswordApi.replace(":token", tocken);
+        console.log(url);
+
+        const response = await http.get(url);
+        return response
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const identifyService = async (data: IFormIdentify) => {
+    try {
+        const response = await http.post(identifyApi, data);
+        return response
+    } catch (error) {
+        throw error;
+    }
+}
 
 export const refreshTokenService = async (): Promise<AxiosResponse | null> => {
     try {
         const response = await http.get(refreshTokenAPI);
-        const newToken = response.data.token    
+        const newToken = response.data.token
         if (newToken) {
             socketClient.updateToken(newToken);
-        }    
+        }
         return response;
     } catch (error) {
         throw error;
@@ -22,8 +79,6 @@ export const refreshTokenService = async (): Promise<AxiosResponse | null> => {
 export const loginService = async (account: IFormLogin): Promise<AxiosResponse> => {
     try {
         const response = await http.post(loginApi, account)
-        console.log(response);
-        
         return response
     } catch (err) {
         throw err;

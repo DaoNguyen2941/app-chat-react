@@ -9,9 +9,9 @@ import MessageErr from '../../components/messageErr';
 import { useMutation } from '@tanstack/react-query';
 import { registerService } from '../../../services/authService'; // Giả sử bạn có service cho đăng ký
 import { IFormRegister } from './intreface'; // Tạo interface tương ứng cho form đăng ký
-import OtpVerificationPage from './OtpVerificationPage';
 import { isAxiosError } from 'axios';
 import { IRequestErr } from '../../../commom/type/type';
+import { urlPublicPage } from '../../../router/constants';
 
 
 
@@ -138,9 +138,9 @@ const RegisterPage: React.FC = () => {
                 <div className="mt-4 text-center">
                     <Link
                         className="text-blue-500 hover:underline"
-                        to='/login'
+                        to={urlPublicPage.LOGIN}
                     >
-                        Already have an account? Login
+                        Bạn đã có tài khoản? Đang nhập
                     </Link>
                 </div>
             </div>

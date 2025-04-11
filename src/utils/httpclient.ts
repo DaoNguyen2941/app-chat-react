@@ -2,9 +2,9 @@ import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 
 import { host } from "./apiRouter";
 import { jwtDecode, JwtPayload } from "jwt-decode";
 import { refreshTokenService } from "../services/authService";
-import { UseCheckExpirationToken } from "../hooks/authHook";
 import { IDecodedToken } from "../commom/type/type";
 import { logOutService } from "../services/authService";
+import { urlPublicPage } from "../router/constants";
 
 const isTokenExpired = (token: string): boolean => {
     try {
@@ -21,7 +21,7 @@ const handleLogout = async () => {
     console.warn("⚠️ Refresh token hết hạn hoặc không hợp lệ. Đăng xuất...");
     localStorage.removeItem('token');
    await logOutService()
-    window.location.href = '/login';
+    window.location.href = urlPublicPage.LOGIN;
 };
 
 class HttpClient {

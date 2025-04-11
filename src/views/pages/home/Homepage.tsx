@@ -46,6 +46,7 @@ import TimeAgo from './components/elements/TimeAgo';
 import DialogCreateGroup from './components/Dialog/DialogCreateGroup';
 import { logOutService } from '../../../services/authService';
 import ChatPopoverAction from './components/elements/ChatPopoverAction';
+import { urlPublicPage } from '../../../router/constants';
 // Styled Badge for online status (green dot)
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-dot': {
@@ -249,7 +250,7 @@ export default function HomePage(props: DemoProps) {
       dispatch(setAuth({ isAuth: false }));
       dispatch(disconnectSocket());
       dispatch(deleteUserData());
-      navigate('/login');
+      navigate(urlPublicPage.LOGIN);
     },
   });
 
@@ -276,7 +277,7 @@ export default function HomePage(props: DemoProps) {
       // });
     },
     signOut: () => logOut(),
-  }), [logOut]);
+  }), []);
 
   const router = useDemoRouter('/');
   const demoWindow = window ? window() : undefined;

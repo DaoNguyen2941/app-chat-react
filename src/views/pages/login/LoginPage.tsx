@@ -15,11 +15,12 @@ import { useSetToken } from '../../../hooks/authHook';
 import { useAppDispatch } from '../../../hooks/reduxHook';
 import { setAuth } from '../../../store/authSlice';
 import { setUserData } from '../../../store/userSlice';
-import { toast } from 'react-toastify'; 
 import { useEffect } from 'react';
+import { urlPublicPage } from '../../../router/constants';
+
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const setToken = useSetToken; 
+  const setToken = useSetToken;
   const dispatch = useAppDispatch();
 
   // Schema validation
@@ -59,7 +60,7 @@ const LoginPage: React.FC = () => {
       dispatch(setAuth({ isAuth: true }));
       dispatch(setUserData(res.data.user));
       navigate('/home');
-      reset(); 
+      reset();
     },
   });
 
@@ -123,14 +124,16 @@ const LoginPage: React.FC = () => {
 
         {/* Chuyển đến trang đăng ký */}
         <div className="mt-4 text-center">
-          <Link to="/register" className="text-blue-500 hover:underline">
-            Don't have an account? Sign Up
+          <Link to={urlPublicPage.REGISTER} className="text-blue-500 hover:underline">
+           Bạn không có tài khoản? Đang ký!
           </Link>
         </div>
 
         {/* Quên mật khẩu */}
         <div className="mt-2 text-center">
-          <button className="text-blue-500 hover:underline">Forgot password?</button>
+          <Link to={urlPublicPage.FORGOT_PASSWORD} className="text-blue-500 hover:underline">
+           Bạn quên mật khẩu?
+          </Link>
         </div>
       </div>
     </div>
