@@ -48,10 +48,6 @@ const LoginPage: React.FC = () => {
     resolver: yupResolver(schema),
   });
 
-  useEffect(() => {
-    console.log("🔄 Component LoginPage render lại!");
-  });
-
   // Mutation để gọi API login
   const { mutate, error } = useMutation({
     mutationFn: (value: IFormLogin) => loginService(value),

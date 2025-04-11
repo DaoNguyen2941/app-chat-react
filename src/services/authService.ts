@@ -87,7 +87,11 @@ export const loginService = async (account: IFormLogin): Promise<AxiosResponse> 
 
 export const logOutService = async () => {
     try {
-        await http.post(logoutApi)
+        
+        const response = await http.post(logoutApi);
+        console.log(response);
+        
+        return response
     } catch (err) {
         throw err;
     }

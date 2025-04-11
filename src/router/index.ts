@@ -46,11 +46,11 @@ export const routerPublic = [
         component: ResetPassword,
         layout: Fragment
     },
-    {
-        path: urlPublicPage.NOTFOUND,
-        component: NotFoundPage,
-        layout: Fragment
-    },
+    // {
+    //     path: urlPublicPage.NOTFOUND,
+    //     component: NotFoundPage,
+    //     layout: Fragment
+    // },
 ]
 
 export const routerPrivate = [

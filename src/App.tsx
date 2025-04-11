@@ -43,7 +43,7 @@ function App() {
           ))
         )}
         {/* <Route path="*" element={<Directional islogin={isLogin} />} /> */}
-        <Route path="*" element={<NotFoundPage />} />
+        <Route path="*" element={<Directional islogin={isLogin} />} />
       </Routes>
     </Router>
   );
