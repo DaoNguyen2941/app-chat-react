@@ -104,7 +104,7 @@ export default function DialogCreateGroup() {
 
     // Lọc danh sách bạn bè
     const filteredFriends = friendList.filter((friend) =>
-        friend.user.account.toLowerCase().includes(search.toLowerCase())
+        friend.user.name.toLowerCase().includes(search.toLowerCase())
     );
 
     return (
@@ -186,7 +186,7 @@ export default function DialogCreateGroup() {
                                                 }}
                                             >
                                                 {/* <Avatar sx={{ width: 30, height: 30 }} /> */}
-                                                <Typography>{friend.user.account}</Typography>
+                                                <Typography>{friend.user.name}</Typography>
                                                 <IconButton
                                                     size="small"
                                                     onClick={() => toggleFriendSelection(friend.user.id)}
@@ -221,7 +221,7 @@ export default function DialogCreateGroup() {
                                             <Avatar
                                             />
                                         </ListItemAvatar>
-                                        <ListItemText primary={`${friend.user.account}`} />
+                                        <ListItemText primary={`${friend.user.name}`} />
                                     </ListItemButton>
                                 </ListItem>
                             ))

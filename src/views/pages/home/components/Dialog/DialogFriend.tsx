@@ -19,6 +19,7 @@ import { getListReqFriend } from '../../../../../services/friendService';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 import type { Navigation, Router } from '@toolpad/core/AppProvider';
+import { isAuth } from '../../../../../store/authSlice';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -56,6 +57,7 @@ export default function FriendFunction(props: IProps) {
     const numberNotification = useAppSelector(notification)
     const dispatch = useAppDispatch()
     const hasFetched = useRef(false);
+  const isLogin = useAppSelector(isAuth);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -66,20 +68,27 @@ export default function FriendFunction(props: IProps) {
     };
 
     const { mutate } = useMutation({
-        mutationFn: () => {
+        mutationFn: () => {            
             return getListReqFriend()
         },
         onSuccess: (res) => {
+            console.log('lấy dữ liệu getListReqFriend ở dialog')
             dispatch(setNumberInvitation(res.data.length))
-        }
+        },
+        onError: (error) => {
+            console.log('ko lấy dữ liệu getListReqFriend ở dialog');
+            console.log(error);
+            
+          }
     })
 
     useEffect(() => {
         if (!hasFetched.current) {
           mutate();
+          console.log('getListReqFriend được gọi ở DialogFriend');
           hasFetched.current = true; 
         }
-      }, [mutate]);
+      }, []);
 
     return (
         <React.Fragment>

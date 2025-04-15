@@ -312,7 +312,7 @@ const AddFriend: React.FC<ToolbarActionsSearchProps> = ({ router }) => {
                                             <Avatar src={user.avatar ?? ''}
                                             />
                                         </ListItemAvatar>
-                                        <ListItemText primary={`${user.account}`} />
+                                        <ListItemText primary={`${user.name}`} />
                                     </ListItemButton>
                                 </ListItem>
                             ))}

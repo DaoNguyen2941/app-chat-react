@@ -5,6 +5,7 @@ import { refreshTokenService } from "../services/authService";
 import { UseCheckExpirationToken } from "../hooks/authHook";
 import { IDecodedToken } from "../commom/type/type";
 import { logOutService } from "../services/authService";
+import { store } from "../store/index";
 
 const isTokenExpired = (token: string): boolean => {
     try {
@@ -20,7 +21,7 @@ const isTokenExpired = (token: string): boolean => {
 const handleLogout = async () => {
     console.warn("⚠️ Refresh token hết hạn hoặc không hợp lệ. Đăng xuất...");
     localStorage.removeItem('token');
-   await logOutService()
+    await logOutService()
     window.location.href = '/login';
 };
 
@@ -60,8 +61,7 @@ class HttpClient {
             (response: AxiosResponse) => response,
             async (error) => {
                 const originalRequest = error.config;
-                console.log(error);
-                
+
                 if (!originalRequest || error.response?.status !== 401) {
                     return Promise.reject(error);
                 }
@@ -75,8 +75,11 @@ class HttpClient {
 
                 // Kiểm tra nếu request hiện tại là refresh token → Không xử lý tiếp, đăng xuất
                 if (originalRequest.url?.includes("/auth/refresh")) {
-                    handleLogout();
-                    return Promise.reject(error);
+                    const isLogin = store.getState().auth.isAuth
+                    if (isLogin) {
+                        handleLogout();
+                        return Promise.reject(error);
+                    }
                 }
 
                 // Nếu token đã hết hạn, thử refresh token

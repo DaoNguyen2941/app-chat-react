@@ -89,7 +89,13 @@ export default function NavigationFriends(props: NavigationFriendsProps) {
       return getListReqFriend()
     },
     onSuccess: (res) => {
+      console.log('lấy dữ liệu getListReqFriend ở naviga');
       setFriendList(res.data);
+    },
+    onError: (error) => {
+      console.log('ko lấy dữ liệu getListReqFriend ở naviga');
+      console.log(error);
+      
     }
   })
 
@@ -151,6 +157,7 @@ export default function NavigationFriends(props: NavigationFriendsProps) {
     switch (value) {
       case 0:
         listReqFriend();
+        console.log('getListReqFriend được gọi ở navigation');
         break;
       case 1:
         ListFriend();
@@ -197,7 +204,7 @@ export default function NavigationFriends(props: NavigationFriendsProps) {
                 <Avatar src={friend?.user?.avatar ?? ''}
                 />
               </ListItemAvatar>
-              <ListItemText primary={`${friend?.user?.account}`} />
+              <ListItemText primary={`${friend?.user?.name}`} />
             </ListItemButton>
           </ListItem>
         ))}

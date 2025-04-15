@@ -16,15 +16,17 @@ const getUserDataFromToken = (): IUserData | null => {
     const userData: IUserData = {
         id: decodedToken.sub,
         account: decodedToken.account,
-        avatar: decodedToken.avatar 
-    };    
+        avatar: decodedToken.avatar,
+        name: decodedToken.name
+    };
     return userData;
 };
 
 const initialState: IUserData = {
     id: getUserDataFromToken()?.id || "",
     account: getUserDataFromToken()?.account || "",
-    avatar: getUserDataFromToken()?.avatar || ""
+    avatar: getUserDataFromToken()?.avatar || "",
+    name: getUserDataFromToken()?.name || "",
 }
 
 const userSlice = createSlice({
@@ -34,22 +36,25 @@ const userSlice = createSlice({
         setUserData: (state, action: PayloadAction<IUserData>) => {
             state.account = action.payload.account;
             state.id = action.payload.id;
-            state.avatar = action.payload.avatar
+            state.avatar = action.payload.avatar;
+            state.name = action.payload.name
         },
 
         updateUserData: (state) => {
             const userData: IUserData | null = getUserDataFromToken();
             state.id = userData?.id || "";
-            state.account = userData?.account || ""
-            state.avatar = userData?.avatar ||""
+            state.account = userData?.account || "";
+            state.avatar = userData?.avatar || "";
+            state.name = userData?.name || "";
         },
 
         deleteUserData: (state) => {
-            state.id =  "";
+            state.id = "";
             state.account = "";
-            state.avatar =""
+            state.avatar = "";
+             state.name = ""
         },
-        
+
     }
 })
 

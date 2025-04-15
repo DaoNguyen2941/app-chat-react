@@ -9,4 +9,4 @@ interface IProfileUser {
 
 export interface IFormLogin extends Pick<IProfileUser, 'account' | 'password'> {}
 
-export interface IUserData extends Pick<IProfileUser, "account" | "id" | 'avatar' > {}
+export interface IUserData extends Pick<IProfileUser, "account" | "id" | 'avatar'| 'name' > {}

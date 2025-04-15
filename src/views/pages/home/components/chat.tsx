@@ -148,7 +148,7 @@ export default function Chat({ chatId }: { chatId: string }) {
                         )}
                     </ListItemAvatar>
                     <ListItemText
-                        primary={chatData?.user?.account || chatData?.name}
+                        primary={chatData?.user?.name || chatData?.name}
                     //   secondary="Jan 9, 2014"
                     />
                 </ListItem>
@@ -192,7 +192,7 @@ export default function Chat({ chatId }: { chatId: string }) {
                                     display: 'block'
                                 }}
                             >
-                                {message.author?.account}
+                                {message.author?.name}
                             </Typography>
                             <Typography
                                 variant="body1"

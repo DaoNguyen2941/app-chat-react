@@ -10,7 +10,7 @@ import { createTheme } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
 import AddFriend from './components/Dialog/DialogAddFriend';
 import { ThemeSwitcher, } from '@toolpad/core/DashboardLayout';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, QueryClient } from '@tanstack/react-query';
 import { GetListChatService } from '../../../services/chatService';
 import Divider from '@mui/material/Divider';
 import { DashboardLayout, SidebarFooterProps } from '@toolpad/core/DashboardLayout';
@@ -31,13 +31,13 @@ import {
   SignOutButton,
   AccountPreviewProps,
 } from '@toolpad/core/Account';
-import type {Router} from '@toolpad/core/AppProvider';
+import type { Router } from '@toolpad/core/AppProvider';
 import Typography from '@mui/material/Typography';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import { connectSocket, disconnectSocket } from "../../../store/socketSlice"; 
+import { connectSocket, disconnectSocket } from "../../../store/socketSlice";
 import FriendFunction from './components/Dialog/DialogFriend';
 import { useSetToken } from '../../../hooks/authHook';
 import { setAuth } from '../../../store/authSlice';
@@ -97,21 +97,17 @@ const ToolbarActionsSearch: React.FC<ToolbarActionsSearchProps> = ({ router }) =
 const selects = [
   {
     key: 1,
-    primary: 'Tạo nhóm',
-    Icon: <Diversity3Icon />
+    primary: 'Tài khoản',
+    Icon: <SettingsIcon />
   },
   {
     key: 2,
     primary: 'Thiết lập tài khoản',
     Icon: <SettingsIcon />
   },
-
 ];
 
 function SidebarFooterAccountPopover() {
-  console.log("SidebarFooterAccountPopover rendered");
-
-
   const handleClick = (key: number) => {
     if (key === 1) {
     }
@@ -224,7 +220,7 @@ export default function HomePage(props: DemoProps) {
   const dataUser = useAppSelector(userData);
   const navigate = useNavigate();
   const setToken = useSetToken;
-
+  const queryClient = new QueryClient();
   // Lấy danh sách chat
   const { data: listChat } = useQuery({
     queryKey: ['listChat'],
@@ -250,6 +246,7 @@ export default function HomePage(props: DemoProps) {
       dispatch(setAuth({ isAuth: false }));
       dispatch(disconnectSocket());
       dispatch(deleteUserData());
+      queryClient.clear();
       navigate(urlPublicPage.LOGIN);
     },
   });
@@ -257,9 +254,9 @@ export default function HomePage(props: DemoProps) {
 
   // Kiểm tra dataUser trước khi set
   const [session, setSession] = React.useState<Session | null>(
-    dataUser?.account ? {
+    dataUser?.name ? {
       user: {
-        name: dataUser.account,
+        name: dataUser.name,
         image: dataUser.avatar,
       },
     } : null
@@ -268,15 +265,19 @@ export default function HomePage(props: DemoProps) {
   // Xử lý authentication
   const authentication = React.useMemo(() => ({
     signIn: () => {
-      // setSession({
-      //   user: {
-      //     name: dataUser.account,
-      //     email: dataUser.account,
-      //     image: dataUser.avatar,
-      //   },
-      // });
+      setSession({
+        user: {
+          name: dataUser.name,
+          // email: dataUser.account,
+          image: dataUser.avatar,
+        },
+      });
     },
-    signOut: () => logOut(),
+
+    signOut: () => {
+      logOut();
+    }
+
   }), []);
 
   const router = useDemoRouter('/');
@@ -287,7 +288,7 @@ export default function HomePage(props: DemoProps) {
     segment: chat.IsGroup ? `group/${chat.id}` : `${chat?.id}`,
     title: (
       <div>
-        <p>{chat.IsGroup ? chat?.chatGroup.name : chat?.user.account}</p>
+        <p>{chat.IsGroup ? chat?.chatGroup.name : chat?.user.name}</p>
         <TimeAgo timestamp={chat.lastSeen} />
       </div>
     ),
@@ -307,8 +308,8 @@ export default function HomePage(props: DemoProps) {
         )}
       </StyledBadge>
     ),
-    action: chat.unreadCount > 0 ? <Chip label={chat.unreadCount} color="error" size="small" /> 
-    : <ChatPopoverAction chatId={chat.id} isGroup={chat.IsGroup} router={router}/>,
+    action: chat.unreadCount > 0 ? <Chip label={chat.unreadCount} color="error" size="small" />
+      : <ChatPopoverAction chatId={chat.id} isGroup={chat.IsGroup} router={router} />,
   }));
 
   return (

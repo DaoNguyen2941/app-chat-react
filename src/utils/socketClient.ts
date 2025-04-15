@@ -1,11 +1,8 @@
 import { io, Socket } from "socket.io-client";
 import { hostsocket } from "./apiRouter";
-import { setSocketId, updateSocketStatus, connectSocket, disconnectSocket } from "../store/socketSlice";
-import { setNumberInvitation, notification } from "../store/notificationSlice"
+import { connectSocket, disconnectSocket } from "../store/socketSlice";
+import { setNumberInvitation } from "../store/notificationSlice"
 import { store } from "../store/index";
-import { UseCheckExpirationToken } from "../hooks/authHook";
-import { jwtDecode, JwtPayload } from "jwt-decode";
-import { IDecodedToken } from "../commom/type/type";
 import { refreshTokenService } from "../services/authService";
 import { IChatData, Imessage, IChat } from "../commom/type/chat.type";
 import { queryClient } from "../services/cacheService";
@@ -35,7 +32,7 @@ class SocketClient {
                 // Timeout cho kết nối
                 timeout: 5000,
                 reconnection: true, // Tự động kết nối lại
-                reconnectionAttempts: 5, // Thử lại tối đa 5 lần
+                reconnectionAttempts: 3, // Thử lại tối đa 5 lần
                 reconnectionDelay: 2000, // Thời gian chờ giữa các lần thử
             });
 
@@ -91,7 +88,6 @@ class SocketClient {
     private listentoNewGroupChat() {
         if (!this.socket?.hasListeners("new-group-chat")) {
             this.socket?.on('new-group-chat', (data: { message: string }) => {
-                console.log(data.message);
                 queryClient.refetchQueries({ queryKey: ['listChat'] });
             })
         }
