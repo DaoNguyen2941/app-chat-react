@@ -1,7 +1,7 @@
 import http from "../utils/httpclient";
 import socketClient from "../utils/socketClient";
 import { AxiosResponse, AxiosError } from 'axios';
-import { IFormLogin } from "../views/pages/login/intreface";
+import { IFormLogin } from "../commom/type/form.type";
 import {
     loginApi,
     registerApi,

@@ -9,6 +9,7 @@ import ConfirmOtp from '../views/pages/forgotPassword/ConfirmOtp';
 import { urlPublicPage,urlPrivatepPage } from './constants';
 import ResetPassword from '../views/pages/forgotPassword/ResetPassword';
 import NotFoundPage from '../views/pages/notFoundPage/NotFoundPage';
+import SettingsPage from '../views/pages/setting/SettingPage';
 
 export const routerPublic = [
     {
@@ -57,6 +58,11 @@ export const routerPrivate = [
     {
         path: urlPrivatepPage.HOME,
         component: Homepage,
+        Layout: Fragment
+    },
+    {
+        path: urlPrivatepPage.SETTING,
+        component: SettingsPage,
         Layout: Fragment
     },
 ]

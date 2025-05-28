@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import backgroundImage from '../../../assets/images/backgroundBoCongAnh.jpg';
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import { IFormLogin } from './intreface';
+import { IFormLogin } from '../../../commom/type/form.type';
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import Input from '../../components/Input';
@@ -90,7 +90,7 @@ const LoginPage: React.FC = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4">
             <label htmlFor="account" className="block text-sm font-medium text-gray-700">
-              Account
+              Tài khoản
             </label>
             <Controller
               name="account"
@@ -100,9 +100,7 @@ const LoginPage: React.FC = () => {
           </div>
 
           <div className="mb-4">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
+            Mật khẩu
             <Controller
               name="password"
               control={control}
@@ -121,14 +119,14 @@ const LoginPage: React.FC = () => {
         {/* Chuyển đến trang đăng ký */}
         <div className="mt-4 text-center">
           <Link to={urlPublicPage.REGISTER} className="text-blue-500 hover:underline">
-           Bạn không có tài khoản? Đang ký!
+            Bạn không có tài khoản? Đang ký!
           </Link>
         </div>
 
         {/* Quên mật khẩu */}
         <div className="mt-2 text-center">
           <Link to={urlPublicPage.FORGOT_PASSWORD} className="text-blue-500 hover:underline">
-           Bạn quên mật khẩu?
+            Bạn quên mật khẩu?
           </Link>
         </div>
       </div>

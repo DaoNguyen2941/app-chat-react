@@ -52,8 +52,13 @@ const userSlice = createSlice({
             state.id = "";
             state.account = "";
             state.avatar = "";
-             state.name = ""
+            state.name = ""
         },
+
+        setAvatarorName: (state, action: PayloadAction<{ avatar?: string, name?: string }>) => {
+            state.avatar = action.payload.avatar || state.avatar;
+            state.name = action.payload.name || state.name
+        }
 
     }
 })
@@ -61,7 +66,8 @@ const userSlice = createSlice({
 export const {
     setUserData,
     updateUserData,
-    deleteUserData
+    deleteUserData,
+    setAvatarorName
 } = userSlice.actions
 
 export const userData = (state: RootState) => state.userData;

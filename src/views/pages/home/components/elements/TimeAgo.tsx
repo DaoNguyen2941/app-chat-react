@@ -10,13 +10,12 @@ const TimeAgo = ({ timestamp }: { timestamp: Date | null }) => {
     const [timeAgo, setTimeAgo] = useState<string>();
   
     useEffect(() => {
-      if (!timestamp) return;
-  
+      if (!timestamp) return ;
       const updateTime = () => {
         setTimeAgo(dayjs(timestamp).fromNow());
       };
   
-      updateTime(); // Cập nhật lần đầu tiên
+      updateTime(); 
       const interval = setInterval(updateTime, 60000); // Cập nhật mỗi phút
   
       return () => clearInterval(interval);

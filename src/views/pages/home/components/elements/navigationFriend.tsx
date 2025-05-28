@@ -9,57 +9,88 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
 import Avatar from '@mui/material/Avatar';
-import { useEffect, useState, useRef } from 'react';
-import { useMutation, useQueryClient, } from '@tanstack/react-query';
-import { getListFriend, getListReqFriend, acceptedFriend, deleteFriend } from '../../../../../services/friendService';
+import { useEffect, useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+
+import {
+  getListFriend,
+  getListReqFriend,
+  acceptedFriend,
+  deleteFriend,
+} from '../../../../../services/friendService';
+import { createChatService } from '../../../../../services/chatService';
+
 import { IDataFriendType, FriendStatus } from '../../../../../commom/type/friend.type';
-import { useAppSelector, useAppDispatch } from '../../../../../hooks/reduxHook';
-import { notification, setNumberInvitation, exceptOneAnnouncement } from '../../../../../store/notificationSlice';
-import { createChatService, GetListChatService } from '../../../../../services/chatService';
 import { IChat } from '../../../../../commom/type/chat.type';
-import type { Navigation, Router } from '@toolpad/core/AppProvider';
+
+import { useAppSelector, useAppDispatch } from '../../../../../hooks/reduxHook';
+import {
+  notification,
+  setNumberInvitation,
+} from '../../../../../store/notificationSlice';
+
+import type { Router } from '@toolpad/core/AppProvider';
 
 interface NavigationFriendsProps {
   setOpentDialog: React.Dispatch<React.SetStateAction<boolean>>;
   value: number;
-  router: Router
+  router: Router;
 }
 
 const getFriendStatusText = (friend: IDataFriendType, value: number) => {
-  if (value === 0) {
-    if (friend.status === FriendStatus.Pending) {
-      return "Xác nhận";
-    } else if (friend.status === FriendStatus.Accepted) {
-      return "Bạn bè"
-    }
+  if (value === 0 && friend.status === FriendStatus.Pending) {
+    return 'Xác nhận';
   }
-
-  if (value === 1) {
-    if (friend.status === FriendStatus.Accepted) {
-      return "Hủy kết bạn"
-    }
+  if (friend.status === FriendStatus.Accepted) {
+    return value === 1 ? 'Hủy kết bạn' : 'Bạn bè';
   }
-  return "";
+  return '';
 };
 
-export default function NavigationFriends(props: NavigationFriendsProps) {
-  const { value, setOpentDialog, router } = props
+export default function NavigationFriends({ value, setOpentDialog, router }: NavigationFriendsProps) {
   const [friendList, setFriendList] = useState<IDataFriendType[]>([]);
-  const numberNotification = useAppSelector(notification)
-  const dispatch = useAppDispatch()
+  const numberNotification = useAppSelector(notification);
+  const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
 
+  const {
+    data: friendRequestsData,
+    isLoading: isLoadingRequests,
+  } = useQuery({
+    queryKey: ['friendRequests'],
+    queryFn: getListReqFriend,
+    enabled: value === 0,
+    refetchInterval: 5 * 60 * 1000,
+    refetchIntervalInBackground: true, // 👉 vẫn refetch khi tab ẩn
+  });
+
+  const {
+    data: friendsData,
+    isLoading: isLoadingFriends,
+  } = useQuery({
+    queryKey: ['friends'],
+    queryFn: getListFriend,
+    enabled: value === 1,
+  });
+
+  useEffect(() => {
+    if (value === 0 && friendRequestsData) {
+      setFriendList(friendRequestsData.data);
+    } else if (value === 1 && friendsData) {
+      setFriendList(friendsData.data);
+    }
+  }, [value, friendRequestsData, friendsData]);
+
   const { mutate: reqCreateChat } = useMutation({
-    mutationFn: (userId: string) => {
+    mutationFn: async (userId: string) => {
       const listChat: IChat[] = queryClient.getQueryData(['listChat']) || [];
-      const existingChatIndex = listChat.findIndex(chatData => chatData.user.id === userId);
-      if (existingChatIndex !== -1) {
-        const existingChat = listChat[existingChatIndex];
-        const updatedChatList = [existingChat, ...listChat.filter((_, index) => index !== existingChatIndex)];
+      const existingChat = listChat.find(chat => chat.user.id === userId);
+      if (existingChat) {
+        const updatedChatList = [existingChat, ...listChat.filter(chat => chat.user.id !== userId)];
         queryClient.setQueryData(['listChat'], updatedChatList);
         setOpentDialog(false);
         router.navigate(existingChat.id);
-        throw new Error("Chat already exists");
+        throw new Error('Chat already exists');
       }
 
       return createChatService(userId);
@@ -67,148 +98,108 @@ export default function NavigationFriends(props: NavigationFriendsProps) {
     onSuccess: (res) => {
       if (!res) return;
       const chatData: IChat = res.data;
-      queryClient.setQueryData(['listChat'], (oldChats: IChat[] = []) => {
-        return [chatData, ...oldChats]; // Đảm bảo oldChats luôn là mảng
-      });
+      queryClient.setQueryData(['listChat'], (oldChats: IChat[] = []) => [chatData, ...oldChats]);
       setOpentDialog(false);
       router.navigate(chatData.id);
     },
   });
 
-  const { mutate: ListFriend, isPending, } = useMutation({
-    mutationFn: () => {
-      return getListFriend()
-    },
-    onSuccess: (res) => {
-      setFriendList(res.data)
-    }
-  })
-
-  const { mutate: listReqFriend, } = useMutation({
-    mutationFn: () => {
-      return getListReqFriend()
-    },
-    onSuccess: (res) => {
-      console.log('lấy dữ liệu getListReqFriend ở naviga');
-      setFriendList(res.data);
-    },
-    onError: (error) => {
-      console.log('ko lấy dữ liệu getListReqFriend ở naviga');
-      console.log(error);
-      
-    }
-  })
-
   const { mutate: onAcceptRequest, isPending: pendingAccept } = useMutation({
     mutationFn: acceptedFriend,
     onSuccess: (_, friendId) => {
-      setFriendList((prevFriends) => {
-        const updatedFriends = [...prevFriends];
-        const index = updatedFriends.findIndex(friend => friend.id === friendId);
+      setFriendList(prev => {
+        const updated = [...prev];
+        const index = updated.findIndex(f => f.id === friendId);
         if (index !== -1) {
-          updatedFriends[index] = { ...updatedFriends[index], status: FriendStatus.Accepted };
+          updated[index] = { ...updated[index], status: FriendStatus.Accepted };
         }
-        return updatedFriends;
-      })
-      dispatch(setNumberInvitation(numberNotification.invitation - 1))
-    },
-    onError: (error) => {
-      console.error("Failed to accept friend request:", error);
-    }
-  });
-
-  const { mutate: declineInvitation, } = useMutation({
-    mutationFn: (friendId: string) => {
-      return deleteFriend(friendId)
-    },
-    onSuccess: (res, friendId) => {
-      setFriendList((prevFriends) =>
-        prevFriends.filter(friend => friend.id !== friendId)
-      );
-      dispatch(setNumberInvitation(numberNotification.invitation - 1))
+        return updated;
+      });
+      dispatch(setNumberInvitation(numberNotification.invitation - 1));
+      queryClient.invalidateQueries({ queryKey: ['friendRequests'] });
+      queryClient.invalidateQueries({ queryKey: ['friends'] });
     },
   });
 
-  const { mutate: unFriend, } = useMutation({
-    mutationFn: (friendId: string) => {
-      return deleteFriend(friendId)
+  const { mutate: declineInvitation } = useMutation({
+    mutationFn: deleteFriend,
+    onSuccess: (_, friendId) => {
+      setFriendList(prev => prev.filter(friend => friend.id !== friendId));
+      dispatch(setNumberInvitation(numberNotification.invitation - 1));
+      queryClient.invalidateQueries({ queryKey: ['friendRequests'] });
     },
-    onSuccess: (res, friendId) => {
-      setFriendList((prevFriends) =>
-        prevFriends.filter(friend => friend.id !== friendId)
-      );
+  });
+
+  const { mutate: unFriend } = useMutation({
+    mutationFn: deleteFriend,
+    onSuccess: (_, friendId) => {
+      setFriendList(prev => prev.filter(friend => friend.id !== friendId));
+      queryClient.invalidateQueries({ queryKey: ['friends'] });
     },
   });
 
   const handleCreateChat = (userId: string) => {
-    const listChat: IChat[] = queryClient.getQueryData(['listChat']) || []
+    const listChat: IChat[] = queryClient.getQueryData(['listChat']) || [];
     const existingChat = listChat.find(chat => chat.user.id === userId);
 
     if (existingChat) {
       const updatedList = [existingChat, ...listChat.filter(chat => chat.user.id !== userId)];
       queryClient.setQueryData(['listChat'], updatedList);
-      router.navigate(`${existingChat.id}`)
+      router.navigate(`${existingChat.id}`);
     } else {
       reqCreateChat(userId);
     }
-  }
+  };
 
-  useEffect(() => {
-    switch (value) {
-      case 0:
-        listReqFriend();
-        console.log('getListReqFriend được gọi ở navigation');
-        break;
-      case 1:
-        ListFriend();
-        break;
-      default:
-        break;
-    }
-  }, [value, numberNotification]);
+  const isLoading = (value === 0 && isLoadingRequests) || (value === 1 && isLoadingFriends);
 
   return (
-    <Box >
+    <Box>
       <CssBaseline />
-      <List>
-        {friendList.map((friend, index) => (
-          <ListItem key={index} disablePadding
-            sx={{ width: '100%' }}
-            secondaryAction={
-              <ButtonGroup
-                disableElevation
-                variant="contained"
-                aria-label="Disabled button group"
-              >
-                <LoadingButton
-                  size="small"
-                  variant="outlined"
-                  onClick={() => value === 0 ? onAcceptRequest(friend.id) : unFriend(friend.id)}
-                //  loading={pendingMakeFriend}
-                >
-                  <b>{getFriendStatusText(friend, value)}</b>
-                </LoadingButton>
-                <Button
-                  size="small"
-                  variant="outlined"
-                  onClick={() => value === 0 ? declineInvitation(friend.id) : handleCreateChat(friend.user.id)}
-                >
-                  {value === 0 ? (<b>Từ chối</b>) : (<b>Nhắn tin</b>)}
-                </Button>
-              </ButtonGroup>
-            }
-          >
-            <ListItemButton sx={{ width: '100%', display: 'flex', alignItems: 'center' }}
+      {isLoading ? (
+        <div>Loading...</div> // Bạn có thể thay bằng Skeleton hoặc CircularProgress
+      ) : (
+        <List>
+          {friendList.map((friend) => (
+            <ListItem key={friend.id} disablePadding sx={{ width: '100%' }}
+              secondaryAction={
+                <ButtonGroup disableElevation variant="contained">
+                  <LoadingButton
+                    size="small"
+                    variant="outlined"
+                    onClick={() =>
+                      value === 0
+                        ? onAcceptRequest(friend.id)
+                        : unFriend(friend.id)
+                    }
+                    loading={pendingAccept}
+                  >
+                    <b>{getFriendStatusText(friend, value)}</b>
+                  </LoadingButton>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    onClick={() =>
+                      value === 0
+                        ? declineInvitation(friend.id)
+                        : handleCreateChat(friend.user.id)
+                    }
+                  >
+                    <b>{value === 0 ? 'Từ chối' : 'Nhắn tin'}</b>
+                  </Button>
+                </ButtonGroup>
+              }
             >
-              <ListItemAvatar>
-                <Avatar src={friend?.user?.avatar ?? ''}
-                />
-              </ListItemAvatar>
-              <ListItemText primary={`${friend?.user?.name}`} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
+              <ListItemButton sx={{ display: 'flex', alignItems: 'center' }}>
+                <ListItemAvatar>
+                  <Avatar src={friend.user.avatar ?? ''} />
+                </ListItemAvatar>
+                <ListItemText primary={friend.user.name} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      )}
     </Box>
   );
 }

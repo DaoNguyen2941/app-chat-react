@@ -19,7 +19,6 @@ import { getListReqFriend } from '../../../../../services/friendService';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 import type { Navigation, Router } from '@toolpad/core/AppProvider';
-import { isAuth } from '../../../../../store/authSlice';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -36,7 +35,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     },
 }));
 
-interface IProps  {
+interface IProps {
     router: Router
 }
 
@@ -57,38 +56,30 @@ export default function FriendFunction(props: IProps) {
     const numberNotification = useAppSelector(notification)
     const dispatch = useAppDispatch()
     const hasFetched = useRef(false);
-  const isLogin = useAppSelector(isAuth);
 
     const handleClickOpen = () => {
         setOpen(true);
     };
-    
+
     const handleClose = () => {
         setOpen(false);
     };
 
     const { mutate } = useMutation({
-        mutationFn: () => {            
+        mutationFn: () => {
             return getListReqFriend()
         },
         onSuccess: (res) => {
-            console.log('lấy dữ liệu getListReqFriend ở dialog')
             dispatch(setNumberInvitation(res.data.length))
         },
-        onError: (error) => {
-            console.log('ko lấy dữ liệu getListReqFriend ở dialog');
-            console.log(error);
-            
-          }
     })
 
     useEffect(() => {
         if (!hasFetched.current) {
-          mutate();
-          console.log('getListReqFriend được gọi ở DialogFriend');
-          hasFetched.current = true; 
+            mutate();
+            hasFetched.current = true;
         }
-      }, []);
+    }, []);
 
     return (
         <React.Fragment>
@@ -118,7 +109,7 @@ export default function FriendFunction(props: IProps) {
                     <CloseIcon />
                 </IconButton>
                 <DialogContent dividers>
-                    <NavigationFriends value={value} setOpentDialog = {setOpen} router = {router}/>
+                    <NavigationFriends value={value} setOpentDialog={setOpen} router={router} />
                 </DialogContent>
                 <DialogActions sx={{ justifyContent: "center" }}>
                     <BottomNavigation

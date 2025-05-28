@@ -6,6 +6,8 @@ import { routerPublic, routerPrivate } from './router';
 import { useAppSelector } from './hooks/reduxHook';
 import { isAuth } from './store/authSlice';
 import NotFoundPage from './views/pages/notFoundPage/NotFoundPage';
+import { useDemoRouter } from '@toolpad/core/internal';
+
 interface DirectionalProps {
   islogin: boolean;
 }
@@ -42,7 +44,6 @@ function App() {
             <Route key={index} path={path} element={<Component />} />
           ))
         )}
-        {/* <Route path="*" element={<Directional islogin={isLogin} />} /> */}
         <Route path="*" element={<Directional islogin={isLogin} />} />
       </Routes>
     </Router>

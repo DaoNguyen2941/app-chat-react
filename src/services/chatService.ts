@@ -8,7 +8,47 @@ import {
     patchReadMessages,
     createChatGroupApi2,
     deleteChatApi,
+    chatGroupApi,
+    chatGroupDataApi,
+    chatGroupMemberApi
 } from "../utils/apiRouter";
+import { IChatGroupInfo,IChat } from "../commom/type/chat.type";
+
+export const addMemberToGroupService = async (groupId:string, userId: string) => {
+
+}
+
+export const deleterMemberGroupService = async (groupId: string, userId: string) => {
+  try {
+    const url = chatGroupMemberApi
+      .replace(':groupId', groupId)
+      .replace(':userId', userId);
+      
+    const response = await http.delete(url);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+export const getChatGroupDataService = async (chatid: string): Promise<IChatGroupInfo> => {
+    try {
+        const url = chatGroupDataApi.replace(":id", chatid);
+        const response = await http.get(url)
+        return response.data
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const getListChatGroupService = async () => {
+    try {
+        const response = await http.get(chatGroupApi);
+        console.log(response);
+        return response.data
+    } catch (error) {
+        throw error;
+    }
+}
 
 export const deleteChatService = async (chatId: string, isGroup: boolean) => {
     try {
@@ -21,7 +61,7 @@ export const deleteChatService = async (chatId: string, isGroup: boolean) => {
 }
 
 export const readMessageService = async (chatId: string) => {
-    try {                
+    try {
         const url = patchReadMessages.replace("/:id", chatId);
         const response = await http.patch(url)
         return response
@@ -39,7 +79,7 @@ export const postMessageService = async (chatId: string, connect: string) => {
     }
 }
 
-export const GetListChatService = async () => {
+export const getListChatService = async () => {
     try {
         const response = await http.get(getListChatsApi);
         return response.data
@@ -51,7 +91,7 @@ export const GetListChatService = async () => {
 export const getChatDataService = async (chatid: string) => {
     try {
         const url = getChatDataById.replace("/:id", chatid);
-        const response = await http.get(url)        
+        const response = await http.get(url)
         return response
     } catch (error) {
         throw error;
@@ -77,7 +117,7 @@ export const createChatService = async (receiverId: string) => {
     }
 }
 
-export const createChatGroupService = async (members: string[],name: string) => {
+export const createChatGroupService = async (members: string[], name: string) => {
     try {
         const response = await http.post(createChatGroupApi2, { members: members, name: name })
         return response

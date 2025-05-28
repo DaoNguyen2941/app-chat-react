@@ -1,4 +1,5 @@
 import { FriendStatus } from "./friend.type";
+export type GenderType = 'Male' | 'Female' | 'Other';
 
 export interface IUser {
     id: string;
@@ -15,8 +16,8 @@ export interface IFriendStatus {
     status: FriendStatus;
 }
 
-export interface IUserType extends Pick<IUser, "id" | "account" | "avatar" | 'name'>  {}
+export interface IUserType extends Pick<IUser, "id" | "avatar" | 'name'>  {}
 
-export interface ISearchUser extends Pick<IUser, "id" | "avatar" | "account" | "name"> {
+export interface ISearchUser extends Pick<IUser, "id" | "avatar" | "name"> {
     statusFriend: IFriendStatus | null;
 }

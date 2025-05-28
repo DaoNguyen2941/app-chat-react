@@ -11,5 +11,6 @@ export const urlPublicPage = {
 }
 
 export const urlPrivatepPage = {
-    HOME: `/home`
+    HOME: `/home`,
+    SETTING:'/settings'
 }

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AppProvider, type Session, } from '@toolpad/core/AppProvider';
+import { AppProvider, type Session, type Navigation } from '@toolpad/core/AppProvider';
 import { useDemoRouter } from '@toolpad/core/internal';
 import Avatar from '@mui/material/Avatar';
 import { styled } from '@mui/material/styles';
@@ -11,7 +11,7 @@ import Stack from '@mui/material/Stack';
 import AddFriend from './components/Dialog/DialogAddFriend';
 import { ThemeSwitcher, } from '@toolpad/core/DashboardLayout';
 import { useMutation, useQuery, QueryClient } from '@tanstack/react-query';
-import { GetListChatService } from '../../../services/chatService';
+import { getListChatService } from '../../../services/chatService';
 import Divider from '@mui/material/Divider';
 import { DashboardLayout, SidebarFooterProps } from '@toolpad/core/DashboardLayout';
 import { useState, useEffect } from 'react';
@@ -23,7 +23,6 @@ import { useAppSelector } from '../../../hooks/reduxHook';
 import { Link, useNavigate } from 'react-router-dom';
 import AvatarGroup from '@mui/material/AvatarGroup';
 import SettingsIcon from '@mui/icons-material/Settings';
-import Diversity3Icon from '@mui/icons-material/Diversity3';
 import {
   Account,
   AccountPreview,
@@ -36,7 +35,7 @@ import Typography from '@mui/material/Typography';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemText from '@mui/material/ListItemText';
-import ListItemIcon from '@mui/material/ListItemIcon';
+import { ListItem } from '@mui/material';
 import { connectSocket, disconnectSocket } from "../../../store/socketSlice";
 import FriendFunction from './components/Dialog/DialogFriend';
 import { useSetToken } from '../../../hooks/authHook';
@@ -47,6 +46,9 @@ import DialogCreateGroup from './components/Dialog/DialogCreateGroup';
 import { logOutService } from '../../../services/authService';
 import ChatPopoverAction from './components/elements/ChatPopoverAction';
 import { urlPublicPage } from '../../../router/constants';
+import IconButton from '@mui/material/IconButton';
+import { useLocation } from 'react-router-dom';
+
 // Styled Badge for online status (green dot)
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-dot': {
@@ -56,7 +58,6 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
     borderRadius: '50%', // Đảm bảo chấm luôn tròn
   },
 }));
-
 
 
 const demoTheme = createTheme({
@@ -84,22 +85,28 @@ interface ToolbarActionsSearchProps {
 }
 
 const ToolbarActionsSearch: React.FC<ToolbarActionsSearchProps> = ({ router }) => {
+  const navigate = useNavigate();
+
+  const goToSettings = () => {
+    navigate('/settings',);
+  };
+
   return (
     <Stack direction="row">
       <AddFriend router={router} />
       <FriendFunction router={router} />
       <DialogCreateGroup />
+      <>
+        <IconButton onClick={goToSettings}>
+          <SettingsIcon />
+        </IconButton>
+      </>
       <ThemeSwitcher />
     </Stack>
   );
 };
 
 const selects = [
-  {
-    key: 1,
-    primary: 'Tài khoản',
-    Icon: <SettingsIcon />
-  },
   {
     key: 2,
     primary: 'Thiết lập tài khoản',
@@ -108,10 +115,6 @@ const selects = [
 ];
 
 function SidebarFooterAccountPopover() {
-  const handleClick = (key: number) => {
-    if (key === 1) {
-    }
-  };
 
   return (
     <Stack direction="column">
@@ -119,15 +122,15 @@ function SidebarFooterAccountPopover() {
       <MenuList>
         {selects.map((select) => (
           <MenuItem
-            key={select.key} // Dùng id thay vì index
-            onClick={() => handleClick(select.key)}
+            key={select.key}
+            // onClick={() => handleClick(select.key)}
             sx={{
               justifyContent: 'flex-start',
               width: '100%',
               columnGap: 2,
             }}
           >
-            <ListItemIcon>{select.Icon}</ListItemIcon>
+            <ListItem>{select.Icon}</ListItem>
             <ListItemText
               sx={{
                 display: 'flex',
@@ -173,11 +176,12 @@ const createPreviewComponent = (mini: boolean) => {
 
 function SidebarFooterAccount({ mini }: SidebarFooterProps) {
   const PreviewComponent = React.useMemo(() => createPreviewComponent(mini), [mini]);
+
   return (
     <Account
       slots={{
         preview: PreviewComponent,
-        popoverContent: SidebarFooterAccountPopover,
+        // popoverContent: SidebarFooterAccountPopover,
       }}
       slotProps={{
         popover: {
@@ -221,10 +225,11 @@ export default function HomePage(props: DemoProps) {
   const navigate = useNavigate();
   const setToken = useSetToken;
   const queryClient = new QueryClient();
-  // Lấy danh sách chat
+  // const chatId = location.state?.chatId;
+
   const { data: listChat } = useQuery({
     queryKey: ['listChat'],
-    queryFn: GetListChatService,
+    queryFn: getListChatService,
     refetchOnWindowFocus: false,
     refetchInterval: 1000 * 60 * 5, // 5 phút
   });
@@ -282,14 +287,13 @@ export default function HomePage(props: DemoProps) {
 
   const router = useDemoRouter('/');
   const demoWindow = window ? window() : undefined;
-
   // Tạo danh sách chat
   const listChats = listChat?.map((chat: IChat) => ({
     segment: chat.IsGroup ? `group/${chat.id}` : `${chat?.id}`,
     title: (
       <div>
         <p>{chat.IsGroup ? chat?.chatGroup.name : chat?.user.name}</p>
-        <TimeAgo timestamp={chat.lastSeen} />
+        {chat.lastSeen ? (<TimeAgo timestamp={chat.lastSeen} />) : null}
       </div>
     ),
     icon: (

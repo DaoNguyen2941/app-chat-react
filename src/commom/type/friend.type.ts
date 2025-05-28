@@ -11,8 +11,10 @@ export interface IFriendType {
     receiver: IUserType,
     status: FriendStatus,
     created_At: Date,
+    isOnline: boolean,
+    lastSeen: Date
 }
 
-export interface IDataFriendType extends Pick< IFriendType, "id" | "status">{
+export interface IDataFriendType extends Pick< IFriendType, "id" | "status" |"isOnline"|"lastSeen">{
     user: IUserType
 }
