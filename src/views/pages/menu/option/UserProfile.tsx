@@ -127,32 +127,32 @@ const UserProfile: React.FC = () => {
                     <Typography variant="h6">{userProfile?.name}</Typography>
                     <DialogEditName initialName={userProfile?.name ?? ''} />
                 </Box>
-                <Typography color="text.secondary">@{userProfile?.id}</Typography>
+                <Typography >@{userProfile?.id}</Typography>
 
                 {/* Details */}
                 <Grid container spacing={2} mt={2}>
                     <Grid item xs={12} sm={6}>
-                        <Typography variant="subtitle2" color="text.secondary">Email:</Typography>
+                        <Typography variant="subtitle2" >Email:</Typography>
                         <Typography>{userProfile?.email}</Typography>
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <Typography variant="subtitle2" color="text.secondary">Số Điện Thoại:</Typography>
+                        <Typography variant="subtitle2" >Số Điện Thoại:</Typography>
                         <Typography>{ }</Typography>
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <Typography variant="subtitle2" color="text.secondary">Tài Khoản:</Typography>
+                        <Typography variant="subtitle2" >Tài Khoản:</Typography>
                         <Typography>{ }</Typography>
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <Typography variant="subtitle2" color="text.secondary">Giới tính:</Typography>
+                        <Typography variant="subtitle2" >Giới tính:</Typography>
                         <Typography>{ }</Typography>
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <Typography variant="subtitle2" color="text.secondary">Sinh nhật:</Typography>
+                        <Typography variant="subtitle2" >Sinh nhật:</Typography>
                         <Typography>{ }</Typography>
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <Typography variant="subtitle2" color="text.secondary">Địa Chỉ:</Typography>
+                        <Typography variant="subtitle2" >Địa Chỉ:</Typography>
                         <Typography>{ }</Typography>
                     </Grid>
                 </Grid>

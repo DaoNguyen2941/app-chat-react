@@ -47,8 +47,7 @@ import { logOutService } from '../../../services/authService';
 import ChatPopoverAction from './components/elements/ChatPopoverAction';
 import { urlPublicPage } from '../../../router/constants';
 import IconButton from '@mui/material/IconButton';
-import { useLocation } from 'react-router-dom';
-
+import { urlPrivatepPage } from '../../../router/constants';
 // Styled Badge for online status (green dot)
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-dot': {
@@ -88,7 +87,7 @@ const ToolbarActionsSearch: React.FC<ToolbarActionsSearchProps> = ({ router }) =
   const navigate = useNavigate();
 
   const goToSettings = () => {
-    navigate('/settings',);
+    navigate(urlPrivatepPage.MENU.PROFILE);
   };
 
   return (

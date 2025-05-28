@@ -30,9 +30,10 @@ export const deleterMemberGroupService = async (groupId: string, userId: string)
     throw error;
   }
 };
-export const getChatGroupDataService = async (chatid: string): Promise<IChatGroupInfo> => {
+export const getChatGroupDataService = async (groupId: string): Promise<IChatGroupInfo> => {
     try {
-        const url = chatGroupDataApi.replace(":id", chatid);
+        console.log(`chat group Id : ${groupId}`);
+        const url = chatGroupDataApi.replace(":id", groupId);
         const response = await http.get(url)
         return response.data
     } catch (error) {

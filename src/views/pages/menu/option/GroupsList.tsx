@@ -13,38 +13,24 @@ import {
 } from '@mui/material';
 import GroupIcon from '@mui/icons-material/Groups';
 import ChatIcon from '@mui/icons-material/Chat';
-import GroupInfoDialog from '../../../components/GroupInfoDialog';
-import { getListChatGroupService } from '../../../../services/chatService';
 import { useQuery } from '@tanstack/react-query';
 import { IChat } from '../../../../commom/type/chat.type';
-import { useQueryClient } from '@tanstack/react-query';
 import { getListChatService } from '../../../../services/chatService';
+import { useNavigate } from 'react-router-dom';
+import { urlPrivatepPage } from '../../../../router/constants';
+
 const GroupList: React.FC = () => {
-    const [openDialog, setOpenDialog] = useState(false);
-    const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
+    const navigate = useNavigate();
 
-const { data: listGroup,isPending } = useQuery<IChat[]>({
-  queryKey: ['listChat'],
-  queryFn: getListChatService,
-  select: (data) => data.filter(chat => !!chat.chatGroup),
-});
-    // const {
-    //     data: listGroup,
-    //     isLoading,
-    //     isError,
-    // } = useQuery({
-    //     queryKey: ['group-chat'],
-    //     queryFn: getListChatGroupService,
-    // });
+    const { data: listGroup, isPending } = useQuery<IChat[]>({
+        queryKey: ['listChat'],
+        queryFn: getListChatService,
+        select: (data) => data.filter(chat => !!chat.chatGroup),
+    });
 
-    const handleGroupClick = (group: IChat) => {
-        setSelectedGroupId(group.id);
-        setOpenDialog(true);
-    };
-
-    const handleCloseDialog = () => {
-        setOpenDialog(false);
-        setSelectedGroupId(null);
+    const handleGroupClick = (groupId: string) => {
+        const url = urlPrivatepPage.MENU.GROUPS_INFO.replace(':groupId', groupId)
+        navigate(url)
     };
 
     return (
@@ -60,7 +46,7 @@ const { data: listGroup,isPending } = useQuery<IChat[]>({
             ) : listGroup && listGroup.length > 0 ? (
                 <List>
                     {listGroup.map((chat: IChat) => (
-                        <ListItemButton key={chat.id} onClick={() => handleGroupClick(chat)}>
+                        <ListItemButton key={chat.id} onClick={() => handleGroupClick(chat.id)}>
                             <ListItemAvatar>
                                 <Badge
                                     badgeContent={chat.chatGroup.members.length}
@@ -93,14 +79,6 @@ const { data: listGroup,isPending } = useQuery<IChat[]>({
                 </List>
             ) : (
                 <Typography>Không có nhóm nào.</Typography>
-            )}
-
-            {selectedGroupId && (
-                <GroupInfoDialog
-                    open={openDialog}
-                    onClose={handleCloseDialog}
-                    groupId={selectedGroupId}
-                />
             )}
         </Box>
     );

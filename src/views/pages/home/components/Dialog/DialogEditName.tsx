@@ -71,7 +71,6 @@ const EditNameDialog: React.FC<EditNameDialogProps> = ({ initialName }) => {
   const handleClose = () => setOpen(false);
 
   const onSubmit: SubmitHandler<IFormUpdateNameUser> = (data) => {
-    console.log(data);
     mutate(data);
   };
 
@@ -79,7 +78,7 @@ const EditNameDialog: React.FC<EditNameDialogProps> = ({ initialName }) => {
     <>
       <Tooltip title="Chỉnh sửa tên">
         <IconButton size="small" onClick={handleOpen}>
-          <BorderColorIcon fontSize="small" />
+          <BorderColorIcon fontSize="small" color='primary'/>
         </IconButton>
       </Tooltip>
 

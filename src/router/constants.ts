@@ -12,5 +12,12 @@ export const urlPublicPage = {
 
 export const urlPrivatepPage = {
     HOME: `/home`,
-    SETTING:'/settings'
+    MENU: {
+        PROFILE: '/menu/profile',
+        UPDATE_PROFILE: '/menu/profile/update',
+        UPDATE_PASSWORD: '/menu/password/update',
+        FRIENDS: '/menu/friends',
+        GROUPS: '/menu/groups',
+        GROUPS_INFO: '/menu/groups/:groupId',
+    }
 }
