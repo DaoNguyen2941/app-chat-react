@@ -23,9 +23,9 @@ import { useState } from "react";
 import { useEffect } from "react";
 import List from '@mui/material/List';
 import { getListFriend } from "../../../../../services/friendService";
-import { createChatGroupService } from "../../../../../services/chatService"; 
-import { IDataFriendType, FriendStatus } from '../../../../../commom/type/friend.type';
-import { QueryClient, useQueryClient, useMutation } from '@tanstack/react-query';
+import { createChatGroupService } from "../../../../../services/chatService";
+import { IDataFriendType } from '../../../../../commom/type/friend.type';
+import {  useQueryClient, useMutation, useQuery, } from '@tanstack/react-query';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -47,7 +47,6 @@ export default function DialogCreateGroup() {
     const [search, setSearch] = React.useState("");
     const [selectedFriends, setSelectedFriends] = useState<string[]>([]);
     const [groupName, setGroupName] = React.useState("");
-    const [friendList, setFriendList] = useState<IDataFriendType[]>([]);
     const queryClient = useQueryClient();
 
     // Mở / Đóng dialog
@@ -57,20 +56,11 @@ export default function DialogCreateGroup() {
         setSelectedFriends([])
     }
 
-    const { mutate: ListFriend, isPending, } = useMutation({
-        mutationFn: () => {
-            return getListFriend()
-        },
-        onSuccess: (res) => {
-            setFriendList(res.data)
-        }
-    })
-
-    useEffect(() => {
-        if (open) {
-            ListFriend()
-        }
-    }, [open])
+    const { data: friends, isLoading } = useQuery({
+        queryKey: ['friends'],
+        queryFn: getListFriend,
+        enabled: open, // chỉ gọi khi dialog mở
+    });
 
     // Xử lý chọn bạn bè
     const toggleFriendSelection = (id: string) => {
@@ -79,8 +69,8 @@ export default function DialogCreateGroup() {
         );
     };
 
-    const {mutate: createGroup}= useMutation({
-        mutationFn: ()=>{
+    const { mutate: createGroup } = useMutation({
+        mutationFn: () => {
             return createChatGroupService(selectedFriends, groupName)
         },
         onSuccess(data,) {
@@ -95,7 +85,6 @@ export default function DialogCreateGroup() {
     const handleCreateGroup = () => {
         if (!groupName.trim() || selectedFriends.length === 0) {
             console.log(123);
-            
             alert("Vui lòng nhập tên nhóm và chọn ít nhất một người bạn.");
             return;
         }
@@ -103,9 +92,10 @@ export default function DialogCreateGroup() {
     };
 
     // Lọc danh sách bạn bè
-    const filteredFriends = friendList.filter((friend) =>
+    const filteredFriends: IDataFriendType[] = (friends ?? []).filter((friend: IDataFriendType) =>
         friend.user.name.toLowerCase().includes(search.toLowerCase())
     );
+
 
     return (
         <React.Fragment>
@@ -170,7 +160,7 @@ export default function DialogCreateGroup() {
                             </Typography>
                             <List sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
                                 {selectedFriends.map((userId) => {
-                                    const friend = friendList.find((f) => f.user.id === userId);
+                                    const friend = (friends ?? []).find((f: IDataFriendType) => f.user.id === userId);
                                     return (
                                         friend && (
                                             <ListItem

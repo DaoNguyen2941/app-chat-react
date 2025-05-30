@@ -15,7 +15,7 @@ import { IChatGroupInfo } from '../../../../commom/type/chat.type';
 import { useAppSelector } from '../../../../hooks/reduxHook';
 import { userData } from '../../../../store/userSlice';
 import UserInfoDialog from '../../../components/UserInfoDialog';
-
+import InviteMembersDialog from '../dialog/InviteMembersDialog';
 const GroupDetailPage: React.FC = () => {
     const { groupId: groupId } = useParams();
     const dataUser = useAppSelector(userData);
@@ -23,6 +23,7 @@ const GroupDetailPage: React.FC = () => {
     const navigate = useNavigate();
 
     const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+    const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
 
     const {
         data: groupInfo,
@@ -75,7 +76,9 @@ const GroupDetailPage: React.FC = () => {
 
     const handleInvite = () => {
         // TODO: Mở dialog mời người
-        alert('Chức năng mời thành viên đang được phát triển');
+        setInviteDialogOpen(true);
+
+        // alert('Chức năng mời thành viên đang được phát triển');
     };
 
     return (
@@ -168,6 +171,16 @@ const GroupDetailPage: React.FC = () => {
                     onClose={() => setSelectedUserId(null)}
                 />
             )}
+
+            {groupInfo && (
+                <InviteMembersDialog
+                    open={inviteDialogOpen}
+                    onClose={() => setInviteDialogOpen(false)}
+                    groupId={groupId!}
+                    existingMemberIds={groupInfo.members.map(m => m.id)}
+                />
+            )}
+
         </Box>
     );
 };

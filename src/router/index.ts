@@ -11,7 +11,7 @@ import ResetPassword from '../views/pages/forgotPassword/ResetPassword';
 import NotFoundPage from '../views/pages/notFoundPage/NotFoundPage';
 import MenusLayout from '../views/pages/menu/layout/menuLayout';
 import UserProfile from '../views/pages/menu/option/UserProfile';
-import FriendsList from '../views/pages/menu/option/friendsList';
+import FriendsList from '../views/pages/menu/option/FriendsList';
 import GroupList from '../views/pages/menu/option/GroupsList';
 import UpdatePassword from '../views/pages/menu/option/UpdatePassword';
 import UserProfileForm from '../views/pages/menu/option/UpdateProfile';

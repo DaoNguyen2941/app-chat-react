@@ -77,7 +77,7 @@ export default function NavigationFriends({ value, setOpentDialog, router }: Nav
     if (value === 0 && friendRequestsData) {
       setFriendList(friendRequestsData.data);
     } else if (value === 1 && friendsData) {
-      setFriendList(friendsData.data);
+      setFriendList(friendsData);
     }
   }, [value, friendRequestsData, friendsData]);
 

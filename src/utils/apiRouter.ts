@@ -17,7 +17,8 @@ export const getChatVirtualApi = `${host}/chat/virtual/:userId` ;
 export const postMessageApi = `${host}/chat/:id/message`;
 export const patchReadMessages = `${host}/chat/:id/unreadCount`
 export const chatGroupDataApi = `${host}/chat/group/:id` ;
-export const chatGroupMemberApi = `${host}/chat/group/:groupId/manager/members/:userId`
+export const chatGroupMemberApi = `${host}/chat/group/:groupId/manager/members/:userId`;
+// export const 
 //user
 export const searchUserApi = `${host}/user/search/:keyword`;
 export const identifyApi = `${host}/user/identify`;

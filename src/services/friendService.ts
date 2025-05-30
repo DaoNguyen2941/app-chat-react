@@ -15,8 +15,7 @@ export const getListReqFriend = async () => {
 export const getListFriend = async () => {
     try {
         const response = await http.get(getListFriendApi)
-        console.log(response);
-        return response;
+        return response.data;
     } catch (error) {
         throw error;
     }
