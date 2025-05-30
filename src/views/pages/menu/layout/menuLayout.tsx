@@ -17,6 +17,8 @@ const menuItems = [
     { url: urlPrivatepPage.MENU.FRIENDS, label: 'Bạn bè', icon: <GroupOutlinedIcon /> },
     { url: urlPrivatepPage.MENU.FRIEND_REQUETS, label: 'Yêu cầu kết bạn', icon: <GroupOutlinedIcon /> },
     { url: urlPrivatepPage.MENU.GROUPS, label: 'Nhóm', icon: <Diversity3OutlinedIcon /> },
+    { url: urlPrivatepPage.MENU.GROUPS_REQUETS, label: 'lời mời vào nhóm', icon: <Diversity3OutlinedIcon /> },
+
 ];
 
 const SettingsLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {

@@ -10,29 +10,49 @@ import {
     deleteChatApi,
     chatGroupApi,
     chatGroupDataApi,
-    chatGroupMemberApi
+    chatGroupMemberApi,
+    groupInvititationApi
 } from "../utils/apiRouter";
-import { IChatGroupInfo,IChat } from "../commom/type/chat.type";
+import { IChatGroupInfo, IChat, IPendingInvitationGroup } from "../commom/type/chat.type";
+import { enumInvitationStatus } from "../commom/type/chat.type";
 
-export const addMemberToGroupService = async (groupId:string, userId: string) => {
+export const patchGroupInvitationReqService = async (data:{invitationId: string, status: enumInvitationStatus}) => {
+    try {
+        const url = groupInvititationApi + `/${data.invitationId}`
+        const response = await http.patch(url, {status: data.status});
+        return response.data
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const getGroupInvitationReqService = async (): Promise<IPendingInvitationGroup[]> => {
+    try {
+        const response = await http.get(groupInvititationApi);
+        console.log(response.data);
+        return response.data
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const addMemberToGroupService = async (groupId: string, userId: string) => {
 
 }
 
 export const deleterMemberGroupService = async (groupId: string, userId: string) => {
-  try {
-    const url = chatGroupMemberApi
-      .replace(':groupId', groupId)
-      .replace(':userId', userId);
-      
-    const response = await http.delete(url);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+    try {
+        const url = chatGroupMemberApi
+            .replace(':groupId', groupId)
+            .replace(':userId', userId);
+        const response = await http.delete(url);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
 };
 export const getChatGroupDataService = async (groupId: string): Promise<IChatGroupInfo> => {
     try {
-        console.log(`chat group Id : ${groupId}`);
         const url = chatGroupDataApi.replace(":id", groupId);
         const response = await http.get(url)
         return response.data
@@ -44,7 +64,6 @@ export const getChatGroupDataService = async (groupId: string): Promise<IChatGro
 export const getListChatGroupService = async () => {
     try {
         const response = await http.get(chatGroupApi);
-        console.log(response);
         return response.data
     } catch (error) {
         throw error;

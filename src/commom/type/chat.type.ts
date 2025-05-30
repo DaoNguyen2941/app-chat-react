@@ -1,5 +1,25 @@
 import { IUserType } from "./user.type";
 
+export enum enumInvitationStatus {
+    PENDING = 'pending',
+    ACCEPTED = 'accepted',
+    REJECTED = 'rejected'
+}
+
+export interface IChatGroupInfo {
+    id: string;
+    members: IUserType[];
+    name: string | null;
+    manager: IUserType
+}
+export interface IPendingInvitationGroup {
+    id: string;
+    status: enumInvitationStatus,
+    invitedBy: IUserType,
+    chatGroup: IChatGroupInfo
+    expiredAt: string | Date | null;
+}
+
 export interface IChat {
     id: string;
     user: IUserType;
@@ -7,10 +27,7 @@ export interface IChat {
     status: 'online' | 'offline';
     lastSeen: Date | null
     IsGroup: boolean,
-    chatGroup: {
-        members: { avatar: string, id: string, name: string }[],
-        name: string
-    }
+    chatGroup: IChatGroupInfo
 }
 
 export interface Imessage {
@@ -29,9 +46,3 @@ export interface IChatData {
     name: string | null;
 }
 
-export interface IChatGroupInfo {
-    id: string;
-    members: IUserType[];
-    name: string | null;
-    manager: IUserType
-}

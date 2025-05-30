@@ -17,6 +17,8 @@ import UpdatePassword from '../views/pages/menu/option/UpdatePassword';
 import UserProfileForm from '../views/pages/menu/option/UpdateProfile';
 import GroupDetailPage from '../views/pages/menu/DetailPage/GroupDetailPage';
 import FriendRequest from '../views/pages/menu/option/FriendRequest';
+import GroupInvationReq from '../views/pages/menu/option/GroupInvitationReq';
+
 export const routerPublic = [
     {
         path: urlPublicPage.LOGIN,
@@ -96,9 +98,14 @@ export const routerPrivate = [
         component: GroupDetailPage,
         Layout: MenusLayout,
     },
-     {
+    {
         path: urlPrivatepPage.MENU.FRIEND_REQUETS,
         component: FriendRequest,
+        Layout: MenusLayout,
+    },
+    {
+        path: urlPrivatepPage.MENU.GROUPS_REQUETS,
+        component: GroupInvationReq,
         Layout: MenusLayout,
     },
 ]
