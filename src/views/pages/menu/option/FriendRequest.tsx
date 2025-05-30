@@ -5,37 +5,35 @@ import {
 } from '@mui/material';
 import { green, red } from '@mui/material/colors';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-
 import UserInfoDialog from '../../../components/UserInfoDialog'; // 👉 sửa đúng path
 import { getListFriend, deleteFriend } from '../../../../services/friendService';
-import { IDataFriendType } from '../../../../commom/type/friend.type';
+import { IDataFriendType, FriendStatus } from '../../../../commom/type/friend.type';
 import TimeAgo from '../../home/components/elements/TimeAgo';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { IChat } from '../../../../commom/type/chat.type';
 import { createChatService } from '../../../../services/chatService';
 import { useNavigate } from 'react-router-dom';
+import { getListReqFriend } from '../../../../services/friendService';
+import { acceptedFriend } from '../../../../services/friendService';
+import { useAppSelector, useAppDispatch } from '../../../../hooks/reduxHook';
+import {
+  notification,
+  setNumberInvitation,
+} from '../../../../store/notificationSlice';
 
-const FriendsList: React.FC = () => {
-
+const FriendRequest: React.FC = () => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const numberNotification = useAppSelector(notification);
 
   const {
     data: friendData,
     isLoading,
   } = useQuery({
-    queryKey: ['friends'],
-    queryFn: getListFriend,
-  });
-
-  const { mutate: unFriend, isPending: isUnfriending } = useMutation({
-    mutationFn: (friendId: string) => deleteFriend(friendId),
-    onSuccess: (_, friendId) => {
-      queryClient.setQueryData(['friends'], (old: any) =>
-        old ? old.data.filter((f: IDataFriendType) => f.id !== friendId) : []
-      );
-    },
+    queryKey: ['friend-requests'],
+    queryFn: getListReqFriend,
   });
 
   const handleClickFriend = (userId: string) => {
@@ -46,54 +44,44 @@ const FriendsList: React.FC = () => {
     setSelectedUserId(null);
   };
 
-  const friends: IDataFriendType[] = friendData || [];
-
-  const { mutate: reqCreateChat } = useMutation({
-    mutationFn: async (userId: string) => {
-      const listChat: IChat[] = queryClient.getQueryData(['listChat']) || [];
-      const existingChat = listChat.find(chat => chat.user.id === userId);
-      if (existingChat) {
-        const updatedChatList = [existingChat, ...listChat.filter(chat => chat.user.id !== userId)];
-        queryClient.setQueryData(['listChat'], updatedChatList);
-        // router.navigate(existingChat.id);
-        navigate('/home',{state: {chatId: existingChat.id}});
-        throw new Error('Chat already exists');
-      }
-      return createChatService(userId);
-    },
-    onSuccess: (res) => {
-      if (!res) return;
-      const chatData: IChat = res.data;
-      queryClient.setQueryData(['listChat'], (oldChats: IChat[] = []) => [chatData, ...oldChats]);
-      // router.navigate(chatData.id);
-      navigate('/home', {state: {chatId: chatData.id}});
+  const { mutate: onAcceptRequest, isPending: pendingAccept } = useMutation({
+    mutationFn: acceptedFriend,
+    onSuccess: (_, friendId) => {
+      // setFriendList(prev => {
+      //   const updated = [...prev];
+      //   const index = updated.findIndex(f => f.id === friendId);
+      //   if (index !== -1) {
+      //     updated[index] = { ...updated[index], status: FriendStatus.Accepted };
+      //   }
+      //   return updated;
+      // });
+      dispatch(setNumberInvitation(numberNotification.invitation - 1));
+      queryClient.invalidateQueries({ queryKey: ['friend-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['friends'] });
     },
   });
-  const handleCreateChat = (userId: string) => {
-    const listChat: IChat[] = queryClient.getQueryData(['listChat']) || [];
-    const existingChat = listChat.find(chat => chat.user.id === userId);
 
-    if (existingChat) {
-      const updatedList = [existingChat, ...listChat.filter(chat => chat.user.id !== userId)];
-      queryClient.setQueryData(['listChat'], updatedList);
-      // router.navigate(`${existingChat.id}`);
-      navigate('/home', {state: {chatId: existingChat.id}});
-    } else {
-      reqCreateChat(userId);
-    }
-  };
+  const { mutate: declineInvitation, isPending: isUnfriending } = useMutation({
+    mutationFn: deleteFriend,
+    onSuccess: (_, friendId) => {
+      // setFriendList(prev => prev.filter(friend => friend.id !== friendId));
+      dispatch(setNumberInvitation(numberNotification.invitation - 1));
+      queryClient.invalidateQueries({ queryKey: ['friend-requests'] });
+    },
+  });
+
 
   return (
     <Box sx={{ width: '100%', padding: 2 }}>
       <Typography variant="h6" gutterBottom>
-        Danh sách bạn bè
+        Danh sách yêu cầu kết bạn
       </Typography>
 
       {isLoading ? (
         <Typography>Đang tải...</Typography>
       ) : (
         <List>
-          {friends.map((friend) => (
+          {friendData.map((friend: IDataFriendType) => (
             <ListItemButton
               key={friend.id}
               onClick={() => handleClickFriend(friend.user.id)}
@@ -125,21 +113,22 @@ const FriendsList: React.FC = () => {
                   loading={isUnfriending}
                   onClick={(event) => {
                     event.stopPropagation();
-                    unFriend(friend.id);
+                    declineInvitation(friend.id)
                   }}
                 >
-                  <b>Hủy kết bạn</b>
+                  <b>Từ chối</b>
                 </LoadingButton>
-                <Button
+                <LoadingButton
                   size="small"
                   variant="outlined"
+                  loading={pendingAccept}
                   onClick={(event) => {
                     event.stopPropagation();
-                    handleCreateChat(friend.user.id)
+                    onAcceptRequest(friend.id)
                   }}
                 >
-                  <b>Nhắn tin</b>
-                </Button>
+                  <b>Xác nhận</b>
+                </LoadingButton>
               </ButtonGroup>
             </ListItemButton>
           ))}
@@ -157,4 +146,4 @@ const FriendsList: React.FC = () => {
   );
 };
 
-export default FriendsList;
+export default FriendRequest;

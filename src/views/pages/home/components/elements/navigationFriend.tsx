@@ -57,7 +57,7 @@ export default function NavigationFriends({ value, setOpentDialog, router }: Nav
     data: friendRequestsData,
     isLoading: isLoadingRequests,
   } = useQuery({
-    queryKey: ['friendRequests'],
+    queryKey: ['friend-requests'],
     queryFn: getListReqFriend,
     enabled: value === 0,
     refetchInterval: 5 * 60 * 1000,
@@ -75,7 +75,7 @@ export default function NavigationFriends({ value, setOpentDialog, router }: Nav
 
   useEffect(() => {
     if (value === 0 && friendRequestsData) {
-      setFriendList(friendRequestsData.data);
+      setFriendList(friendRequestsData);
     } else if (value === 1 && friendsData) {
       setFriendList(friendsData);
     }
@@ -116,7 +116,7 @@ export default function NavigationFriends({ value, setOpentDialog, router }: Nav
         return updated;
       });
       dispatch(setNumberInvitation(numberNotification.invitation - 1));
-      queryClient.invalidateQueries({ queryKey: ['friendRequests'] });
+      queryClient.invalidateQueries({ queryKey: ['friend-requests'] });
       queryClient.invalidateQueries({ queryKey: ['friends'] });
     },
   });
@@ -126,7 +126,7 @@ export default function NavigationFriends({ value, setOpentDialog, router }: Nav
     onSuccess: (_, friendId) => {
       setFriendList(prev => prev.filter(friend => friend.id !== friendId));
       dispatch(setNumberInvitation(numberNotification.invitation - 1));
-      queryClient.invalidateQueries({ queryKey: ['friendRequests'] });
+      queryClient.invalidateQueries({ queryKey: ['friend-requests'] });
     },
   });
 

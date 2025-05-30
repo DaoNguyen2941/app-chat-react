@@ -9,10 +9,10 @@ import {
 } from '@mui/material';
 // import { updateUserAvatar } from '../../../../services/userService'; // bạn cần tạo hàm này
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { changeUserAvatarService } from '../../../../../services/userService';
-import { IUser } from '../../../../../commom/type/user.type';
-import { useAppDispatch } from '../../../../../hooks/reduxHook';
-import { setAvatarorName } from '../../../../../store/userSlice';
+import { changeUserAvatarService } from '../../services/userService';
+import { IUser } from '../../commom/type/user.type';
+import { useAppDispatch } from '../../hooks/reduxHook';
+import { setAvatarorName } from '../../store/userSlice';
 
 interface DialogPreviewAvatarProps {
     open: boolean;

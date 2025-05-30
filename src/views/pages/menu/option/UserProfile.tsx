@@ -12,9 +12,9 @@ import {
 } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { getUserProfile } from '../../../../services/userService';
-import DialogEditName from '../../home/components/Dialog/DialogEditName';
+import EditNameDialog from '../../../components/DialogEditName';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
-import DialogPreviewAvatar from '../../home/components/Dialog/DialogPreviewAvatar';
+import DialogPreviewAvatar from '../../../components/DialogPreviewAvatar';
 const UserProfile: React.FC = () => {
     const [openPreview, setOpenPreview] = useState(false);
     const [openConfirmAvatar, setOpenConfirmAvatar] = useState(false);
@@ -125,7 +125,7 @@ const UserProfile: React.FC = () => {
 
                 <Box display="flex" alignItems="center" gap={1} mt={1}>
                     <Typography variant="h6">{userProfile?.name}</Typography>
-                    <DialogEditName initialName={userProfile?.name ?? ''} />
+                    <EditNameDialog initialName={userProfile?.name ?? ''} />
                 </Box>
                 <Typography >@{userProfile?.id}</Typography>
 

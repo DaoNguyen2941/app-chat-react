@@ -17,7 +17,9 @@ export const urlPrivatepPage = {
         UPDATE_PROFILE: '/menu/profile/update',
         UPDATE_PASSWORD: '/menu/password/update',
         FRIENDS: '/menu/friends',
+        FRIEND_REQUETS: '/menu/friends/req',
         GROUPS: '/menu/groups',
+        GROUPS_REQUETS: '/menu/groups/req',
         GROUPS_INFO: '/menu/groups/:groupId',
     }
 }

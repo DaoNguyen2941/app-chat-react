@@ -32,8 +32,8 @@ const FriendsList: React.FC = () => {
   const { mutate: unFriend, isPending: isUnfriending } = useMutation({
     mutationFn: (friendId: string) => deleteFriend(friendId),
     onSuccess: (_, friendId) => {
-      queryClient.setQueryData(['friends'], (old: any) =>
-        old ? old.data.filter((f: IDataFriendType) => f.id !== friendId) : []
+      queryClient.setQueryData(['friends'], (old: IDataFriendType[]) =>
+        old ? old.filter((f: IDataFriendType) => f.id !== friendId) : []
       );
     },
   });
@@ -130,7 +130,7 @@ const FriendsList: React.FC = () => {
                 >
                   <b>Hủy kết bạn</b>
                 </LoadingButton>
-                <Button
+                <LoadingButton
                   size="small"
                   variant="outlined"
                   onClick={(event) => {
@@ -139,7 +139,7 @@ const FriendsList: React.FC = () => {
                   }}
                 >
                   <b>Nhắn tin</b>
-                </Button>
+                </LoadingButton>
               </ButtonGroup>
             </ListItemButton>
           ))}

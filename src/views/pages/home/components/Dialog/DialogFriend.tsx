@@ -69,8 +69,8 @@ export default function FriendFunction(props: IProps) {
         mutationFn: () => {
             return getListReqFriend()
         },
-        onSuccess: (res) => {
-            dispatch(setNumberInvitation(res.data.length))
+        onSuccess: (data) => {            
+            dispatch(setNumberInvitation(data.length))
         },
     })
 

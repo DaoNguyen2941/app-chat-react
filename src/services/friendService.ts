@@ -5,8 +5,7 @@ export const getListReqFriend = async () => {
     try {
         console.log('getListReqFriend được gọi' );
         const response = await http.get(getListReqFriendApi)
-        console.log(response);
-        return response;
+        return response.data;
     } catch (error) {
         throw error;
     }

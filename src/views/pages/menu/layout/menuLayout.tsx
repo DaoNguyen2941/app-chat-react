@@ -15,6 +15,7 @@ const menuItems = [
     { url: urlPrivatepPage.MENU.UPDATE_PROFILE, label: 'Cập nhật thông tin', icon: <EditNoteOutlinedIcon /> },
     { url: urlPrivatepPage.MENU.UPDATE_PASSWORD, label: 'Đổi mật khẩu', icon: <LockOutlinedIcon /> },
     { url: urlPrivatepPage.MENU.FRIENDS, label: 'Bạn bè', icon: <GroupOutlinedIcon /> },
+    { url: urlPrivatepPage.MENU.FRIEND_REQUETS, label: 'Yêu cầu kết bạn', icon: <GroupOutlinedIcon /> },
     { url: urlPrivatepPage.MENU.GROUPS, label: 'Nhóm', icon: <Diversity3OutlinedIcon /> },
 ];
 
