@@ -8,6 +8,9 @@ import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
 import Diversity3OutlinedIcon from '@mui/icons-material/Diversity3Outlined';
 import HomeIcon from '@mui/icons-material/Home';
 import { urlPrivatepPage } from '../../../../router/constants';
+import { useAppSelector } from '../../../../hooks/reduxHook';
+import { notification } from '../../../../store/notificationSlice';
+import Badge from '@mui/material/Badge';
 
 const menuItems = [
     { url: urlPrivatepPage.HOME, label: 'home', icon: <HomeIcon /> },
@@ -18,12 +21,12 @@ const menuItems = [
     { url: urlPrivatepPage.MENU.FRIEND_REQUETS, label: 'Yêu cầu kết bạn', icon: <GroupOutlinedIcon /> },
     { url: urlPrivatepPage.MENU.GROUPS, label: 'Nhóm', icon: <Diversity3OutlinedIcon /> },
     { url: urlPrivatepPage.MENU.GROUPS_REQUETS, label: 'lời mời vào nhóm', icon: <Diversity3OutlinedIcon /> },
-
 ];
 
 const SettingsLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const navigate = useNavigate();
     const location = useLocation();
+    const numberNotification = useAppSelector(notification)
 
     const params = new URLSearchParams(location.search);
     const selected = params.get('tab') || 'account';
@@ -70,7 +73,18 @@ const SettingsLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =
                                 },
                             }}
                         >
-                            <ListItemIcon sx={{ color: isDark ? 'white' : 'inherit' }}>{item.icon}</ListItemIcon>
+                            <ListItemIcon sx={{ color: isDark ? 'white' : 'inherit' }}>
+                                <Badge
+                                    badgeContent={item.url === urlPrivatepPage.MENU.FRIEND_REQUETS ?
+                                        numberNotification.friendInvitation :
+                                        item.url === urlPrivatepPage.MENU.GROUPS_REQUETS ?
+                                            numberNotification.groupInvitation : 0
+                                    }
+                                    color="error"
+                                >
+                                    {item.icon}
+                                </Badge>
+                            </ListItemIcon>
                             <ListItemText primary={item.label} />
                         </ListItemButton>
                     ))}

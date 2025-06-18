@@ -14,9 +14,11 @@ export default function WelCome() {
     }, [])
 
     const images = [
-       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrbQ33UWGP4KRr1LAMVSprfsLnWT6wo7pB5A&s',
-       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY-CeS0jGuV6oyXTRoBH78_6rUjPuhw1rS9g&s',
-       'https://gcs.tripi.vn/public-tripi/tripi-feed/img/482525sVw/anh-mo-ta.png'
+        'https://pub-5c96059ac5534e72b75bf2db6c189f0c.r2.dev/welCome.png',
+        'https://pub-5c96059ac5534e72b75bf2db6c189f0c.r2.dev/functionFriend.png',
+        'https://pub-5c96059ac5534e72b75bf2db6c189f0c.r2.dev/Introduce%20group%20function.png',
+        'https://pub-5c96059ac5534e72b75bf2db6c189f0c.r2.dev/Introducing%20interface%20brightness.png',
+        'https://pub-5c96059ac5534e72b75bf2db6c189f0c.r2.dev/security.png'
     ];
 
     return (

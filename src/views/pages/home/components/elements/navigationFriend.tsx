@@ -20,24 +20,27 @@ import {
 } from '../../../../../services/friendService';
 import { createChatService } from '../../../../../services/chatService';
 
-import { IDataFriendType, FriendStatus } from '../../../../../commom/type/friend.type';
+import { IDataFriendType, FriendStatus, IDataFriendReqType } from '../../../../../commom/type/friend.type';
 import { IChat } from '../../../../../commom/type/chat.type';
 
 import { useAppSelector, useAppDispatch } from '../../../../../hooks/reduxHook';
 import {
   notification,
-  setNumberInvitation,
+  setFriendInvitation,
 } from '../../../../../store/notificationSlice';
 
 import type { Router } from '@toolpad/core/AppProvider';
+import { useFriendInvitations } from '../../../../../hooks/friends/useFriendInvitations';
+import { useFriendList } from '../../../../../hooks/friends/useFriendList';
 
 interface NavigationFriendsProps {
   setOpentDialog: React.Dispatch<React.SetStateAction<boolean>>;
   value: number;
   router: Router;
+  open: boolean
 }
 
-const getFriendStatusText = (friend: IDataFriendType, value: number) => {
+const getFriendStatusText = (friend: IDataFriendType | IDataFriendReqType, value: number) => {
   if (value === 0 && friend.status === FriendStatus.Pending) {
     return 'Xác nhận';
   }
@@ -47,31 +50,14 @@ const getFriendStatusText = (friend: IDataFriendType, value: number) => {
   return '';
 };
 
-export default function NavigationFriends({ value, setOpentDialog, router }: NavigationFriendsProps) {
-  const [friendList, setFriendList] = useState<IDataFriendType[]>([]);
+export default function NavigationFriends({ value, setOpentDialog, router, open }: NavigationFriendsProps) {
+  const [friendList, setFriendList] = useState<IDataFriendType[] | IDataFriendReqType[]>([]);
   const numberNotification = useAppSelector(notification);
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
+  const { data: friendRequestsData, isLoading: isLoadingRequests, error } = useFriendInvitations();
+  const { data: friendsData, isLoading: isLoadingFriends } = useFriendList(value === 1);
 
-  const {
-    data: friendRequestsData,
-    isLoading: isLoadingRequests,
-  } = useQuery({
-    queryKey: ['friend-requests'],
-    queryFn: getListReqFriend,
-    enabled: value === 0,
-    refetchInterval: 5 * 60 * 1000,
-    refetchIntervalInBackground: true, // 👉 vẫn refetch khi tab ẩn
-  });
-
-  const {
-    data: friendsData,
-    isLoading: isLoadingFriends,
-  } = useQuery({
-    queryKey: ['friends'],
-    queryFn: getListFriend,
-    enabled: value === 1,
-  });
 
   useEffect(() => {
     if (value === 0 && friendRequestsData) {
@@ -115,7 +101,7 @@ export default function NavigationFriends({ value, setOpentDialog, router }: Nav
         }
         return updated;
       });
-      dispatch(setNumberInvitation(numberNotification.invitation - 1));
+      dispatch(setFriendInvitation(numberNotification.friendInvitation - 1));
       queryClient.invalidateQueries({ queryKey: ['friend-requests'] });
       queryClient.invalidateQueries({ queryKey: ['friends'] });
     },
@@ -125,7 +111,7 @@ export default function NavigationFriends({ value, setOpentDialog, router }: Nav
     mutationFn: deleteFriend,
     onSuccess: (_, friendId) => {
       setFriendList(prev => prev.filter(friend => friend.id !== friendId));
-      dispatch(setNumberInvitation(numberNotification.invitation - 1));
+      dispatch(setFriendInvitation(numberNotification.friendInvitation - 1));
       queryClient.invalidateQueries({ queryKey: ['friend-requests'] });
     },
   });
@@ -140,13 +126,16 @@ export default function NavigationFriends({ value, setOpentDialog, router }: Nav
 
   const handleCreateChat = (userId: string) => {
     const listChat: IChat[] = queryClient.getQueryData(['listChat']) || [];
-    const existingChat = listChat.find(chat => chat.user.id === userId);
+    const existingChat = listChat.find(chat => chat.user && chat.user.id === userId);
 
     if (existingChat) {
-      const updatedList = [existingChat, ...listChat.filter(chat => chat.user.id !== userId)];
+      console.log(existingChat);
+      const updatedList = [existingChat, ...listChat.filter(chat => chat.user && chat.user.id !== userId)];
       queryClient.setQueryData(['listChat'], updatedList);
       router.navigate(`${existingChat.id}`);
     } else {
+      console.log(false);
+      
       reqCreateChat(userId);
     }
   };

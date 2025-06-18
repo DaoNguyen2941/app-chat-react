@@ -7,9 +7,8 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { getListFriend } from '../../../../services/friendService';
-import { IDataFriendType } from '../../../../commom/type/friend.type';
-
+import { addMemberToGroupService } from '../../../../services/chatService';
+import { useFriendList } from '../../../../hooks/friends/useFriendList';
 interface InviteMembersDialogProps {
     open: boolean;
     onClose: () => void;
@@ -26,11 +25,8 @@ const InviteMembersDialog: React.FC<InviteMembersDialogProps> = ({
     const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const { data: friends = [], isLoading } = useQuery<IDataFriendType[]>({
-        queryKey: ['friends'],
-        queryFn: getListFriend,
-        enabled: open
-    });
+    const { data: friends = [], isLoading } = useFriendList(open);
+
 
     const selectableUsers = useMemo(
         () => friends.filter(f => !existingMemberIds.includes(f.user.id) && !selectedUserIds.includes(f.user.id)),
@@ -56,9 +52,20 @@ const InviteMembersDialog: React.FC<InviteMembersDialogProps> = ({
         setSelectedUserIds((prev) => prev.filter((id) => id !== userId));
     };
 
+    const { mutate: addMember, isPending } = useMutation({
+        mutationFn: () => addMemberToGroupService(groupId, selectedUserIds),
+        onSuccess(data, variables, context) {
+            console.log('đã gửi lời mời vào nhóm đến các người dùng khác');
+            setSelectedUserIds([])
+            setSearchTerm('')
+            onClose();
+
+        },
+    })
+
     const handleInvite = () => {
         console.log('Inviting users:', selectedUserIds);
-        onClose();
+        addMember()
     };
 
     return (

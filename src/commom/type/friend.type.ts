@@ -18,3 +18,7 @@ export interface IFriendType {
 export interface IDataFriendType extends Pick< IFriendType, "id" | "status" |"isOnline"|"lastSeen">{
     user: IUserType
 }
+
+export interface IDataFriendReqType extends Pick< IFriendType, "id" | "status">{
+    user: IUserType
+}

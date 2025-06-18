@@ -1,7 +1,7 @@
 import { io, Socket } from "socket.io-client";
 import { hostsocket } from "./apiRouter";
 import { connectSocket, disconnectSocket } from "../store/socketSlice";
-import { setNumberInvitation } from "../store/notificationSlice"
+import { setFriendInvitation, setGroupInvitation } from "../store/notificationSlice"
 import { store } from "../store/index";
 import { refreshTokenService } from "../services/authService";
 import { IChatData, Imessage, IChat } from "../commom/type/chat.type";
@@ -9,7 +9,7 @@ import { queryClient } from "../services/cacheService";
 import { readMessageService } from "../services/chatService";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { IDataFriendReqType, IDataFriendType } from "../commom/type/friend.type";
 class SocketClient {
     private socket: Socket | null = null;
     private readonly baseURL: string;
@@ -83,6 +83,7 @@ class SocketClient {
         this.listenToNotificationsFromFriends();
         this.listenToNewMessages();
         this.listentoNewGroupChat()
+        this.listenToInveteGroup()
     };
 
     private listentoNewGroupChat() {
@@ -93,10 +94,14 @@ class SocketClient {
         }
     }
 
+    // sau khi server sửa dữ liệu gửi về thì có thể push trực tiếp vào cache ko cần refetch lại cache 
     private listenToInveteGroup() {
         if (!this.socket?.hasListeners("invete-group")) {
-            this.socket?.on('invete-group', (data: { message: string }) => {
-                console.log(data.message);
+            this.socket?.on('invete-group', (data: any) => {
+                const newNumberInvitation = store.getState().notification.groupInvitation
+                store.dispatch(setGroupInvitation(newNumberInvitation + 1))
+                queryClient.refetchQueries({ queryKey: ['group-invitation'] });
+
             })
         }
     }
@@ -106,45 +111,76 @@ class SocketClient {
             this.socket?.on("new-message", (data: { messageData: Imessage, chatId: string, isNewChat: boolean, isGroup: boolean }) => {
                 const { messageData, chatId, isNewChat, isGroup } = data;
                 const chatISOpent = store.getState().socket.chatIsOpent;
-
+                console.log(messageData);
+                
                 if (isNewChat) {
                     queryClient.refetchQueries({ queryKey: ['listChat'] });
                 } else {
                     if (chatISOpent !== chatId) {
-                        queryClient.setQueryData(["listChat"], (oldData: IChat[] | []) =>
-                            oldData
-                                ? oldData.map(chat =>
-                                    chat.id === chatId ? { ...chat, unreadCount: (chat.unreadCount || 0) + 1 } : chat
-                                )
-                                : oldData
-                        );
+                        queryClient.setQueryData(["listChat"], (oldData: IChat[] | []) => {
+                            if (!oldData || oldData.length === 0) return oldData;
+
+                            const chatIndex = oldData.findIndex(chat => chat.id === chatId);
+                            if (chatIndex === -1) return oldData;
+
+                            const chat = oldData[chatIndex];
+
+                            const updatedChat = {
+                                ...chat,
+                                unreadCount: (chat.unreadCount || 0) + 1,
+                            };
+
+                            if (chatIndex === 0) {
+                                return [updatedChat, ...oldData.slice(1)];
+                            } else {
+                                return [updatedChat, ...oldData.filter((_, i) => i !== chatIndex)];
+                            }
+                        });
+
                     } else {
                         try {
-                            queryClient.setQueryData(["chatData", isGroup ? `group/${chatId}` : chatId], (oldData: IChatData | undefined) => ({
+                            queryClient.setQueryData(["chatData", chatId], (oldData: IChatData | undefined) => ({
                                 ...oldData,
                                 message: [...(oldData?.message || []), messageData],
                             }));
+                            queryClient.setQueryData(["listChat"], (oldChats: IChat[] = []) => {
+                                const chatIndex = oldChats.findIndex(chat => chat.id === chatId);
+                                if (chatIndex === -1) return oldChats;
+
+                                const chat = oldChats[chatIndex];
+                                if (chatIndex === 0) return oldChats;
+                                return [chat, ...oldChats.filter((_, i) => i !== chatIndex)];
+                            });
 
                             readMessageService(isGroup ? `/group/${chatId}` : `/${chatId}`);
                         } catch (error) {
-                            console.error("Error updating chat data:", error);
                             toast.error("Có lỗi khi cập nhật tin nhắn mới.");
                         }
                     }
                 }
+
             });
         }
     }
 
     private listenToNotificationsFromFriends() {
         if (!this.socket?.hasListeners("Notifications-from-friends")) {
-            this.socket?.on('Notifications-from-friends', (data: any) => {
+            this.socket?.on('Notifications-from-friends', (data: IDataFriendReqType) => {
                 console.log(data);
-                const newNumberInvitation = store.getState().notification.invitation
-                store.dispatch(setNumberInvitation(newNumberInvitation + 1))
-            })
+
+                // Cập nhật số lượng thông báo trong Redux
+                const newNumberInvitation = store.getState().notification.friendInvitation;
+                store.dispatch(setFriendInvitation(newNumberInvitation + 1));
+
+                // Cập nhật cache friend-requests
+                queryClient.setQueryData<IDataFriendReqType[]>(["friend-requests"], (oldData) => {
+                    if (!oldData) return [data]; // Nếu chưa có dữ liệu cũ, khởi tạo mảng mới
+                    return [data, ...oldData];   // Thêm phần tử mới vào đầu
+                });
+            });
         }
     }
+
 
     updateToken(token: string) {
         if (!this.socket) {
@@ -156,7 +192,6 @@ class SocketClient {
 
         // Kiểm tra nếu socket đã disconnect thì kết nối lại
         if (this.socket.disconnected) {
-            console.warn("🔄 Token được cập nhật, kết nối lại WebSocket...");
             this.socket.connect();
         }
     }

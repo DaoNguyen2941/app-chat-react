@@ -14,20 +14,14 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { IChat } from '../../../../commom/type/chat.type';
 import { createChatService } from '../../../../services/chatService';
 import { useNavigate } from 'react-router-dom';
-
+import { useFriendList } from '../../../../hooks/friends/useFriendList';
 const FriendsList: React.FC = () => {
 
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const {
-    data: friendData,
-    isLoading,
-  } = useQuery({
-    queryKey: ['friends'],
-    queryFn: getListFriend,
-  });
+  const {data: friendData,isLoading,} = useFriendList(true)
 
   const { mutate: unFriend, isPending: isUnfriending } = useMutation({
     mutationFn: (friendId: string) => deleteFriend(friendId),
@@ -56,7 +50,7 @@ const FriendsList: React.FC = () => {
         const updatedChatList = [existingChat, ...listChat.filter(chat => chat.user.id !== userId)];
         queryClient.setQueryData(['listChat'], updatedChatList);
         // router.navigate(existingChat.id);
-        navigate('/home',{state: {chatId: existingChat.id}});
+        navigate('/home', { state: { chatId: existingChat.id } });
         throw new Error('Chat already exists');
       }
       return createChatService(userId);
@@ -66,7 +60,7 @@ const FriendsList: React.FC = () => {
       const chatData: IChat = res.data;
       queryClient.setQueryData(['listChat'], (oldChats: IChat[] = []) => [chatData, ...oldChats]);
       // router.navigate(chatData.id);
-      navigate('/home', {state: {chatId: chatData.id}});
+      navigate('/home', { state: { chatId: chatData.id } });
     },
   });
   const handleCreateChat = (userId: string) => {
@@ -77,7 +71,7 @@ const FriendsList: React.FC = () => {
       const updatedList = [existingChat, ...listChat.filter(chat => chat.user.id !== userId)];
       queryClient.setQueryData(['listChat'], updatedList);
       // router.navigate(`${existingChat.id}`);
-      navigate('/home', {state: {chatId: existingChat.id}});
+      navigate('/home', { state: { chatId: existingChat.id } });
     } else {
       reqCreateChat(userId);
     }
@@ -130,7 +124,7 @@ const FriendsList: React.FC = () => {
                 >
                   <b>Hủy kết bạn</b>
                 </LoadingButton>
-                <LoadingButton
+                {/* <LoadingButton
                   size="small"
                   variant="outlined"
                   onClick={(event) => {
@@ -139,7 +133,7 @@ const FriendsList: React.FC = () => {
                   }}
                 >
                   <b>Nhắn tin</b>
-                </LoadingButton>
+                </LoadingButton> */}
               </ButtonGroup>
             </ListItemButton>
           ))}

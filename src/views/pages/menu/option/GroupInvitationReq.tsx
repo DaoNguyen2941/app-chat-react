@@ -15,20 +15,18 @@ import {
 import GroupIcon from '@mui/icons-material/Groups';
 import ChatIcon from '@mui/icons-material/Chat';
 import { IChat, IPendingInvitationGroup } from '../../../../commom/type/chat.type';
-import { getListChatService, getGroupInvitationReqService, patchGroupInvitationReqService } from '../../../../services/chatService';
+import { patchGroupInvitationReqService } from '../../../../services/chatService';
 import { useNavigate } from 'react-router-dom';
 import { urlPrivatepPage } from '../../../../router/constants';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { enumInvitationStatus } from '../../../../commom/type/chat.type';
+import { useGroupInvitations } from '../../../../hooks/chat/useGroupInvation';
 const GroupInvationReq: React.FC = () => {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
 
-    const { data: GroupInvationReqs, isPending } = useQuery<IPendingInvitationGroup[]>({
-        queryKey: ['group-invitation'],
-        queryFn: getGroupInvitationReqService,
-    });
+    const { data: GroupInvationReqs, isPending } = useGroupInvitations()
 
     const handleGroupClick = (groupId: string) => {
         const url = urlPrivatepPage.MENU.GROUPS_INFO.replace(':groupId', groupId)

@@ -48,6 +48,13 @@ import ChatPopoverAction from './components/elements/ChatPopoverAction';
 import { urlPublicPage } from '../../../router/constants';
 import IconButton from '@mui/material/IconButton';
 import { urlPrivatepPage } from '../../../router/constants';
+import ListIcon from '@mui/icons-material/List';
+import { notification } from '../../../store/notificationSlice';
+import { useChatList } from '../../../hooks/chat/useChatList';
+import { preloadQueriesConfig } from '../../../services/preloadQueries';
+import { useFriendInvitations } from '../../../hooks/friends/useFriendInvitations';
+import { useFriendList } from '../../../hooks/friends/useFriendList';
+import { useGroupInvitations } from '../../../hooks/chat/useGroupInvation';
 // Styled Badge for online status (green dot)
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-dot': {
@@ -85,6 +92,7 @@ interface ToolbarActionsSearchProps {
 
 const ToolbarActionsSearch: React.FC<ToolbarActionsSearchProps> = ({ router }) => {
   const navigate = useNavigate();
+  const numberNotification = useAppSelector(notification)
 
   const goToSettings = () => {
     navigate(urlPrivatepPage.MENU.PROFILE);
@@ -97,7 +105,9 @@ const ToolbarActionsSearch: React.FC<ToolbarActionsSearchProps> = ({ router }) =
       <DialogCreateGroup />
       <>
         <IconButton onClick={goToSettings}>
-          <SettingsIcon />
+          <Badge badgeContent={numberNotification.total} color="error">
+            <ListIcon />
+          </Badge>
         </IconButton>
       </>
       <ThemeSwitcher />
@@ -225,13 +235,10 @@ export default function HomePage(props: DemoProps) {
   const setToken = useSetToken;
   const queryClient = new QueryClient();
   // const chatId = location.state?.chatId;
-
-  const { data: listChat } = useQuery({
-    queryKey: ['listChat'],
-    queryFn: getListChatService,
-    refetchOnWindowFocus: false,
-    refetchInterval: 1000 * 60 * 5, // 5 phút
-  });
+  const { data: listChat } = useChatList()
+  const { data: groupInvitations } = useGroupInvitations()
+  const {data: friends} = useFriendList(true)
+  const {data: friendInvitation} = useFriendInvitations()
 
   // Chỉ kết nối socket khi component mount
   useEffect(() => {
@@ -323,7 +330,7 @@ export default function HomePage(props: DemoProps) {
       router={router}
       theme={demoTheme}
       window={demoWindow}
-      branding={{ logo: null, title: 'ViVUChat' }}
+      branding={{ logo: <img src="https://pub-5c96059ac5534e72b75bf2db6c189f0c.r2.dev/logo.png" />, title: 'ViVUChat' }}
     >
       <DashboardLayout
         slots={{

@@ -9,13 +9,20 @@ import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import DeleteIcon from '@mui/icons-material/Delete';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getChatGroupDataService, deleterMemberGroupService } from '../../../../services/chatService';
+import {
+    getChatGroupDataInfoService,
+    deleterMemberGroupService,
+    leaveGroupService,
+    deleteGroupService,
+} from '../../../../services/chatService';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { IChatGroupInfo } from '../../../../commom/type/chat.type';
+import { IChat, IChatGroupInfo } from '../../../../commom/type/chat.type';
 import { useAppSelector } from '../../../../hooks/reduxHook';
 import { userData } from '../../../../store/userSlice';
 import UserInfoDialog from '../../../components/UserInfoDialog';
 import InviteMembersDialog from '../dialog/InviteMembersDialog';
+import VpnKeyIcon from '@mui/icons-material/VpnKey';
+
 const GroupDetailPage: React.FC = () => {
     const { groupId: groupId } = useParams();
     const dataUser = useAppSelector(userData);
@@ -31,16 +38,34 @@ const GroupDetailPage: React.FC = () => {
         refetch,
     } = useQuery({
         queryKey: ['groupInfo', groupId],
-        queryFn: () => getChatGroupDataService(groupId!),
+        queryFn: () => getChatGroupDataInfoService(groupId!),
         enabled: !!groupId,
     });
 
     const isManager = groupInfo?.manager.id === dataUser.id;
 
+    const { mutate: leaveGroup } = useMutation({
+        mutationFn: (groupId: string) => leaveGroupService(groupId),
+        onSuccess: (_, groupId) => {
+            queryClient.setQueryData<any>(['listChat'], (old: any[]) =>
+                old.filter((chat: IChat) => chat.id !== groupId)
+            );
+        },
+    });
+
     const { mutate: removeMember } = useMutation({
         mutationFn: (userId: string) => deleterMemberGroupService(groupId!, userId),
         onSuccess: (_, userId) => {
-            queryClient.setQueryData<any>(['listChat'], (old: any[]) =>
+            queryClient.setQueryData(['groupInfo', groupId], (groupdata: IChatGroupInfo | undefined) => {
+                if (!groupdata) return groupdata;
+
+                return {
+                    ...groupdata,
+                    members: groupdata.members.filter((m) => m.id !== userId),
+                };
+            });
+
+            queryClient.setQueryData(['listChat'], (old: any[]) =>
                 old?.map(chat =>
                     chat.id === groupId
                         ? {
@@ -56,29 +81,37 @@ const GroupDetailPage: React.FC = () => {
         },
     });
 
+    const { mutate: disbandTheGroup } = useMutation({
+        mutationFn: (groupId: string) => deleteGroupService(groupId),
+        onSuccess: (_, groupId) => {
+            queryClient.setQueryData<any>(['listChat'], (old: any[]) =>
+                old.filter((chat: IChat) => chat.id !== groupId)
+            );
+        },
+    });
+
     const handleKick = (userId: string) => {
         if (window.confirm('Bạn có chắc muốn xóa thành viên này khỏi nhóm?')) {
             removeMember(userId);
         }
     };
 
-    const handleLeaveGroup = () => {
+    const handleLeaveGroup = (groupId: string) => {
         if (window.confirm('Bạn có chắc muốn rời khỏi nhóm?')) {
-            removeMember(dataUser.id);
+            leaveGroup(groupId);
             navigate('/menu/groups');
         }
     };
 
-    const handleDissolveGroup = () => {
-        // TODO: Gọi API giải tán nhóm
-        alert('Chức năng giải tán nhóm đang được phát triển');
+    const handleDissolveGroup = (groupId: string) => {
+        if (window.confirm('Bạn có chắc muốn giải tán nhóm này?')) {
+            disbandTheGroup(groupId);
+            navigate('/menu/groups');
+        }
     };
 
     const handleInvite = () => {
-        // TODO: Mở dialog mời người
         setInviteDialogOpen(true);
-
-        // alert('Chức năng mời thành viên đang được phát triển');
     };
 
     return (
@@ -118,7 +151,27 @@ const GroupDetailPage: React.FC = () => {
                             {groupInfo.members.map((member) => (
                                 <ListItemButton key={member.id} onClick={() => setSelectedUserId(member.id)}>
                                     <ListItemAvatar>
-                                        <Avatar src={member.avatar} />
+                                        <Box sx={{ position: 'relative', width: 40, height: 40 }}>
+                                            <Avatar
+                                                src={member.avatar}
+                                                sx={{ width: 40, height: 40 }}
+                                            />
+                                            {member.id === groupInfo.manager.id && (
+                                                <VpnKeyIcon
+                                                    sx={{
+                                                        position: 'absolute',
+                                                        bottom: -4,
+                                                        right: -4,
+                                                        width: 16,
+                                                        height: 16,
+                                                        color: '#fbc02d', // màu vàng đậm
+                                                        backgroundColor: 'white',
+                                                        borderRadius: '50%',
+                                                        boxShadow: 1,
+                                                    }}
+                                                />
+                                            )}
+                                        </Box>
                                     </ListItemAvatar>
                                     <ListItemText
                                         primary={member.name}
@@ -151,12 +204,17 @@ const GroupDetailPage: React.FC = () => {
                                 <Button variant="outlined" startIcon={<GroupAddIcon />} onClick={handleInvite}>
                                     Mời thành viên
                                 </Button>
-                                <Button variant="contained" color="error" startIcon={<DeleteIcon />} onClick={handleDissolveGroup}>
+                                <Button
+                                    variant="contained"
+                                    color="error"
+                                    startIcon={<DeleteIcon />}
+                                    onClick={() => handleDissolveGroup(groupInfo.id)}
+                                >
                                     Giải tán nhóm
                                 </Button>
                             </>
                         ) : (
-                            <Button variant="contained" color="warning" startIcon={<LogoutIcon />} onClick={handleLeaveGroup}>
+                            <Button variant="contained" color="warning" startIcon={<LogoutIcon />} onClick={() => handleLeaveGroup(groupInfo.id)}>
                                 Thoát nhóm
                             </Button>
                         )}

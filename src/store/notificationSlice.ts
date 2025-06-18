@@ -2,31 +2,40 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from '.';
 
 interface INumberNotification {
-    invitation: number;
+    friendInvitation: number;
+    groupInvitation: number;
     total: number;
 };
 
 const initialState: INumberNotification = {
-    invitation: 0,
-    total: 0 
+    friendInvitation: 0,
+    groupInvitation: 0,
+    total: 0
 }
 
 const notificationSlice = createSlice({
     name: 'numberNotification',
     initialState,
     reducers: {
-        setNumberInvitation: (state, action: PayloadAction<number>) => {            
-            state.invitation = action.payload;
-            state.total = state.invitation ;
+        setFriendInvitation: (state, action: PayloadAction<number>) => {
+            state.friendInvitation = action.payload;
+            state.total = state.friendInvitation + state.groupInvitation;
         },
-        exceptOneAnnouncement: (state) =>{
-            state.invitation = state.invitation - 1;
-            state.total = state.invitation ;
-        }
-
+        excludeAFriendNotification: (state) => {
+            state.friendInvitation = state.friendInvitation - 1;
+            state.total = state.friendInvitation + state.groupInvitation;
+        },
+        setGroupInvitation: (state, action: PayloadAction<number>) => {
+            state.groupInvitation = action.payload;
+            state.total = state.friendInvitation + state.groupInvitation;
+        },
+        excludeAGroupNotification: (state) => {
+            state.groupInvitation = state.friendInvitation - 1;
+            state.total = state.friendInvitation + state.groupInvitation;
+        },
     },
 });
 
-export const { setNumberInvitation, exceptOneAnnouncement }  = notificationSlice.actions;
-export const notification = (state: RootState): INumberNotification  => state.notification
+export const { setFriendInvitation, excludeAFriendNotification, setGroupInvitation, excludeAGroupNotification} = notificationSlice.actions;
+export const notification = (state: RootState): INumberNotification => state.notification
 export default notificationSlice.reducer

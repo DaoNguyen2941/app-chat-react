@@ -4,54 +4,88 @@ import {
     getChatDataById,
     getChatVirtualApi,
     createChatApi,
-    postMessageApi,
+    chatMessageApi,
     patchReadMessages,
-    createChatGroupApi2,
     deleteChatApi,
     chatGroupApi,
     chatGroupDataApi,
+    chatGroupManagerMemberApi,
+    groupInvititationApi,
     chatGroupMemberApi,
-    groupInvititationApi
 } from "../utils/apiRouter";
 import { IChatGroupInfo, IChat, IPendingInvitationGroup } from "../commom/type/chat.type";
 import { enumInvitationStatus } from "../commom/type/chat.type";
 
-export const patchGroupInvitationReqService = async (data:{invitationId: string, status: enumInvitationStatus}) => {
+export const getMessageService = async (chatId: string, params: { startCursor: string | null | undefined, limit: number }) => {
+    try {
+        const url = chatMessageApi.replace("/:id", chatId);
+        const response = await http.get(url, { params });
+        return response.data
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const deleteGroupService = async (groupId: string) => {
+    try {
+        const url = chatGroupApi + `/${groupId}`;
+        const response = await http.delete(url);
+        return response.data
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const leaveGroupService = async (groupId: string) => {
+    try {
+        const url = chatGroupMemberApi.replace(':groupId', groupId)
+        const response = await http.delete(url);
+        return response.data
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const patchGroupInvitationReqService = async (data: { invitationId: string, status: enumInvitationStatus }) => {
     try {
         const url = groupInvititationApi + `/${data.invitationId}`
-        const response = await http.patch(url, {status: data.status});
+        const response = await http.patch(url, { status: data.status });
         return response.data
     } catch (error) {
         throw error;
     }
 }
 
-export const getGroupInvitationReqService = async (): Promise<IPendingInvitationGroup[]> => {
+export const getGroupInvitationService = async (): Promise<IPendingInvitationGroup[]> => {
     try {
         const response = await http.get(groupInvititationApi);
-        console.log(response.data);
         return response.data
     } catch (error) {
         throw error;
     }
 }
 
-export const addMemberToGroupService = async (groupId: string, userId: string) => {
-
+export const addMemberToGroupService = async (groupId: string, userIds: string[]) => {
+    try {
+        const url = chatGroupManagerMemberApi.replace(':groupId', groupId)
+        const response = await http.post(url, { memberIds: userIds });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
 }
 
 export const deleterMemberGroupService = async (groupId: string, userId: string) => {
     try {
-        const url = chatGroupMemberApi
-            .replace(':groupId', groupId)
-            .replace(':userId', userId);
+        const url = chatGroupManagerMemberApi
+            .replace(':groupId', groupId) + `/${userId}`
         const response = await http.delete(url);
         return response.data;
     } catch (error) {
         throw error;
     }
 };
-export const getChatGroupDataService = async (groupId: string): Promise<IChatGroupInfo> => {
+export const getChatGroupDataInfoService = async (groupId: string): Promise<IChatGroupInfo> => {
     try {
         const url = chatGroupDataApi.replace(":id", groupId);
         const response = await http.get(url)
@@ -90,10 +124,11 @@ export const readMessageService = async (chatId: string) => {
     }
 }
 
-export const postMessageService = async (chatId: string, connect: string) => {
+export const postMessageService = async (chatId: string, content: string) => {
     try {
-        const url = postMessageApi.replace("/:id", chatId);
-        return await http.post(url, { content: connect })
+        const url = chatMessageApi.replace("/:id", chatId);
+        const res = await http.post(url, { content: content })
+        return res
     } catch (error) {
         throw error;
     }
@@ -139,7 +174,7 @@ export const createChatService = async (receiverId: string) => {
 
 export const createChatGroupService = async (members: string[], name: string) => {
     try {
-        const response = await http.post(createChatGroupApi2, { members: members, name: name })
+        const response = await http.post(chatGroupApi, { members: members, name: name })
         return response
     } catch (error) {
         throw error;

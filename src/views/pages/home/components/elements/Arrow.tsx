@@ -8,7 +8,7 @@ export const NextArrow = (props: any) => {
       onClick={onClick}
       className="!absolute !top-1/2 !translate-y-[-50%] !right-[-2.5rem] z-10 bg-white hover:bg-gray-200 shadow-lg"
     >
-      <ArrowForwardIos className="text-black" />
+      <ArrowForwardIos />
     </IconButton>
   );
 };
@@ -20,7 +20,7 @@ export const PrevArrow = (props: any) => {
       onClick={onClick}
       className="!absolute !top-1/2 !translate-y-[-50%] !left-[-2.5rem] z-10 bg-white hover:bg-gray-200 shadow-lg"
     >
-      <ArrowBackIos className="text-black" />
+      <ArrowBackIos />
     </IconButton>
   );
 };

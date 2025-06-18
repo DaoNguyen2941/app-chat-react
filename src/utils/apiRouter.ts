@@ -9,16 +9,16 @@ export const logoutApi = `${host}/auth/logout`;
 //chat
 export const createChatApi = `${host}/chat` ;
 export const chatGroupApi = `${host}/chat/group` ;
-export const createChatGroupApi2 = `${host}/chat/group/api2` ;
 export const getListChatsApi = `${host}/chat/list` ;
 export const getChatDataById = `${host}/chat/:id`;
 export const deleteChatApi = `${host}/chat/:id/`;
 export const getChatVirtualApi = `${host}/chat/virtual/:userId` ;
-export const postMessageApi = `${host}/chat/:id/message`;
+export const chatMessageApi = `${host}/chat/:id/message`;
 export const patchReadMessages = `${host}/chat/:id/unreadCount`
-export const chatGroupDataApi = `${host}/chat/group/:id` ;
-export const chatGroupMemberApi = `${host}/chat/group/:groupId/manager/members/:userId`;
+export const chatGroupDataApi = `${host}/chat/group/:id/info` ;
+export const chatGroupManagerMemberApi = `${host}/chat/group/:groupId/manager/members`;
 export const groupInvititationApi = `${host}/chat/group/invitation`;
+export const chatGroupMemberApi = `${host}/chat/group/:groupId/member/me`
 //user
 export const searchUserApi = `${host}/user/search/:keyword`;
 export const identifyApi = `${host}/user/identify`;

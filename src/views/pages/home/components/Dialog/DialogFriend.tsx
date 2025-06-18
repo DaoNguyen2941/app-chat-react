@@ -13,13 +13,13 @@ import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import { useState } from 'react';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import Badge, { BadgeProps } from '@mui/material/Badge';
-import { notification, setNumberInvitation } from '../../../../../store/notificationSlice';
+import { notification, setFriendInvitation } from '../../../../../store/notificationSlice';
 import { useAppSelector, useAppDispatch } from '../../../../../hooks/reduxHook';
 import { getListReqFriend } from '../../../../../services/friendService';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 import type { Navigation, Router } from '@toolpad/core/AppProvider';
-
+import { useFriendInvitations } from '../../../../../hooks/friends/useFriendInvitations';
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
         padding: theme.spacing(2),
@@ -54,8 +54,6 @@ export default function FriendFunction(props: IProps) {
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(0);
     const numberNotification = useAppSelector(notification)
-    const dispatch = useAppDispatch()
-    const hasFetched = useRef(false);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -65,26 +63,10 @@ export default function FriendFunction(props: IProps) {
         setOpen(false);
     };
 
-    const { mutate } = useMutation({
-        mutationFn: () => {
-            return getListReqFriend()
-        },
-        onSuccess: (data) => {            
-            dispatch(setNumberInvitation(data.length))
-        },
-    })
-
-    useEffect(() => {
-        if (!hasFetched.current) {
-            mutate();
-            hasFetched.current = true;
-        }
-    }, []);
-
     return (
         <React.Fragment>
             <IconButton onClick={handleClickOpen} aria-label={notificationsLabel(100)}>
-                <Badge badgeContent={numberNotification.total} color="error">
+                <Badge badgeContent={numberNotification.friendInvitation} color="error">
                     <PeopleIcon />
                 </Badge>
             </IconButton>
@@ -109,7 +91,7 @@ export default function FriendFunction(props: IProps) {
                     <CloseIcon />
                 </IconButton>
                 <DialogContent dividers>
-                    <NavigationFriends value={value} setOpentDialog={setOpen} router={router} />
+                    <NavigationFriends value={value} setOpentDialog={setOpen} router={router} open={open}/>
                 </DialogContent>
                 <DialogActions sx={{ justifyContent: "center" }}>
                     <BottomNavigation
@@ -120,7 +102,7 @@ export default function FriendFunction(props: IProps) {
                         }}
                     >
                         <BottomNavigationAction label="Lời mời" icon={
-                            <StyledBadge badgeContent={numberNotification.invitation} color="error">
+                            <StyledBadge badgeContent={numberNotification.friendInvitation} color="error">
                                 <PersonAddIcon />
                             </StyledBadge>
                         } />

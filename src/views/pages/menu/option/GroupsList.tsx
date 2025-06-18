@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Box,
     Typography,
@@ -18,15 +18,15 @@ import { IChat } from '../../../../commom/type/chat.type';
 import { getListChatService } from '../../../../services/chatService';
 import { useNavigate } from 'react-router-dom';
 import { urlPrivatepPage } from '../../../../router/constants';
-
+import { useChatList } from '../../../../hooks/chat/useChatList';
 const GroupList: React.FC = () => {
     const navigate = useNavigate();
+    const [listGroup, setListGroup] = useState([])
+    const { data, isPending } = useChatList()
 
-    const { data: listGroup, isPending } = useQuery<IChat[]>({
-        queryKey: ['listChat'],
-        queryFn: getListChatService,
-        select: (data) => data.filter(chat => !!chat.chatGroup),
-    });
+    useEffect(() => {
+        setListGroup(data?.filter((chat: IChat) => !!chat.chatGroup))
+    }, [data])
 
     const handleGroupClick = (groupId: string) => {
         const url = urlPrivatepPage.MENU.GROUPS_INFO.replace(':groupId', groupId)

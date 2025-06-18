@@ -21,7 +21,7 @@ const MuiCarousel: React.FC<MuiCarouselProps> = ({ images }) => {
   };
 
   return (
-    <Box className="w-full max-w-4xl mx-auto mb-6"> 
+    <Box className="w-full max-w-3xl mx-auto mb-6"> 
       <Slider {...settings}>
         {images.map((img, idx) => (
           <Box key={idx} className="p-2">

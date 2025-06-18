@@ -25,8 +25,8 @@ import List from '@mui/material/List';
 import { getListFriend } from "../../../../../services/friendService";
 import { createChatGroupService } from "../../../../../services/chatService";
 import { IDataFriendType } from '../../../../../commom/type/friend.type';
-import {  useQueryClient, useMutation, useQuery, } from '@tanstack/react-query';
-
+import { useQueryClient, useMutation, useQuery, } from '@tanstack/react-query';
+import { useFriendList } from "../../../../../hooks/friends/useFriendList";
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
         padding: theme.spacing(2),
@@ -48,7 +48,6 @@ export default function DialogCreateGroup() {
     const [selectedFriends, setSelectedFriends] = useState<string[]>([]);
     const [groupName, setGroupName] = React.useState("");
     const queryClient = useQueryClient();
-
     // Mở / Đóng dialog
     const handleClickOpen = () => setOpen(true);
     const handleClose = () => {
@@ -56,11 +55,7 @@ export default function DialogCreateGroup() {
         setSelectedFriends([])
     }
 
-    const { data: friends, isLoading } = useQuery({
-        queryKey: ['friends'],
-        queryFn: getListFriend,
-        enabled: open, // chỉ gọi khi dialog mở
-    });
+    const { data: friends, isLoading } = useFriendList(open)
 
     // Xử lý chọn bạn bè
     const toggleFriendSelection = (id: string) => {

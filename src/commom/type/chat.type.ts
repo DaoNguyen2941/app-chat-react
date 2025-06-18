@@ -37,12 +37,24 @@ export interface Imessage {
     created_At: Date;
 }
 
+export interface IPagination {
+    hasMore: boolean,
+    nextCursor: string | null;
+}
+
 export interface IChatData {
     id: string;
     user: IUserType | null;
     message: Imessage[];
     isGroup: boolean;
-    members: IUserType[];
+    members?: IUserType[];
     name: string | null;
+    pagination: IPagination
+}
+
+export interface IMessagePage {
+    messages: Imessage[],
+    pagination: IPagination
+
 }
 

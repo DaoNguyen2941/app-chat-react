@@ -7,34 +7,26 @@ import { green, red } from '@mui/material/colors';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import UserInfoDialog from '../../../components/UserInfoDialog'; // 👉 sửa đúng path
 import { getListFriend, deleteFriend } from '../../../../services/friendService';
-import { IDataFriendType, FriendStatus } from '../../../../commom/type/friend.type';
+import { IDataFriendType, FriendStatus, IDataFriendReqType } from '../../../../commom/type/friend.type';
 import TimeAgo from '../../home/components/elements/TimeAgo';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { IChat } from '../../../../commom/type/chat.type';
 import { createChatService } from '../../../../services/chatService';
 import { useNavigate } from 'react-router-dom';
-import { getListReqFriend } from '../../../../services/friendService';
 import { acceptedFriend } from '../../../../services/friendService';
 import { useAppSelector, useAppDispatch } from '../../../../hooks/reduxHook';
 import {
   notification,
-  setNumberInvitation,
+  setFriendInvitation,
 } from '../../../../store/notificationSlice';
-
+import { useFriendInvitations } from '../../../../hooks/friends/useFriendInvitations';
 const FriendRequest: React.FC = () => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const numberNotification = useAppSelector(notification);
+  const { data: friendData, isLoading, error } = useFriendInvitations();
 
-  const {
-    data: friendData,
-    isLoading,
-  } = useQuery({
-    queryKey: ['friend-requests'],
-    queryFn: getListReqFriend,
-  });
 
   const handleClickFriend = (userId: string) => {
     setSelectedUserId(userId);
@@ -55,7 +47,7 @@ const FriendRequest: React.FC = () => {
       //   }
       //   return updated;
       // });
-      dispatch(setNumberInvitation(numberNotification.invitation - 1));
+      dispatch(setFriendInvitation(numberNotification.friendInvitation - 1));
       queryClient.invalidateQueries({ queryKey: ['friend-requests'] });
       queryClient.invalidateQueries({ queryKey: ['friends'] });
     },
@@ -65,7 +57,7 @@ const FriendRequest: React.FC = () => {
     mutationFn: deleteFriend,
     onSuccess: (_, friendId) => {
       // setFriendList(prev => prev.filter(friend => friend.id !== friendId));
-      dispatch(setNumberInvitation(numberNotification.invitation - 1));
+      dispatch(setFriendInvitation(numberNotification.friendInvitation - 1));
       queryClient.invalidateQueries({ queryKey: ['friend-requests'] });
     },
   });
@@ -81,7 +73,7 @@ const FriendRequest: React.FC = () => {
         <Typography>Đang tải...</Typography>
       ) : (
         <List>
-          {friendData.map((friend: IDataFriendType) => (
+          {friendData.map((friend: IDataFriendReqType  ) => (
             <ListItemButton
               key={friend.id}
               onClick={() => handleClickFriend(friend.user.id)}
@@ -91,20 +83,20 @@ const FriendRequest: React.FC = () => {
               </ListItemAvatar>
               <ListItemText
                 primary={friend.user.name}
-                secondary={
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      color: friend.isOnline ? green[500] : red[500],
-                      fontWeight: 'bold',
-                    }}
-                  >
-                    {friend.isOnline
-                      ? 'Đang online'
-                      : <TimeAgo timestamp={friend.lastSeen} />
-                    }
-                  </Typography>
-                }
+                // secondary={
+                //   <Typography
+                //     variant="body2"
+                //     sx={{
+                //       color: friend.isOnline ? green[500] : red[500],
+                //       fontWeight: 'bold',
+                //     }}
+                //   >
+                //     {friend.isOnline
+                //       ? 'Đang online'
+                //       : <TimeAgo timestamp={friend.lastSeen} />
+                //     }
+                //   </Typography>
+                // }
               />
               <ButtonGroup variant="contained" disableElevation>
                 <LoadingButton
