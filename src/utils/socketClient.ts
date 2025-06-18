@@ -4,12 +4,12 @@ import { connectSocket, disconnectSocket } from "../store/socketSlice";
 import { setFriendInvitation, setGroupInvitation } from "../store/notificationSlice"
 import { store } from "../store/index";
 import { refreshTokenService } from "../services/authService";
-import { IChatData, Imessage, IChat } from "../commom/type/chat.type";
+import { IChatData, Imessage, IChat } from "../commom/chat.type";
 import { queryClient } from "../services/cacheService";
 import { readMessageService } from "../services/chatService";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { IDataFriendReqType, IDataFriendType } from "../commom/type/friend.type";
+import { IDataFriendReqType, IDataFriendType } from "../commom/friend.type";
 class SocketClient {
     private socket: Socket | null = null;
     private readonly baseURL: string;

@@ -20,7 +20,7 @@ import { changeUserNameService } from '../../services/userService';
 import { IFormUpdateNameUser } from '../../commom/type/form.type';
 import Input from '../components/Input';
 import { useQueryClient } from '@tanstack/react-query';
-import { IUser } from '../../commom/type/user.type';
+import { IUser } from '../../commom/user.type';
 import { useAppDispatch } from '../../hooks/reduxHook';
 import { setAvatarorName } from '../../store/userSlice';
 

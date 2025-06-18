@@ -1,8 +1,8 @@
-import React, {  useState } from 'react';
+import React, { useState } from 'react';
 import {
     Avatar, Box, Button, CircularProgress, Typography,
-    List, ListItemAvatar, ListItemText, ListItemButton,
-    IconButton, 
+    List,ListItemAvatar, ListItemText, ListItemButton,
+    IconButton,
 } from '@mui/material';
 import PersonOffIcon from '@mui/icons-material/PersonOff';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
@@ -16,7 +16,7 @@ import {
     deleteGroupService,
 } from '../../../../services/chatService';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { IChat, IChatGroupInfo } from '../../../../commom/type/chat.type';
+import { IChat, IChatGroupInfo } from '../../../../commom/chat.type';
 import { useAppSelector } from '../../../../hooks/reduxHook';
 import { userData } from '../../../../store/userSlice';
 import UserInfoDialog from '../../../components/UserInfoDialog';
@@ -35,6 +35,7 @@ const GroupDetailPage: React.FC = () => {
     const {
         data: groupInfo,
         isLoading,
+        refetch,
     } = useQuery({
         queryKey: ['groupInfo', groupId],
         queryFn: () => getChatGroupDataInfoService(groupId!),

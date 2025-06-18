@@ -1,5 +1,5 @@
-export const host = "http://localhost:3001";
-export const hostsocket = "http://localhost:3001";
+export const host = process.env.REACT_APP_API_URL
+export const hostsocket = process.env.REACT_APP_SOCKET_URL
 //auth
 export const loginApi = `${host}/auth/login`;
 export const registerApi = `${host}/auth/register`;

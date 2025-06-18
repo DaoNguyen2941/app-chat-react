@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { IUserData } from "../commom/user.type";
-import { IDecodedToken } from "../commom/type/type";
+import { IDecodedToken } from "../commom/type";
 import { UseDecodeToken } from "../hooks/authHook";
 
 const getUserDataFromToken = (): IUserData | null => {

@@ -9,10 +9,10 @@ import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Input from '../../../components/Input';
-import { IFormProfileUser } from '../../../../commom/type/form.type';
+import { IFormProfileUser } from '../../../../commom/form.type';
 import { useQueryClient } from '@tanstack/react-query';
-import { IUser } from '../../../../commom/type/user.type';
-import { GenderType } from '../../../../commom/type/user.type';
+import { IUser } from '../../../../commom/user.type';
+import { GenderType } from '../../../../commom/user.type';
 
 const initialData = {
   avatarUrl: '',

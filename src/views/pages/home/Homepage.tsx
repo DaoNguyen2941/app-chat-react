@@ -10,7 +10,7 @@ import { createTheme } from '@mui/material/styles';
 import { useMutation,  QueryClient } from '@tanstack/react-query';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import {  useEffect } from 'react';
-import { IChat } from '../../../commom/type/chat.type';
+import { IChat } from '../../../commom/chat.type';
 import WelCome from '../../components/welCome';
 import { useAppDispatch } from '../../../hooks/reduxHook';
 import { userData } from '../../../store/userSlice';

@@ -8,10 +8,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import UserInfoDialog from '../../../components/UserInfoDialog'; // 👉 sửa đúng path
 import {  deleteFriend } from '../../../../services/friendService';
-import { IDataFriendType } from '../../../../commom/type/friend.type';
+import { IDataFriendType } from '../../../../commom/friend.type';
 import TimeAgo from '../../home/components/elements/TimeAgo';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { IChat } from '../../../../commom/type/chat.type';
+import { IChat } from '../../../../commom/chat.type';
 import { createChatService } from '../../../../services/chatService';
 import { useNavigate } from 'react-router-dom';
 import { useFriendList } from '../../../../hooks/friends/useFriendList';

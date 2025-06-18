@@ -1,7 +1,7 @@
 // hooks/useFriendInvitations.ts
 import { useQuery } from '@tanstack/react-query';
 import { getListFriend } from '../../services/friendService';
-import { IDataFriendType } from '../../commom/type/friend.type';
+import { IDataFriendType } from '../../commom/friend.type';
 
 export function useFriendList(run: boolean) {
   return useQuery<IDataFriendType[]>({

@@ -9,7 +9,7 @@ import {
     changeUserAvatarApi,
     getUserApi
 } from "../utils/apiRouter";
-import { IUser, IUserType } from "../commom/type/user.type";
+import { IUser, IUserType } from "../commom/user.type";
 import { IFormChangePassword, IFormUpdateNameUser } from "../commom/type/form.type";
 
 

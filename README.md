@@ -1,46 +1,181 @@
-# Getting Started with Create React App
+# 💬 VivuWord - Ứng dụng Chat Thời Gian Thực
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**VivuWord** là một ứng dụng nhắn tin hiện đại, thời gian thực, được xây dựng bằng ReactJS và các công nghệ web mạnh mẽ. Ứng dụng hỗ trợ chat cá nhân, chat nhóm, gửi emoji, quản lý bạn bè và hồ sơ người dùng – tất cả trong một giao diện mượt mà và trực quan.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🚀 Tính Năng Nổi Bật
 
-### `npm start`
+* **Đang ký tài khoản miễn phí**: tạo tài khoản bằng email và mã otp, thay đổi mật khẩu, quên mật khẩu
+* **Gửi/nhận tin nhắn thời gian thực**
+* **Quản lý bạn bè**: gửi lời mời, chấp nhận, từ chối, hủy kết bạn
+* **trò chuyện trực tuyến**: tạo và xóa cuộc hội thoại
+* **trò chuyện nhóm**: tạo nhóm, thêm thành viên, rời nhóm, giải tán nhóm
+* **Gửi emoji**
+* **Cập nhật hồ sơ người dùng**: avatar, tên, ngày sinh, giới tính, số điện thoại
+* **Tìm kiếm người dùng & kết bạn** : gửi kết bạn,chấp nhận, từ chối
+* **Thông báo thời gian thực**
+* **Giao diện đẹp, responsive, hỗ trợ light/dark mode**
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+---
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## 🧱🏼‍💻 Kiến Trúc Công Nghệ
 
-### `npm test`
+| Công Nghệ            | Mục Đích                       |
+| -------------------- | ------------------------------ |
+| ReactJS              | Xây dựng giao diện             |
+| React Router         | Điều hướng trang SPA           |
+| React Query          | Quản lý dữ liệu bất đồng bộ    |
+| Redux Toolkit        | Quản lý state toàn cục         |
+| Socket.IO Client     | Kết nối thời gian thực         |
+| React Hook Form      | Quản lý và validate form       |
+| Yup                  | Xác thực dữ liệu form          |
+| MUI (Material UI)    | Giao diện hiện đại & linh hoạt |
+| Axios                | Gọi REST API                   |
+| emoji-picker         | Thêm emoji vào tin nhắn        |
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 📁 Cấu Trúc Thư Mục
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+src/
+├── assets/             # Hình ảnh, icon, file tĩnh
+├── features/           # Các module chức năng chính (chat, auth, friend,...)
+├── hooks/              # Custom hooks
+├── layouts/            # Giao diện bố cục (Dashboard, Auth...)
+├── pages/              # Các trang chính (ChatPage, LoginPage,...)
+├── router/             # Cấu hình routing
+├── services/           # Gọi API qua axios
+├── socket/             # Cấu hình Socket.IO client
+├── store/              # Redux store & slices
+├── types/              # Kiểu TypeScript chung
+├── utils/              # Tiện ích chung
+├── App.tsx             # Component gốc
+└── main.tsx            # Điểm khởi chạy React app
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+## ⚙️ Cài Đặt & Chạy Ứng Dụng
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### 1. Clone Dự Án
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+git clone https://github.com/your-username/vivuworld.git
+cd vivuworld
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### 2. Cài Dependencies
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```bash
+npm install
+# hoặc
+yarn install
+```
 
-## Learn More
+### 3. Tạo file `.env`
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```env
+VITE_API_URL=http://localhost:3000/api
+VITE_SOCKET_URL=http://localhost:3000
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+> 🔐 Nếu dùng backend của bạn, cập nhật URL API/SOCKET tương ứng.
+
+### 4. Chạy Ứng Dụng
+
+```bash
+npm run dev
+# hoặc
+yarn dev
+```
+
+Truy cập tại: [http://localhost:5173](http://localhost:5173)
+
+---
+
+## 🥪 Scripts Hữu Ích
+
+```bash
+npm run dev        # Chạy development server
+npm run build      # Build production
+npm run preview    # Xem bản build production
+npm run lint       # Kiểm tra linting
+```
+
+---
+
+## 🔌 Kết Nối Với Backend
+
+Ứng dụng yêu cầu backend hỗ trợ REST API và WebSocket (có thể dùng NestJS + Socket.IO).
+
+Các endpoint backend nên bao gồm:
+
+* `/auth/login`, `/auth/register`
+* `/users/me`, `/users/update-profile`, `/users/avatar`
+* `/friends/request`, `/friends/accept`, `/friends/remove`
+* `/messages/:conversationId`, `/messages/send`
+* `/groups/create`, `/groups/members`, `/groups/invite`, etc.
+* WebSocket events: `message:new`, `friend:request`, `group:update`, v.v.
+
+---
+
+## 📦 Backend Gợi Ý
+
+Nếu bạn cần backend tương thích:
+
+> 🔧 [VivuWord Backend (NestJS)](https://github.com/your-username/vivuworld-backend) *(tùy chọn)*
+
+---
+
+## 🌐 Triển Khai (Deployment)
+
+Bạn có thể deploy VivuWord frontend trên các nền tảng như:
+
+* **Vercel**
+* **Netlify**
+* **Render**
+* **Firebase Hosting**
+
+### Triển khai với Vercel:
+
+```bash
+npm run build
+# sau đó push lên GitHub và kết nối với Vercel
+```
+
+---
+
+## 📸 Một Số Hình Ảnh
+
+> *(Thêm ảnh chụp màn hình ứng dụng nếu có)*
+
+---
+
+## 👨‍💼 Đóng Góp
+
+Mọ i ý tưởng, lỗi phát hiện, hoặc tính năng mới đều được chào đón!
+
+* Fork repository
+* Tạo branch mới (`feature/your-feature`)
+* Tạo pull request 🚀
+
+---
+
+## 📜 Giấy Phép
+
+Dự án được phát hành theo giấy phép MIT. Bạn được phép sử dụng, sửa đổi và triển khai ứng dụng với mục đích cá nhân hoặc thương mại.
+
+---
+
+## 📧 Liên Hệ
+
+> 📬 Email: [your-email@example.com](mailto:your-email@example.com)
+> 🌐 Website: [https://your-portfolio.com](https://your-portfolio.com)
+> 👥 GitHub: [@yourusername](https://github.com/yourusername)
+
+---
+
+**VivuWord – Trải nghiệm chat hiện đại, kết nối tức thì.**

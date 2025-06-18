@@ -8,10 +8,9 @@ import {
     DialogContent,
     CircularProgress,
 } from '@mui/material';
-import { IUserType } from '../../commom/type/user.type';
+import { IUserType } from '../../commom/user.type';
 import { getUserDataService } from '../../services/userService';
 import { useMutation, useQueryClient, } from '@tanstack/react-query';
-import { IChat } from '../../commom/type/chat.type';
 
 interface UserInfoDialogProps {
     userId: string;

@@ -9,7 +9,7 @@ import Input from '../../components/Input';
 import { useMutation, QueryClient, } from '@tanstack/react-query';
 import { loginService } from '../../../services/authService';
 import { isAxiosError } from 'axios';
-import { IRequestErr } from '../../../commom/type/type';
+import { IRequestErr } from '../../../commom/type';
 import MessageErr from '../../components/messageErr';
 import { useSetToken } from '../../../hooks/authHook';
 import { useAppDispatch } from '../../../hooks/reduxHook';

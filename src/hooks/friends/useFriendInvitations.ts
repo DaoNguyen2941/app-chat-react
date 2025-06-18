@@ -3,7 +3,7 @@ import { useAppDispatch } from '../reduxHook';
 import { setFriendInvitation } from '../../store/notificationSlice';
 import { useEffect, useRef } from 'react';
 import { getListReqFriend } from '../../services/friendService';
-import { IDataFriendReqType } from '../../commom/type/friend.type';
+import { IDataFriendReqType } from '../../commom/friend.type';
 
 export const useFriendInvitations = () => {
     const dispatch = useAppDispatch();

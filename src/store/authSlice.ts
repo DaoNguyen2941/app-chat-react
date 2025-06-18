@@ -1,6 +1,6 @@
 import { UseDecodeToken } from '../hooks/authHook';
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { IDecodedToken } from '../commom/type/type';
+import { IDecodedToken } from '../commom/type';
 import { RootState } from '.';
 import { refreshTokenService } from '../services/authService';
 import { jwtDecode } from "jwt-decode";

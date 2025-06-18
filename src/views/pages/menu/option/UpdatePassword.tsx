@@ -1,13 +1,13 @@
 import { Box, Button, Grid, Typography } from '@mui/material';
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import { IFormChangePassword } from '../../../../commom/type/form.type';
+import { IFormChangePassword } from '../../../../commom/form.type';
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Input from '../../../components/Input';
 import { useMutation } from '@tanstack/react-query';
 import { changeUserPasswordService } from '../../../../services/userService';
 import { isAxiosError } from 'axios';
-import { IRequestErr } from '../../../../commom/type/type';
+import { IRequestErr } from '../../../../commom/type';
 import MessageErr from '../../../components/messageErr';
 import MessageSuccess from '../../../components/MessageSuccess';
 

@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import GroupIcon from '@mui/icons-material/Groups';
 import ChatIcon from '@mui/icons-material/Chat';
-import { IChat } from '../../../../commom/type/chat.type';
+import { IChat } from '../../../../commom/chat.type';
 import { useNavigate } from 'react-router-dom';
 import { urlPrivatepPage } from '../../../../router/constants';
 import { useChatList } from '../../../../hooks/chat/useChatList';

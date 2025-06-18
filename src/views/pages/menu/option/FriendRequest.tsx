@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 import UserInfoDialog from '../../../components/UserInfoDialog'; 
 import {  deleteFriend } from '../../../../services/friendService';
-import {  IDataFriendReqType } from '../../../../commom/type/friend.type';
+import {  IDataFriendReqType } from '../../../../commom/friend.type';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { acceptedFriend } from '../../../../services/friendService';
 import { useAppSelector, useAppDispatch } from '../../../../hooks/reduxHook';

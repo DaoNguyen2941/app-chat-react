@@ -12,13 +12,13 @@ import {
     ButtonGroup,
 } from '@mui/material';
 import GroupIcon from '@mui/icons-material/Groups';
-import {  IPendingInvitationGroup } from '../../../../commom/type/chat.type';
+import {  IPendingInvitationGroup } from '../../../../commom/chat.type';
 import { patchGroupInvitationReqService } from '../../../../services/chatService';
 import { useNavigate } from 'react-router-dom';
 import { urlPrivatepPage } from '../../../../router/constants';
 import LoadingButton from '@mui/lab/LoadingButton';
 import {  useMutation, useQueryClient } from '@tanstack/react-query';
-import { enumInvitationStatus } from '../../../../commom/type/chat.type';
+import { enumInvitationStatus } from '../../../../commom/chat.type';
 import { useGroupInvitations } from '../../../../hooks/chat/useGroupInvation';
 const GroupInvationReq: React.FC = () => {
     const navigate = useNavigate();
