@@ -36,7 +36,7 @@ const ConfirmOtp: React.FC = () => {
     resolver: yupResolver(schema),
   });
 
-  const { mutate, isError, error } = useMutation({
+  const { mutate, isError } = useMutation({
     mutationFn: (value: InputOtp) => {
       return confirmOtpResetPasswordService(token, value.OTP);
     },

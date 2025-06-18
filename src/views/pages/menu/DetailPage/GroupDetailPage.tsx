@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import {
     Avatar, Box, Button, CircularProgress, Typography,
-    List, ListItem, ListItemAvatar, ListItemText, ListItemButton,
-    IconButton, Dialog, DialogTitle, DialogContent
+    List, ListItemAvatar, ListItemText, ListItemButton,
+    IconButton, 
 } from '@mui/material';
 import PersonOffIcon from '@mui/icons-material/PersonOff';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
@@ -35,7 +35,6 @@ const GroupDetailPage: React.FC = () => {
     const {
         data: groupInfo,
         isLoading,
-        refetch,
     } = useQuery({
         queryKey: ['groupInfo', groupId],
         queryFn: () => getChatGroupDataInfoService(groupId!),

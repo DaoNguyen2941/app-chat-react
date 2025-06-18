@@ -2,12 +2,9 @@ import { useAppDispatch } from '../../hooks/reduxHook';
 import { setChatOpent } from "../../store/socketSlice";
 import { useEffect } from 'react';
 import MuiCarousel from '../pages/home/components/elements/MuiCarousel';
-import { useNavigate } from 'react-router-dom';
-import backgroundImage from '../../../assets/images/backgroundBoCongAnh.jpg';
 
 export default function WelCome() {
     const dispatch = useAppDispatch()
-    const navigate = useNavigate();
 
     useEffect(() => {
         dispatch(setChatOpent(""))

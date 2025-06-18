@@ -6,7 +6,7 @@ import {
     Box, Chip, Typography, TextField
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import {  useMutation } from '@tanstack/react-query';
 import { addMemberToGroupService } from '../../../../services/chatService';
 import { useFriendList } from '../../../../hooks/friends/useFriendList';
 interface InviteMembersDialogProps {

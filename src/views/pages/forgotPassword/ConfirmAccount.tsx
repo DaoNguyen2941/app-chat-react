@@ -4,7 +4,7 @@ import { getOtpForgotPasswordService } from '../../../services/authService';
 import backgroundImage from '../../../assets/images/backgroundBoCongAnh.jpg';
 import { urlPublicPage } from '../../../router/constants';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Avatar,
   Box,

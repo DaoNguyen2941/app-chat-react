@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
     Box,
     Typography,
@@ -6,20 +6,18 @@ import {
     List,
     ListItemAvatar,
     ListItemText,
-    IconButton,
     Badge,
     ListItemButton,
     CircularProgress,
     ButtonGroup,
 } from '@mui/material';
 import GroupIcon from '@mui/icons-material/Groups';
-import ChatIcon from '@mui/icons-material/Chat';
-import { IChat, IPendingInvitationGroup } from '../../../../commom/type/chat.type';
+import {  IPendingInvitationGroup } from '../../../../commom/type/chat.type';
 import { patchGroupInvitationReqService } from '../../../../services/chatService';
 import { useNavigate } from 'react-router-dom';
 import { urlPrivatepPage } from '../../../../router/constants';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {  useMutation, useQueryClient } from '@tanstack/react-query';
 import { enumInvitationStatus } from '../../../../commom/type/chat.type';
 import { useGroupInvitations } from '../../../../hooks/chat/useGroupInvation';
 const GroupInvationReq: React.FC = () => {

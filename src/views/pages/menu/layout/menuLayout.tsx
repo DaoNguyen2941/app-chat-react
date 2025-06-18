@@ -11,6 +11,18 @@ import { urlPrivatepPage } from '../../../../router/constants';
 import { useAppSelector } from '../../../../hooks/reduxHook';
 import { notification } from '../../../../store/notificationSlice';
 import Badge from '@mui/material/Badge';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+export const lightTheme = createTheme({
+    palette: {
+        mode: 'light',
+    },
+});
+
+export const darkTheme = createTheme({
+    palette: {
+        mode: 'dark',
+    },
+});
 
 const menuItems = [
     { url: urlPrivatepPage.HOME, label: 'home', icon: <HomeIcon /> },
@@ -40,69 +52,72 @@ const SettingsLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =
     };
 
     return (
-        <Box
-            display="flex"
-            height="100vh"
-            p={2}
-            bgcolor={isDark ? '#121212' : 'white'} // nền tối hoặc sáng
-            color={isDark ? 'white' : 'black'} // màu chữ tương ứng
-        >
-            <Paper
-                sx={{
-                    width: 250,
-                    mr: 2,
-                    bgcolor: isDark ? '#1e1e1e' : 'white',
-                    color: isDark ? 'white' : 'black',
-                }}
-                elevation={3}
+        <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
+            <Box
+                display="flex"
+                height="100vh"
+                p={2}
+                bgcolor={isDark ? '#121212' : 'white'} // nền tối hoặc sáng
+                color={isDark ? 'white' : 'black'} // màu chữ tương ứng
             >
-                <List>
-                    {menuItems.map((item) => (
-                        <ListItemButton
-                            key={item.url}
-                            selected={selected === item.url}
-                            onClick={() => handleSelect(item.url)}
-                            disabled={item.url === urlPrivatepPage.MENU.UPDATE_PROFILE}
-                            sx={{
-                                '&.Mui-selected': {
-                                    backgroundColor: isDark ? '#333' : '#e0e0e0',
-                                    color: isDark ? '#90caf9' : 'blue',
-                                },
-                                '&:hover': {
-                                    backgroundColor: isDark ? '#444' : '#f5f5f5',
-                                },
-                            }}
-                        >
-                            <ListItemIcon sx={{ color: isDark ? 'white' : 'inherit' }}>
-                                <Badge
-                                    badgeContent={item.url === urlPrivatepPage.MENU.FRIEND_REQUETS ?
-                                        numberNotification.friendInvitation :
-                                        item.url === urlPrivatepPage.MENU.GROUPS_REQUETS ?
-                                            numberNotification.groupInvitation : 0
-                                    }
-                                    color="error"
-                                >
-                                    {item.icon}
-                                </Badge>
-                            </ListItemIcon>
-                            <ListItemText primary={item.label} />
-                        </ListItemButton>
-                    ))}
-                </List>
-            </Paper>
+                <Paper
+                    sx={{
+                        width: 250,
+                        mr: 2,
+                        bgcolor: isDark ? '#1e1e1e' : 'white',
+                        color: isDark ? 'white' : 'black',
+                    }}
+                    elevation={3}
+                >
+                    <List>
+                        {menuItems.map((item) => (
+                            <ListItemButton
+                                key={item.url}
+                                selected={selected === item.url}
+                                onClick={() => handleSelect(item.url)}
+                                disabled={item.url === urlPrivatepPage.MENU.UPDATE_PROFILE}
+                                sx={{
+                                    '&.Mui-selected': {
+                                        backgroundColor: isDark ? '#333' : '#e0e0e0',
+                                        color: isDark ? '#90caf9' : 'blue',
+                                    },
+                                    '&:hover': {
+                                        backgroundColor: isDark ? '#444' : '#f5f5f5',
+                                    },
+                                }}
+                            >
+                                <ListItemIcon sx={{ color: isDark ? 'white' : 'inherit' }}>
+                                    <Badge
+                                        badgeContent={item.url === urlPrivatepPage.MENU.FRIEND_REQUETS ?
+                                            numberNotification.friendInvitation :
+                                            item.url === urlPrivatepPage.MENU.GROUPS_REQUETS ?
+                                                numberNotification.groupInvitation : 0
+                                        }
+                                        color="error"
+                                    >
+                                        {item.icon}
+                                    </Badge>
+                                </ListItemIcon>
+                                <ListItemText primary={item.label} />
+                            </ListItemButton>
+                        ))}
+                    </List>
+                </Paper>
 
-            <Paper
-                sx={{
-                    flexGrow: 1,
-                    p: 2,
-                    bgcolor: isDark ? '#121212' : 'white',
-                    color: isDark ? 'white' : 'black',
-                }}
-                elevation={3}
-            >
-                {children}
-            </Paper>
-        </Box>
+                <Paper
+                    sx={{
+                        flexGrow: 1,
+                        p: 2,
+                        bgcolor: isDark ? '#121212' : 'white',
+                        color: isDark ? 'white' : 'black',
+                    }}
+                    elevation={3}
+                >
+                    {children}
+                </Paper>
+            </Box>
+        </ThemeProvider >
+
     );
 };
 

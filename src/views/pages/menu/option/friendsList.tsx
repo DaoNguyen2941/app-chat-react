@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import {
   Box, Avatar, Typography, List, ListItemAvatar, ListItemText, ListItemButton,
-  ButtonGroup, Button
+  ButtonGroup,
 } from '@mui/material';
 import { green, red } from '@mui/material/colors';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import UserInfoDialog from '../../../components/UserInfoDialog'; // 👉 sửa đúng path
-import { getListFriend, deleteFriend } from '../../../../services/friendService';
+import {  deleteFriend } from '../../../../services/friendService';
 import { IDataFriendType } from '../../../../commom/type/friend.type';
 import TimeAgo from '../../home/components/elements/TimeAgo';
 import LoadingButton from '@mui/lab/LoadingButton';

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AppProvider, type Session, type Navigation } from '@toolpad/core/AppProvider';
+import { AppProvider, type Session, } from '@toolpad/core/AppProvider';
 import { useDemoRouter } from '@toolpad/core/internal';
 import Avatar from '@mui/material/Avatar';
 import { styled } from '@mui/material/styles';
@@ -7,54 +7,32 @@ import Badge from '@mui/material/Badge';
 import Chip from '@mui/material/Chip';
 import Chat from './components/chat';
 import { createTheme } from '@mui/material/styles';
-import Stack from '@mui/material/Stack';
-import AddFriend from './components/Dialog/DialogAddFriend';
-import { ThemeSwitcher, } from '@toolpad/core/DashboardLayout';
-import { useMutation, useQuery, QueryClient } from '@tanstack/react-query';
-import { getListChatService } from '../../../services/chatService';
-import Divider from '@mui/material/Divider';
-import { DashboardLayout, SidebarFooterProps } from '@toolpad/core/DashboardLayout';
-import { useState, useEffect } from 'react';
+import { useMutation,  QueryClient } from '@tanstack/react-query';
+import { DashboardLayout } from '@toolpad/core/DashboardLayout';
+import {  useEffect } from 'react';
 import { IChat } from '../../../commom/type/chat.type';
 import WelCome from '../../components/welCome';
 import { useAppDispatch } from '../../../hooks/reduxHook';
 import { userData } from '../../../store/userSlice';
 import { useAppSelector } from '../../../hooks/reduxHook';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import AvatarGroup from '@mui/material/AvatarGroup';
-import SettingsIcon from '@mui/icons-material/Settings';
-import {
-  Account,
-  AccountPreview,
-  AccountPopoverFooter,
-  SignOutButton,
-  AccountPreviewProps,
-} from '@toolpad/core/Account';
-import type { Router } from '@toolpad/core/AppProvider';
-import Typography from '@mui/material/Typography';
-import MenuList from '@mui/material/MenuList';
-import MenuItem from '@mui/material/MenuItem';
-import ListItemText from '@mui/material/ListItemText';
-import { ListItem } from '@mui/material';
 import { connectSocket, disconnectSocket } from "../../../store/socketSlice";
-import FriendFunction from './components/Dialog/DialogFriend';
 import { useSetToken } from '../../../hooks/authHook';
 import { setAuth } from '../../../store/authSlice';
 import { deleteUserData } from '../../../store/userSlice';
 import TimeAgo from './components/elements/TimeAgo';
-import DialogCreateGroup from './components/Dialog/DialogCreateGroup';
 import { logOutService } from '../../../services/authService';
 import ChatPopoverAction from './components/elements/ChatPopoverAction';
 import { urlPublicPage } from '../../../router/constants';
-import IconButton from '@mui/material/IconButton';
-import { urlPrivatepPage } from '../../../router/constants';
-import ListIcon from '@mui/icons-material/List';
-import { notification } from '../../../store/notificationSlice';
 import { useChatList } from '../../../hooks/chat/useChatList';
-import { preloadQueriesConfig } from '../../../services/preloadQueries';
 import { useFriendInvitations } from '../../../hooks/friends/useFriendInvitations';
 import { useFriendList } from '../../../hooks/friends/useFriendList';
 import { useGroupInvitations } from '../../../hooks/chat/useGroupInvation';
+import { SidebarFooterAccount } from './components/SidebarFooterAccount';
+import { SidebarFooterAccountPopover } from './components/SidebarFooterAccountPopover';
+import { ToolbarActionsSearch } from './components/ToolbarActionsSearch';
+
 // Styled Badge for online status (green dot)
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-dot': {
@@ -86,146 +64,6 @@ interface DemoProps {
   window?: () => Window;
 }
 
-interface ToolbarActionsSearchProps {
-  router: Router;
-}
-
-const ToolbarActionsSearch: React.FC<ToolbarActionsSearchProps> = ({ router }) => {
-  const navigate = useNavigate();
-  const numberNotification = useAppSelector(notification)
-
-  const goToSettings = () => {
-    navigate(urlPrivatepPage.MENU.PROFILE);
-  };
-
-  return (
-    <Stack direction="row">
-      <AddFriend router={router} />
-      <FriendFunction router={router} />
-      <DialogCreateGroup />
-      <>
-        <IconButton onClick={goToSettings}>
-          <Badge badgeContent={numberNotification.total} color="error">
-            <ListIcon />
-          </Badge>
-        </IconButton>
-      </>
-      <ThemeSwitcher />
-    </Stack>
-  );
-};
-
-const selects = [
-  {
-    key: 2,
-    primary: 'Thiết lập tài khoản',
-    Icon: <SettingsIcon />
-  },
-];
-
-function SidebarFooterAccountPopover() {
-
-  return (
-    <Stack direction="column">
-      <Typography variant="body2" mx={2} mt={1}></Typography>
-      <MenuList>
-        {selects.map((select) => (
-          <MenuItem
-            key={select.key}
-            // onClick={() => handleClick(select.key)}
-            sx={{
-              justifyContent: 'flex-start',
-              width: '100%',
-              columnGap: 2,
-            }}
-          >
-            <ListItem>{select.Icon}</ListItem>
-            <ListItemText
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'flex-start',
-                width: '100%',
-              }}
-              primary={select.primary}
-              primaryTypographyProps={{ variant: 'body2' }}
-              secondaryTypographyProps={{ variant: 'caption' }}
-            />
-          </MenuItem>
-        ))}
-      </MenuList>
-      <Divider />
-      <AccountPopoverFooter>
-        <SignOutButton />
-      </AccountPopoverFooter>
-    </Stack>
-  );
-}
-
-
-function AccountSidebarPreview(props: AccountPreviewProps & { mini: boolean }) {
-  const { handleClick, open, mini } = props;
-  return (
-    <Stack direction="column" p={0} overflow="hidden">
-      <Divider />
-      <AccountPreview
-        variant={mini ? 'condensed' : 'expanded'}
-        handleClick={handleClick}
-        open={open}
-      />
-    </Stack>
-  );
-}
-const createPreviewComponent = (mini: boolean) => {
-  function PreviewComponent(props: AccountPreviewProps) {
-    return <AccountSidebarPreview {...props} mini={mini} />;
-  }
-  return PreviewComponent;
-};
-
-function SidebarFooterAccount({ mini }: SidebarFooterProps) {
-  const PreviewComponent = React.useMemo(() => createPreviewComponent(mini), [mini]);
-
-  return (
-    <Account
-      slots={{
-        preview: PreviewComponent,
-        // popoverContent: SidebarFooterAccountPopover,
-      }}
-      slotProps={{
-        popover: {
-          transformOrigin: { horizontal: 'left', vertical: 'bottom' },
-          anchorOrigin: { horizontal: 'right', vertical: 'bottom' },
-          disableAutoFocus: false,
-          slotProps: {
-            paper: {
-              elevation: 0,
-              sx: {
-                overflow: 'visible',
-                filter: (theme) =>
-                  `drop-shadow(0px 2px 8px ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.32)'})`,
-                mt: 1,
-                '&::before': {
-                  content: '""',
-                  display: 'block',
-                  position: 'absolute',
-                  bottom: 10,
-                  left: 0,
-                  width: 10,
-                  height: 10,
-                  bgcolor: 'background.paper',
-                  transform: 'translate(-50%, -50%) rotate(45deg)',
-                  zIndex: 0,
-                },
-              },
-            },
-          },
-        },
-      }}
-    />
-  );
-}
-
 
 export default function HomePage(props: DemoProps) {
   const { window } = props;
@@ -236,9 +74,9 @@ export default function HomePage(props: DemoProps) {
   const queryClient = new QueryClient();
   // const chatId = location.state?.chatId;
   const { data: listChat } = useChatList()
-  const { data: groupInvitations } = useGroupInvitations()
-  const {data: friends} = useFriendList(true)
-  const {data: friendInvitation} = useFriendInvitations()
+  useGroupInvitations()
+  useFriendList(true)
+  useFriendInvitations()
 
   // Chỉ kết nối socket khi component mount
   useEffect(() => {

@@ -6,8 +6,6 @@ import {
     Grid,
     Dialog,
     DialogContent,
-    DialogActions,
-    Button,
     IconButton,
 } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';

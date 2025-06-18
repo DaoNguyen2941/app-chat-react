@@ -13,9 +13,7 @@ import {
 } from '@mui/material';
 import GroupIcon from '@mui/icons-material/Groups';
 import ChatIcon from '@mui/icons-material/Chat';
-import { useQuery } from '@tanstack/react-query';
 import { IChat } from '../../../../commom/type/chat.type';
-import { getListChatService } from '../../../../services/chatService';
 import { useNavigate } from 'react-router-dom';
 import { urlPrivatepPage } from '../../../../router/constants';
 import { useChatList } from '../../../../hooks/chat/useChatList';

@@ -1,24 +1,20 @@
 import React, { useState } from 'react';
 import {
   Box, Avatar, Typography, List, ListItemAvatar, ListItemText, ListItemButton,
-  ButtonGroup, Button
+  ButtonGroup,
 } from '@mui/material';
-import { green, red } from '@mui/material/colors';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import UserInfoDialog from '../../../components/UserInfoDialog'; // 👉 sửa đúng path
-import { getListFriend, deleteFriend } from '../../../../services/friendService';
-import { IDataFriendType, FriendStatus, IDataFriendReqType } from '../../../../commom/type/friend.type';
-import TimeAgo from '../../home/components/elements/TimeAgo';
+import UserInfoDialog from '../../../components/UserInfoDialog'; 
+import {  deleteFriend } from '../../../../services/friendService';
+import {  IDataFriendReqType } from '../../../../commom/type/friend.type';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { IChat } from '../../../../commom/type/chat.type';
-import { createChatService } from '../../../../services/chatService';
-import { useNavigate } from 'react-router-dom';
 import { acceptedFriend } from '../../../../services/friendService';
 import { useAppSelector, useAppDispatch } from '../../../../hooks/reduxHook';
 import {
   notification,
   setFriendInvitation,
 } from '../../../../store/notificationSlice';
+import { useQueryClient,useMutation } from '@tanstack/react-query';
+
 import { useFriendInvitations } from '../../../../hooks/friends/useFriendInvitations';
 const FriendRequest: React.FC = () => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
