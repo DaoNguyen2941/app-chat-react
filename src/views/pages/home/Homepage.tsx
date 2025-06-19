@@ -72,7 +72,7 @@ export default function HomePage(props: DemoProps) {
   const navigate = useNavigate();
   const setToken = useSetToken;
   const queryClient = new QueryClient();
-  
+
   const {
     groupInvitation,
     friendList,
@@ -87,9 +87,9 @@ export default function HomePage(props: DemoProps) {
       dispatch(disconnectSocket());
     };
   }, []);
-  useEffect(() => {
-
-  }, [])
+  function ToolbarSlot() {
+    return <ToolbarActionsSearch router={router} />;
+  }
   // Logout
   const { mutate: logOut } = useMutation({
     mutationFn: logOutService,
@@ -176,7 +176,7 @@ export default function HomePage(props: DemoProps) {
     >
       <DashboardLayout
         slots={{
-          toolbarActions: () => <ToolbarActionsSearch router={router} />,
+          toolbarActions: ToolbarSlot,
           toolbarAccount: () => null,
           sidebarFooter: SidebarFooterAccount,
         }}

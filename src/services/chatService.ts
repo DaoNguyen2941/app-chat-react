@@ -165,6 +165,10 @@ export const getVirtualChatDataService = async (userId: string) => {
 
 export const createChatService = async (receiverId: string) => {
     try {
+        console.log('createChatService');
+        
+        console.log(receiverId);
+        
         const response = await http.post(createChatApi, { receiverId })
         return response
     } catch (error) {

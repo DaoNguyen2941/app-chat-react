@@ -49,7 +49,7 @@ src/
 ├── utils/              # Tiện ích chung
 ├── views/              # Thành phần giao diện 
 ├── App.tsx             # Component gốc
-└── main.tsx            # Điểm khởi chạy React app
+└── index.tsx            # Điểm khởi chạy React app
 ```
 
 ---
@@ -107,7 +107,12 @@ backend tương thích:
 
 ## 📸 Một Số Hình Ảnh
 
-> *(Thêm ảnh chụp màn hình ứng dụng nếu có)*
+![Đăng nhập](public/imges/login.png)
+![Đăng ký](public/imges/signing.png)
+![Home](public/imges/weocome.png)
+![Giao diện chat](public/imges/message.png)
+![Giao diện chat group](public/imges/groupChat.png)
+![Giao diện menu](public/imges/menu.png)
 
 ---
 

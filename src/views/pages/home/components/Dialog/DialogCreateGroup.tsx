@@ -9,24 +9,26 @@ import {
     Checkbox,
     Button,
     TextField,
+    Avatar,
+    List,
+    ListItem,
+    ListItemAvatar,
+    ListItemText,
+    ListItemButton,
+    Chip,
+    Box,
+    InputAdornment,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import Diversity3Icon from "@mui/icons-material/Diversity3";
-import { styled } from '@mui/material/styles';
-import PersonSearchIcon from '@mui/icons-material/PersonSearch';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Avatar from '@mui/material/Avatar';
-import ListItemButton from '@mui/material/ListItemButton';
+import PersonSearchIcon from "@mui/icons-material/PersonSearch";
+import { styled } from "@mui/material/styles";
 import { useState } from "react";
-import { useEffect } from "react";
-import List from '@mui/material/List';
-import { getListFriend } from "../../../../../services/friendService";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { createChatGroupService } from "../../../../../services/chatService";
-import { IDataFriendType } from '../../../../../type/friend.type';
-import { useQueryClient, useMutation, useQuery, } from '@tanstack/react-query';
+import { IDataFriendType } from "../../../../../type/friend.type";
 import { useFriendList } from "../../../../../hooks/friends/useFriendList";
+
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
         padding: theme.spacing(2),
@@ -35,29 +37,32 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
         padding: theme.spacing(1),
     },
     '& .MuiPaper-root': {
-        width: '800px', // Đặt chiều rộng
-        maxWidth: '60%', // Đặt giới hạn tối đa chiều rộng
-        height: '600px', // Đặt chiều cao
-        maxHeight: '90%', // Đặt giới hạn tối đa chiều cao
+        width: '800px',
+        maxWidth: '60%',
+        height: '600px',
+        maxHeight: '90%',
+        display: 'flex',
+        flexDirection: 'column',
     },
 }));
 
 export default function DialogCreateGroup() {
-    const [open, setOpen] = React.useState(false);
-    const [search, setSearch] = React.useState("");
+    const [open, setOpen] = useState(false);
+    const [search, setSearch] = useState("");
     const [selectedFriends, setSelectedFriends] = useState<string[]>([]);
-    const [groupName, setGroupName] = React.useState("");
+    const [groupName, setGroupName] = useState("");
     const queryClient = useQueryClient();
-    // Mở / Đóng dialog
+
     const handleClickOpen = () => setOpen(true);
     const handleClose = () => {
         setOpen(false);
-        setSelectedFriends([])
-    }
+        setSelectedFriends([]);
+        setGroupName("");
+        setSearch("");
+    };
 
-    const { data: friends, isLoading } = useFriendList(open)
+    const { data: friends, isLoading } = useFriendList(open);
 
-    // Xử lý chọn bạn bè
     const toggleFriendSelection = (id: string) => {
         setSelectedFriends((prev) =>
             prev.includes(id) ? prev.filter((fid) => fid !== id) : [...prev, id]
@@ -65,167 +70,130 @@ export default function DialogCreateGroup() {
     };
 
     const { mutate: createGroup } = useMutation({
-        mutationFn: () => {
-            return createChatGroupService(selectedFriends, groupName)
-        },
-        onSuccess(data,) {
+        mutationFn: () => createChatGroupService(selectedFriends, groupName),
+        onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["listChat"] });
-            setOpen(false);
-            setSelectedFriends([]);
-            setGroupName("");
+            handleClose();
         },
-    })
+    });
 
-    // Tạo nhóm
     const handleCreateGroup = () => {
         if (!groupName.trim() || selectedFriends.length === 0) {
-            console.log(123);
             alert("Vui lòng nhập tên nhóm và chọn ít nhất một người bạn.");
             return;
         }
-        createGroup()
+        createGroup();
     };
 
-    // Lọc danh sách bạn bè
     const filteredFriends: IDataFriendType[] = (friends ?? []).filter((friend: IDataFriendType) =>
         friend.user.name.toLowerCase().includes(search.toLowerCase())
     );
 
-
     return (
         <React.Fragment>
-            {/* Nút mở Dialog */}
             <IconButton onClick={handleClickOpen}>
                 <Diversity3Icon />
             </IconButton>
 
-            {/* Dialog tạo nhóm */}
             <BootstrapDialog open={open} onClose={handleClose}>
-                {/* Tiêu đề */}
-                <DialogTitle className="flex justify-between items-center p-4 border-b">
-                    <span className="text-lg font-semibold">Tạo nhóm trò chuyện</span>
+                <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <Typography variant="h6" fontWeight={600}>
+                        Tạo nhóm trò chuyện
+                    </Typography>
                     <IconButton onClick={handleClose}>
                         <CloseIcon />
                     </IconButton>
                 </DialogTitle>
 
-                {/* Nội dung Dialog */}
-                <DialogContent className="p-4 space-y-4">
-                    {/* Ô nhập tên nhóm */}
-                    <TextField
-                        label="Tên nhóm"
-                        fullWidth
-                        variant="outlined"
-                        value={groupName}
-                        onChange={(e) => setGroupName(e.target.value)}
-                    />
+                <DialogContent dividers>
+                    <Box display="flex" flexDirection="column" gap={2}>
+                        {/* Nhập tên nhóm */}
+                        <TextField
+                            label="Tên nhóm"
+                            fullWidth
+                            variant="outlined"
+                            value={groupName}
+                            onChange={(e) => setGroupName(e.target.value)}
+                        />
 
-                    {/* Ô tìm kiếm bạn bè */}
-                    <TextField
-                        fullWidth
-                        label="Search"
-                        variant="outlined"
-                        size="small"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        slotProps={{
-                            input: {
+                        {/* Ô tìm kiếm */}
+                        <TextField
+                            fullWidth
+                            label="Tìm kiếm bạn bè"
+                            variant="outlined"
+                            size="small"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            InputProps={{
                                 endAdornment: (
-                                    <IconButton type="button" aria-label="search" size="small">
+                                    <InputAdornment position="end">
                                         <PersonSearchIcon />
-                                    </IconButton>
+                                    </InputAdornment>
                                 ),
-                                sx: { pr: 0.5 },
-                            },
-                        }}
-                        sx={{
-                            display: {
-                                xs: 'none',
-                                md: 'inline-block'
-                            },
-                            mr: 1,
-                            flex: 1,
-                        }}
-                    />
-                    {/* Hiển thị danh sách bạn bè đã chọn */}
-                    {selectedFriends.length > 0 && (
-                        <div className="p-2 border rounded-md">
-                            <Typography variant="subtitle1" className="mb-2 font-semibold">
-                                Bạn bè đã chọn:
-                            </Typography>
-                            <List sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                                {selectedFriends.map((userId) => {
-                                    const friend = (friends ?? []).find((f: IDataFriendType) => f.user.id === userId);
-                                    return (
-                                        friend && (
-                                            <ListItem
-                                                key={friend.id}
-                                                sx={{
-                                                    width: "auto",
-                                                    border: "1px solid #ddd",
-                                                    borderRadius: "8px",
-                                                    padding: "4px 8px",
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    gap: 1,
-                                                }}
-                                            >
-                                                {/* <Avatar sx={{ width: 30, height: 30 }} /> */}
-                                                <Typography>{friend.user.name}</Typography>
-                                                <IconButton
-                                                    size="small"
-                                                    onClick={() => toggleFriendSelection(friend.user.id)}
-                                                >
-                                                    <CloseIcon fontSize="small" />
-                                                </IconButton>
-                                            </ListItem>
-                                        )
-                                    );
-                                })}
-                            </List>
-                        </div>
-                    )}
+                            }}
+                        />
 
-                    {/* Danh sách bạn bè */}
-                    <List>
-                        {filteredFriends.length > 0 ? (
-                            filteredFriends.map((friend) => (
-                                <ListItem
-                                    key={friend.id}
-                                    sx={{ width: '100%' }}
-                                    secondaryAction={
-                                        <Checkbox
-                                            checked={selectedFriends.includes(friend.user.id)}
-                                            onChange={() => toggleFriendSelection(friend.user.id)}
-                                        />
-                                    }
-                                >
-                                    <ListItemButton sx={{ width: '100%', display: 'flex', alignItems: 'center' }}
-                                    >
-                                        <ListItemAvatar>
-                                            <Avatar
+                        {/* Danh sách bạn đã chọn */}
+                        {selectedFriends.length > 0 && (
+                            <Box>
+                                <Typography variant="subtitle1" fontWeight={500} gutterBottom>
+                                    Bạn bè đã chọn:
+                                </Typography>
+                                <Box display="flex" flexWrap="wrap" gap={1}>
+                                    {selectedFriends.map((userId) => {
+                                        const friend = friends?.find(f => f.user.id === userId);
+                                        if (!friend) return null;
+                                        return (
+                                            <Chip
+                                                key={friend.id}
+                                                avatar={<Avatar src={friend.user.avatar} />}
+                                                label={friend.user.name}
+                                                onDelete={() => toggleFriendSelection(friend.user.id)}
                                             />
-                                        </ListItemAvatar>
-                                        <ListItemText primary={`${friend.user.name}`} />
-                                    </ListItemButton>
-                                </ListItem>
-                            ))
-                        ) : (
-                            <Typography className="text-gray-500">Không tìm thấy bạn bè.</Typography>
+                                        );
+                                    })}
+                                </Box>
+                            </Box>
                         )}
-                    </List>
+
+                        {/* Danh sách bạn bè */}
+                        <List dense sx={{ maxHeight: 300, overflow: "auto" }}>
+                            {filteredFriends.length > 0 ? (
+                                filteredFriends.map((friend) => (
+                                    <ListItem
+                                        key={friend.id}
+                                        disablePadding
+                                        secondaryAction={
+                                            <Checkbox
+                                                edge="end"
+                                                checked={selectedFriends.includes(friend.user.id)}
+                                                onChange={() => toggleFriendSelection(friend.user.id)}
+                                            />
+                                        }
+                                    >
+                                        <ListItemButton onClick={() => toggleFriendSelection(friend.user.id)}>
+                                            <ListItemAvatar>
+                                                <Avatar src={friend.user.avatar} />
+                                            </ListItemAvatar>
+                                            <ListItemText primary={friend.user.name} />
+                                        </ListItemButton>
+                                    </ListItem>
+                                ))
+                            ) : (
+                                <Typography color="text.secondary" mt={2}>
+                                    Không tìm thấy bạn bè.
+                                </Typography>
+                            )}
+                        </List>
+                    </Box>
                 </DialogContent>
 
-                {/* Nút tạo nhóm */}
-                <DialogActions className="p-4">
-                    <Button onClick={handleClose} className="text-gray-600">
-                        Hủy
-                    </Button>
+                <DialogActions>
+                    <Button onClick={handleClose}>Hủy</Button>
                     <Button
                         variant="contained"
-                        color="primary"
                         onClick={handleCreateGroup}
-                        disabled={!groupName.trim() || selectedFriends.length === 0} // Điều kiện disable
+                        disabled={!groupName.trim() || selectedFriends.length === 0}
                     >
                         Tạo nhóm
                     </Button>

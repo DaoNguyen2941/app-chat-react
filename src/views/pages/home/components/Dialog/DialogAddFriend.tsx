@@ -132,44 +132,54 @@ const AddFriend: React.FC<ToolbarActionsSearchProps> = ({ router }) => {
         }
     });
 
-      const { mutate: reqCreateChat } = useMutation({
-        mutationFn: (userId: string) => {
-          const listChat: IChat[] = queryClient.getQueryData(['listChat']) || [];
-          const existingChatIndex = listChat.findIndex(chatData => chatData.user.id === userId);
-          if (existingChatIndex !== -1) {
-            const existingChat = listChat[existingChatIndex];
-            const updatedChatList = [existingChat, ...listChat.filter((_, index) => index !== existingChatIndex)];
-            queryClient.setQueryData(['listChat'], updatedChatList);
-            setOpen(false);
-            router.navigate(existingChat.id);
-            throw new Error("Chat already exists");
-          }
-    
-          return createChatService(userId);
+    const { mutate: reqCreateChat } = useMutation({
+        mutationFn: async (userId: string) => {
+            const listChat: IChat[] = queryClient.getQueryData(['listChat']) || [];
+            const existingChat = listChat.find(chat => chat.user && chat.user.id === userId);
+            if (existingChat) {
+                const updatedChatList = [existingChat, ...listChat.filter(chat => chat.user.id !== userId)];
+                queryClient.setQueryData(['listChat'], updatedChatList);
+                setOpen(false);
+                router.navigate(existingChat.id);
+                throw new Error('Chat already exists');
+            }
+
+            return createChatService(userId);
         },
         onSuccess: (res) => {
-          if (!res) return;
-          const chatData: IChat = res.data;
-          queryClient.setQueryData(['listChat'], (oldChats: IChat[] = []) => {
-            return [chatData, ...oldChats]; // Đảm bảo oldChats luôn là mảng
-          });
-          setOpen(false);
-          router.navigate(chatData.id);
+            if (!res) return;
+            const chatData: IChat = res.data;
+            queryClient.setQueryData(['listChat'], (oldChats: IChat[] = []) => [chatData, ...oldChats]);
+            setOpen(false);
+            setTimeout(() => {
+                router.navigate(chatData.id);
+            }, 200);
         },
-      });
+    });
 
     const handleCreateChat = (userId: string) => {
-        const listChat: IChat[] = queryClient.getQueryData(['listChat']) || []
-        const existingChat = listChat.find(chat => chat.user.id === userId);
-    
-        if (existingChat) {
-          const updatedList = [existingChat, ...listChat.filter(chat => chat.user.id !== userId)];
-          queryClient.setQueryData(['listChat'], updatedList);
-          router.navigate(`${existingChat.id}`)
+        const listChat: IChat[] = queryClient.getQueryData(['listChat']) || [];
+
+        // Tìm chat đã tồn tại với userId (nếu có)
+        const existingChat = listChat.find(chat => chat.user?.id === userId);
+
+        if (existingChat?.id) {
+            // Đưa chat này lên đầu danh sách
+            const updatedList = [
+                existingChat,
+                ...listChat.filter(chat => chat.user?.id !== userId)
+            ];
+            queryClient.setQueryData(['listChat'], updatedList);
+
+            setTimeout(() => {
+                router.navigate(`${existingChat.id}`);
+            }, 200);
         } else {
-          reqCreateChat(userId);
+            // Không có chat, tạo mới
+            reqCreateChat(userId);
         }
-      }
+    };
+
 
     const { mutate: searcUser, isPending: pendingShearch, isError: searchUserError, isSuccess: searchSuccess } = useMutation({
         mutationFn: (keyword: string) => {
@@ -211,7 +221,7 @@ const AddFriend: React.FC<ToolbarActionsSearchProps> = ({ router }) => {
     return (
         <React.Fragment>
             <IconButton onClick={handleClickOpen} >
-                    <SearchIcon />
+                <SearchIcon />
             </IconButton>
             <BootstrapDialog
                 onClose={handleClose}

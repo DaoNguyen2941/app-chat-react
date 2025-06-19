@@ -66,14 +66,12 @@ export default function NavigationFriends({ value, setOpentDialog, router }: Nav
   const { mutate: reqCreateChat } = useMutation({
     mutationFn: async (userId: string) => {
       const listChat: IChat[] = queryClient.getQueryData(['listChat']) || [];
-      const existingChat = listChat.find(chat => chat.user.id === userId);
+      const existingChat = listChat.find(chat => chat.user && chat.user.id === userId);
       if (existingChat) {
         const updatedChatList = [existingChat, ...listChat.filter(chat => chat.user.id !== userId)];
         queryClient.setQueryData(['listChat'], updatedChatList);
         setOpentDialog(false);
-        setTimeout(() => {
-          router.navigate(existingChat.id);
-        }, 200);
+        router.navigate(existingChat.id);
         throw new Error('Chat already exists');
       }
 
@@ -162,18 +160,27 @@ export default function NavigationFriends({ value, setOpentDialog, router }: Nav
 
   const handleCreateChat = (userId: string) => {
     const listChat: IChat[] = queryClient.getQueryData(['listChat']) || [];
-    const existingChat = listChat.find(chat => chat.user && chat.user.id === userId);
-    if (existingChat) {
-      const updatedList = [existingChat, ...listChat.filter(chat => chat.user && chat.user.id !== userId)];
+
+    // Tìm chat đã tồn tại với userId (nếu có)
+    const existingChat = listChat.find(chat => chat.user?.id === userId);
+
+    if (existingChat?.id) {
+      // Đưa chat này lên đầu danh sách
+      const updatedList = [
+        existingChat,
+        ...listChat.filter(chat => chat.user?.id !== userId)
+      ];
       queryClient.setQueryData(['listChat'], updatedList);
-      setOpentDialog(false);
+
       setTimeout(() => {
         router.navigate(`${existingChat.id}`);
       }, 200);
     } else {
+      // Không có chat, tạo mới
       reqCreateChat(userId);
     }
   };
+
 
   const isLoading = (value === 0 && isLoadingRequests) || (value === 1 && isLoadingFriends);
 
