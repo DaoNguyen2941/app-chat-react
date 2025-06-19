@@ -10,7 +10,7 @@ import { useMutation } from '@tanstack/react-query';
 import { registerService } from '../../../services/authService'; // Giả sử bạn có service cho đăng ký
 import { IFormRegister } from './intreface'; // Tạo interface tương ứng cho form đăng ký
 import { isAxiosError } from 'axios';
-import { IRequestErr } from '../../../commom/type';
+import { IRequestErr } from '../../../type/type';
 import { urlPublicPage } from '../../../router/constants';
 
 

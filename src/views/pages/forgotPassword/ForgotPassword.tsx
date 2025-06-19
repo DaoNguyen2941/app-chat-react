@@ -7,7 +7,7 @@ import Input from '../../components/Input';
 import { useMutation, } from '@tanstack/react-query';
 import { identifyService } from '../../../services/authService';
 import { isAxiosError } from 'axios';
-import { IRequestErr } from '../../../commom/type';
+import { IRequestErr } from '../../../type/type';
 import MessageErr from '../../components/messageErr';
 import { urlPublicPage } from '../../../router/constants';
 

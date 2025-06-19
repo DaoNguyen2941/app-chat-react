@@ -5,7 +5,7 @@ import Avatar from '@mui/material/Avatar';
 import SendIcon from '@mui/icons-material/Send';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { getChatDataService, readMessageService, postMessageService } from '../../../../services/chatService';
-import { IChatData, IChat, IMessagePage } from '../../../../commom/chat.type';
+import { IChatData, IChat, IMessagePage } from '../../../../type/chat.type';
 import { setChatOpent } from '../../../../store/socketSlice';
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import TimeAgo from './elements/TimeAgo';

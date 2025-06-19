@@ -12,7 +12,7 @@
 * **trò chuyện trực tuyến**: tạo và xóa cuộc hội thoại
 * **trò chuyện nhóm**: tạo nhóm, thêm thành viên, rời nhóm, giải tán nhóm
 * **Gửi emoji**
-* **Cập nhật hồ sơ người dùng**: avatar, tên, ngày sinh, giới tính, số điện thoại
+* **Cập nhật hồ sơ người dùng**: avatar, tên
 * **Tìm kiếm người dùng & kết bạn** : gửi kết bạn,chấp nhận, từ chối
 * **Thông báo thời gian thực**
 * **Giao diện đẹp, responsive, hỗ trợ light/dark mode**
@@ -34,7 +34,6 @@
 | Axios                | Gọi REST API                   |
 | emoji-picker         | Thêm emoji vào tin nhắn        |
 
-
 ---
 
 ## 📁 Cấu Trúc Thư Mục
@@ -42,16 +41,13 @@
 ```bash
 src/
 ├── assets/             # Hình ảnh, icon, file tĩnh
-├── features/           # Các module chức năng chính (chat, auth, friend,...)
 ├── hooks/              # Custom hooks
-├── layouts/            # Giao diện bố cục (Dashboard, Auth...)
-├── pages/              # Các trang chính (ChatPage, LoginPage,...)
 ├── router/             # Cấu hình routing
 ├── services/           # Gọi API qua axios
-├── socket/             # Cấu hình Socket.IO client
 ├── store/              # Redux store & slices
 ├── types/              # Kiểu TypeScript chung
 ├── utils/              # Tiện ích chung
+├── views/              # Thành phần giao diện 
 ├── App.tsx             # Component gốc
 └── main.tsx            # Điểm khởi chạy React app
 ```
@@ -63,8 +59,8 @@ src/
 ### 1. Clone Dự Án
 
 ```bash
-git clone https://github.com/your-username/vivuworld.git
-cd vivuworld
+git clone https://github.com/DaoNguyen2941/app-chat-react.git
+cd app-chat-react
 ```
 
 ### 2. Cài Dependencies
@@ -78,8 +74,8 @@ yarn install
 ### 3. Tạo file `.env`
 
 ```env
-VITE_API_URL=http://localhost:3000/api
-VITE_SOCKET_URL=http://localhost:3000
+REACT_APP_API_URL=http://localhost:3001
+REACT_APP_SOCKET_URL=http://localhost:3001
 ```
 
 > 🔐 Nếu dùng backend của bạn, cập nhật URL API/SOCKET tương ứng.
@@ -87,64 +83,25 @@ VITE_SOCKET_URL=http://localhost:3000
 ### 4. Chạy Ứng Dụng
 
 ```bash
-npm run dev
-# hoặc
-yarn dev
+npm run start
 ```
 
-Truy cập tại: [http://localhost:5173](http://localhost:5173)
+Truy cập tại: [http://localhost:3000](http://localhost:3000)
 
 ---
 
 ## 🥪 Scripts Hữu Ích
 
 ```bash
-npm run dev        # Chạy development server
+npm run start        # Chạy development server
 npm run build      # Build production
-npm run preview    # Xem bản build production
-npm run lint       # Kiểm tra linting
 ```
-
----
-
-## 🔌 Kết Nối Với Backend
-
-Ứng dụng yêu cầu backend hỗ trợ REST API và WebSocket (có thể dùng NestJS + Socket.IO).
-
-Các endpoint backend nên bao gồm:
-
-* `/auth/login`, `/auth/register`
-* `/users/me`, `/users/update-profile`, `/users/avatar`
-* `/friends/request`, `/friends/accept`, `/friends/remove`
-* `/messages/:conversationId`, `/messages/send`
-* `/groups/create`, `/groups/members`, `/groups/invite`, etc.
-* WebSocket events: `message:new`, `friend:request`, `group:update`, v.v.
-
----
 
 ## 📦 Backend Gợi Ý
 
-Nếu bạn cần backend tương thích:
+backend tương thích:
 
-> 🔧 [VivuWord Backend (NestJS)](https://github.com/your-username/vivuworld-backend) *(tùy chọn)*
-
----
-
-## 🌐 Triển Khai (Deployment)
-
-Bạn có thể deploy VivuWord frontend trên các nền tảng như:
-
-* **Vercel**
-* **Netlify**
-* **Render**
-* **Firebase Hosting**
-
-### Triển khai với Vercel:
-
-```bash
-npm run build
-# sau đó push lên GitHub và kết nối với Vercel
-```
+> 🔧 [app-chat-nestjs Backend (NestJS)](https://github.com/DaoNguyen2941/app-chat-nestjs.git) *(tùy chọn)*
 
 ---
 
@@ -166,15 +123,14 @@ Mọ i ý tưởng, lỗi phát hiện, hoặc tính năng mới đều được
 
 ## 📜 Giấy Phép
 
-Dự án được phát hành theo giấy phép MIT. Bạn được phép sử dụng, sửa đổi và triển khai ứng dụng với mục đích cá nhân hoặc thương mại.
+Dự án được phát hành theo giấy phép MIT. Bạn được phép sử dụng, sửa đổi và triển khai ứng dụng với mục đích tham khảo.
 
 ---
 
 ## 📧 Liên Hệ
 
-> 📬 Email: [your-email@example.com](mailto:your-email@example.com)
-> 🌐 Website: [https://your-portfolio.com](https://your-portfolio.com)
-> 👥 GitHub: [@yourusername](https://github.com/yourusername)
+> 📬 Email: [daonguyen2941@gmail.com](mailto:daonguyen2941@gmail.com)  
+> 👥 GitHub: [@DaoNguyen2941](https://github.com/DaoNguyen2941)
 
 ---
 

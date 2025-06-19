@@ -7,10 +7,10 @@ import Badge from '@mui/material/Badge';
 import Chip from '@mui/material/Chip';
 import Chat from './components/chat';
 import { createTheme } from '@mui/material/styles';
-import { useMutation,  QueryClient } from '@tanstack/react-query';
+import { useMutation, QueryClient } from '@tanstack/react-query';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
-import {  useEffect } from 'react';
-import { IChat } from '../../../commom/chat.type';
+import { useEffect } from 'react';
+import { IChat } from '../../../type/chat.type';
 import WelCome from '../../components/welCome';
 import { useAppDispatch } from '../../../hooks/reduxHook';
 import { userData } from '../../../store/userSlice';
@@ -32,7 +32,7 @@ import { useGroupInvitations } from '../../../hooks/chat/useGroupInvation';
 import { SidebarFooterAccount } from './components/SidebarFooterAccount';
 import { SidebarFooterAccountPopover } from './components/SidebarFooterAccountPopover';
 import { ToolbarActionsSearch } from './components/ToolbarActionsSearch';
-
+import { useHomePageData } from '../../../hooks/useHomePageData';
 // Styled Badge for online status (green dot)
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-dot': {
@@ -72,11 +72,13 @@ export default function HomePage(props: DemoProps) {
   const navigate = useNavigate();
   const setToken = useSetToken;
   const queryClient = new QueryClient();
-  // const chatId = location.state?.chatId;
-  const { data: listChat } = useChatList()
-  useGroupInvitations()
-  useFriendList(true)
-  useFriendInvitations()
+  
+  const {
+    groupInvitation,
+    friendList,
+    friendInvitations,
+    chatList,
+  } = useHomePageData();
 
   // Chỉ kết nối socket khi component mount
   useEffect(() => {
@@ -85,7 +87,9 @@ export default function HomePage(props: DemoProps) {
       dispatch(disconnectSocket());
     };
   }, []);
+  useEffect(() => {
 
+  }, [])
   // Logout
   const { mutate: logOut } = useMutation({
     mutationFn: logOutService,
@@ -132,7 +136,7 @@ export default function HomePage(props: DemoProps) {
   const router = useDemoRouter('/');
   const demoWindow = window ? window() : undefined;
   // Tạo danh sách chat
-  const listChats = listChat?.map((chat: IChat) => ({
+  const listChats = chatList?.map((chat: IChat) => ({
     segment: chat.IsGroup ? `group/${chat.id}` : `${chat?.id}`,
     title: (
       <div>

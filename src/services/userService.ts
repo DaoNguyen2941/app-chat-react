@@ -9,8 +9,8 @@ import {
     changeUserAvatarApi,
     getUserApi
 } from "../utils/apiRouter";
-import { IUser, IUserType } from "../commom/user.type";
-import { IFormChangePassword, IFormUpdateNameUser } from "../commom/type/form.type";
+import { IUser, IUserType } from "../type/user.type";
+import { IFormChangePassword, IFormUpdateNameUser } from "../type/form.type";
 
 
 export const getUserDataService = async (userId: string): Promise<IUserType> => {

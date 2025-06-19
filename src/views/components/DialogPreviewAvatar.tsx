@@ -10,7 +10,7 @@ import {
 // import { updateUserAvatar } from '../../../../services/userService'; // bạn cần tạo hàm này
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { changeUserAvatarService } from '../../services/userService';
-import { IUser } from '../../commom/user.type';
+import { IUser } from '../../type/user.type';
 import { useAppDispatch } from '../../hooks/reduxHook';
 import { setAvatarorName } from '../../store/userSlice';
 

@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 import UserInfoDialog from '../../../components/UserInfoDialog'; 
 import {  deleteFriend } from '../../../../services/friendService';
-import {  IDataFriendReqType } from '../../../../commom/friend.type';
+import {  IDataFriendReqType } from '../../../../type/friend.type';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { acceptedFriend } from '../../../../services/friendService';
 import { useAppSelector, useAppDispatch } from '../../../../hooks/reduxHook';
@@ -69,7 +69,7 @@ const FriendRequest: React.FC = () => {
         <Typography>Đang tải...</Typography>
       ) : (
         <List>
-          {friendData.map((friend: IDataFriendReqType  ) => (
+          {(friendData ?? []).map((friend: IDataFriendReqType  ) => (
             <ListItemButton
               key={friend.id}
               onClick={() => handleClickFriend(friend.user.id)}

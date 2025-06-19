@@ -4,6 +4,7 @@ import { postMakeFriendApi, deleteFriendApi, patchAcceptedFriendApi, getListFrie
 export const getListReqFriend = async () => {
     try {
         const response = await http.get(getListReqFriendApi)
+        console.log(response);
         return response.data;
     } catch (error) {
         throw error;

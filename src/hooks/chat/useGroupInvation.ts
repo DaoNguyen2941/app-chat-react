@@ -1,6 +1,6 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { getGroupInvitationService } from '../../services/chatService';
-import { IPendingInvitationGroup } from '../../commom/chat.type';
+import { IPendingInvitationGroup } from '../../type/chat.type';
 import { useAppDispatch } from '../reduxHook';
 import { useEffect, useRef } from 'react';
 import { setGroupInvitation } from '../../store/notificationSlice';

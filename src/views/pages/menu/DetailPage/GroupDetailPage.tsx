@@ -16,7 +16,7 @@ import {
     deleteGroupService,
 } from '../../../../services/chatService';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { IChat, IChatGroupInfo } from '../../../../commom/chat.type';
+import { IChat, IChatGroupInfo } from '../../../../type/chat.type';
 import { useAppSelector } from '../../../../hooks/reduxHook';
 import { userData } from '../../../../store/userSlice';
 import UserInfoDialog from '../../../components/UserInfoDialog';
@@ -36,7 +36,7 @@ const GroupDetailPage: React.FC = () => {
         data: groupInfo,
         isLoading,
         refetch,
-    } = useQuery({
+    } = useQuery<IChatGroupInfo>({
         queryKey: ['groupInfo', groupId],
         queryFn: () => getChatGroupDataInfoService(groupId!),
         enabled: !!groupId,

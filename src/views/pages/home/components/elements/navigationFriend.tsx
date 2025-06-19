@@ -13,15 +13,13 @@ import { useEffect, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import {
-  getListFriend,
-  getListReqFriend,
   acceptedFriend,
   deleteFriend,
 } from '../../../../../services/friendService';
 import { createChatService } from '../../../../../services/chatService';
 
-import { IDataFriendType, FriendStatus, IDataFriendReqType } from '../../../../../commom/type/friend.type';
-import { IChat } from '../../../../../commom/type/chat.type';
+import { IDataFriendType, FriendStatus, IDataFriendReqType } from '../../../../../type/friend.type';
+import { IChat } from '../../../../../type/chat.type';
 
 import { useAppSelector, useAppDispatch } from '../../../../../hooks/reduxHook';
 import {
@@ -37,7 +35,6 @@ interface NavigationFriendsProps {
   setOpentDialog: React.Dispatch<React.SetStateAction<boolean>>;
   value: number;
   router: Router;
-  open: boolean
 }
 
 const getFriendStatusText = (friend: IDataFriendType | IDataFriendReqType, value: number) => {
@@ -50,14 +47,13 @@ const getFriendStatusText = (friend: IDataFriendType | IDataFriendReqType, value
   return '';
 };
 
-export default function NavigationFriends({ value, setOpentDialog, router, open }: NavigationFriendsProps) {
+export default function NavigationFriends({ value, setOpentDialog, router }: NavigationFriendsProps) {
   const [friendList, setFriendList] = useState<IDataFriendType[] | IDataFriendReqType[]>([]);
   const numberNotification = useAppSelector(notification);
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
   const { data: friendRequestsData, isLoading: isLoadingRequests, error } = useFriendInvitations();
   const { data: friendsData, isLoading: isLoadingFriends } = useFriendList(value === 1);
-
 
   useEffect(() => {
     if (value === 0 && friendRequestsData) {
@@ -75,7 +71,9 @@ export default function NavigationFriends({ value, setOpentDialog, router, open 
         const updatedChatList = [existingChat, ...listChat.filter(chat => chat.user.id !== userId)];
         queryClient.setQueryData(['listChat'], updatedChatList);
         setOpentDialog(false);
-        router.navigate(existingChat.id);
+        setTimeout(() => {
+          router.navigate(existingChat.id);
+        }, 200);
         throw new Error('Chat already exists');
       }
 
@@ -86,13 +84,16 @@ export default function NavigationFriends({ value, setOpentDialog, router, open 
       const chatData: IChat = res.data;
       queryClient.setQueryData(['listChat'], (oldChats: IChat[] = []) => [chatData, ...oldChats]);
       setOpentDialog(false);
-      router.navigate(chatData.id);
+      setTimeout(() => {
+        router.navigate(chatData.id);
+      }, 200);
     },
   });
 
   const { mutate: onAcceptRequest, isPending: pendingAccept } = useMutation({
     mutationFn: acceptedFriend,
     onSuccess: (_, friendId) => {
+      // Cập nhật danh sách hiển thị local 
       setFriendList(prev => {
         const updated = [...prev];
         const index = updated.findIndex(f => f.id === friendId);
@@ -101,41 +102,75 @@ export default function NavigationFriends({ value, setOpentDialog, router, open 
         }
         return updated;
       });
+
+      // Cập nhật thủ công cache danh sách lời mời
+      queryClient.setQueryData<IDataFriendReqType[]>(['friend-requests'], old => {
+        if (!old) return [];
+        return old.filter(friend => friend.id !== friendId);
+      });
+
+      // Cập nhật thủ công cache danh sách bạn bè
+      queryClient.setQueryData<IDataFriendType[]>(['friends'], old => {
+        if (!old) return [];
+        const foundFriend = old.find(f => f.id === friendId);
+        if (foundFriend) return old;
+        // Nếu chưa có, thêm mới
+        const accepted = friendList.find(f => f.id === friendId);
+        if (accepted && accepted.status === FriendStatus.Pending) {
+          return [...old, { ...accepted, status: FriendStatus.Accepted } as IDataFriendType];
+        }
+        return old;
+      });
+
+      // Cập nhật số lượng thông báo
       dispatch(setFriendInvitation(numberNotification.friendInvitation - 1));
-      queryClient.invalidateQueries({ queryKey: ['friend-requests'] });
-      queryClient.invalidateQueries({ queryKey: ['friends'] });
     },
   });
 
   const { mutate: declineInvitation } = useMutation({
     mutationFn: deleteFriend,
     onSuccess: (_, friendId) => {
+      // Cập nhật UI local
       setFriendList(prev => prev.filter(friend => friend.id !== friendId));
+
+      // Cập nhật cache lời mời
+      queryClient.setQueryData<IDataFriendReqType[]>(['friend-requests'], old => {
+        if (!old) return [];
+        return old.filter(friend => friend.id !== friendId);
+      });
+
+      // Cập nhật số lượng thông báo
       dispatch(setFriendInvitation(numberNotification.friendInvitation - 1));
-      queryClient.invalidateQueries({ queryKey: ['friend-requests'] });
     },
   });
+
 
   const { mutate: unFriend } = useMutation({
     mutationFn: deleteFriend,
     onSuccess: (_, friendId) => {
+      // Cập nhật UI local
       setFriendList(prev => prev.filter(friend => friend.id !== friendId));
-      queryClient.invalidateQueries({ queryKey: ['friends'] });
+
+      // Cập nhật cache bạn bè
+      queryClient.setQueryData<IDataFriendType[]>(['friends'], old => {
+        if (!old) return [];
+        return old.filter(friend => friend.id !== friendId);
+      });
     },
   });
+
 
   const handleCreateChat = (userId: string) => {
     const listChat: IChat[] = queryClient.getQueryData(['listChat']) || [];
     const existingChat = listChat.find(chat => chat.user && chat.user.id === userId);
-
     if (existingChat) {
-      console.log(existingChat);
       const updatedList = [existingChat, ...listChat.filter(chat => chat.user && chat.user.id !== userId)];
       queryClient.setQueryData(['listChat'], updatedList);
-      router.navigate(`${existingChat.id}`);
+      setOpentDialog(false);
+      setTimeout(() => {
+        router.navigate(`${existingChat.id}`);
+      }, 200);
     } else {
-      console.log(false);
-      
       reqCreateChat(userId);
     }
   };
@@ -146,7 +181,7 @@ export default function NavigationFriends({ value, setOpentDialog, router, open 
     <Box>
       <CssBaseline />
       {isLoading ? (
-        <div>Loading...</div> // Bạn có thể thay bằng Skeleton hoặc CircularProgress
+        <div>Loading...</div> //  thay bằng Skeleton hoặc CircularProgress
       ) : (
         <List>
           {friendList.map((friend) => (
@@ -156,11 +191,12 @@ export default function NavigationFriends({ value, setOpentDialog, router, open 
                   <LoadingButton
                     size="small"
                     variant="outlined"
-                    onClick={() =>
+                    onClick={(e) => {
+                      e.stopPropagation(); // Ngăn click lan ra ngoài
                       value === 0
                         ? onAcceptRequest(friend.id)
-                        : unFriend(friend.id)
-                    }
+                        : unFriend(friend.id);
+                    }}
                     loading={pendingAccept}
                   >
                     <b>{getFriendStatusText(friend, value)}</b>
@@ -168,11 +204,12 @@ export default function NavigationFriends({ value, setOpentDialog, router, open 
                   <Button
                     size="small"
                     variant="outlined"
-                    onClick={() =>
+                    onClick={(e) => {
+                      e.stopPropagation();
                       value === 0
                         ? declineInvitation(friend.id)
-                        : handleCreateChat(friend.user.id)
-                    }
+                        : handleCreateChat(friend.user.id);
+                    }}
                   >
                     <b>{value === 0 ? 'Từ chối' : 'Nhắn tin'}</b>
                   </Button>

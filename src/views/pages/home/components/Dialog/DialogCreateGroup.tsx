@@ -24,7 +24,7 @@ import { useEffect } from "react";
 import List from '@mui/material/List';
 import { getListFriend } from "../../../../../services/friendService";
 import { createChatGroupService } from "../../../../../services/chatService";
-import { IDataFriendType } from '../../../../../commom/type/friend.type';
+import { IDataFriendType } from '../../../../../type/friend.type';
 import { useQueryClient, useMutation, useQuery, } from '@tanstack/react-query';
 import { useFriendList } from "../../../../../hooks/friends/useFriendList";
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({

@@ -8,7 +8,7 @@ import {
     DialogContent,
     CircularProgress,
 } from '@mui/material';
-import { IUserType } from '../../commom/user.type';
+import { IUserType } from '../../type/user.type';
 import { getUserDataService } from '../../services/userService';
 import { useMutation, useQueryClient, } from '@tanstack/react-query';
 

@@ -13,8 +13,8 @@ import {
     groupInvititationApi,
     chatGroupMemberApi,
 } from "../utils/apiRouter";
-import { IChatGroupInfo, IChat, IPendingInvitationGroup } from "../commom/type/chat.type";
-import { enumInvitationStatus } from "../commom/type/chat.type";
+import { IChatGroupInfo, IPendingInvitationGroup } from "../type/chat.type";
+import { enumInvitationStatus } from "../type/chat.type";
 
 export const getMessageService = async (chatId: string, params: { startCursor: string | null | undefined, limit: number }) => {
     try {

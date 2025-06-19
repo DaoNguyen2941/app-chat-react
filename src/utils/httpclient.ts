@@ -3,7 +3,7 @@ import { host } from "./apiRouter";
 import { jwtDecode, JwtPayload } from "jwt-decode";
 import { refreshTokenService } from "../services/authService";
 import { UseCheckExpirationToken } from "../hooks/authHook";
-import { IDecodedToken } from "../commom/type";
+import { IDecodedToken } from "../type/type";
 import { logOutService } from "../services/authService";
 import { store } from "../store/index";
 

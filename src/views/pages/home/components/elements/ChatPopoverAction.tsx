@@ -7,7 +7,7 @@ import MenuItem from '@mui/material/MenuItem';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { QueryClient, useQueryClient, useMutation } from '@tanstack/react-query';
 import { deleteChatService } from '../../../../../services/chatService';
-import { IChat } from '../../../../../commom/chat.type';
+import { IChat } from '../../../../../type/chat.type';
 import { ChatIsOpent } from '../../../../../store/socketSlice';
 import { useAppSelector } from '../../../../../hooks/reduxHook';
 import type { Router } from '@toolpad/core/AppProvider';

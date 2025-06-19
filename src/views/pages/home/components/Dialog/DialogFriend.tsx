@@ -13,13 +13,9 @@ import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import { useState } from 'react';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import Badge, { BadgeProps } from '@mui/material/Badge';
-import { notification, setFriendInvitation } from '../../../../../store/notificationSlice';
-import { useAppSelector, useAppDispatch } from '../../../../../hooks/reduxHook';
-import { getListReqFriend } from '../../../../../services/friendService';
-import { useMutation } from '@tanstack/react-query';
-import { useEffect, useRef } from 'react';
-import type { Navigation, Router } from '@toolpad/core/AppProvider';
-import { useFriendInvitations } from '../../../../../hooks/friends/useFriendInvitations';
+import { notification } from '../../../../../store/notificationSlice';
+import { useAppSelector } from '../../../../../hooks/reduxHook';
+import type { Router } from '@toolpad/core/AppProvider';
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
         padding: theme.spacing(2),
@@ -91,7 +87,7 @@ export default function FriendFunction(props: IProps) {
                     <CloseIcon />
                 </IconButton>
                 <DialogContent dividers>
-                    <NavigationFriends value={value} setOpentDialog={setOpen} router={router} open={open}/>
+                    <NavigationFriends value={value} setOpentDialog={setOpen} router={router}/>
                 </DialogContent>
                 <DialogActions sx={{ justifyContent: "center" }}>
                     <BottomNavigation

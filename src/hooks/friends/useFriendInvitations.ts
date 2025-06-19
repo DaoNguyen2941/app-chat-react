@@ -3,7 +3,7 @@ import { useAppDispatch } from '../reduxHook';
 import { setFriendInvitation } from '../../store/notificationSlice';
 import { useEffect, useRef } from 'react';
 import { getListReqFriend } from '../../services/friendService';
-import { IDataFriendReqType } from '../../commom/friend.type';
+import { IDataFriendReqType } from '../../type/friend.type';
 
 export const useFriendInvitations = () => {
     const dispatch = useAppDispatch();
@@ -13,8 +13,6 @@ export const useFriendInvitations = () => {
         queryKey: ['friend-requests'],
         queryFn: getListReqFriend,
         staleTime: 1000 * 60 * 10,
-        initialData: [],
-
     });
 
     useEffect(() => {

@@ -1,6 +1,6 @@
 // src/hooks/useAuth.ts
 
-import { IDecodedToken } from '../commom/type';
+import { IDecodedToken } from '../type/type';
 import { jwtDecode } from "jwt-decode";
 
 export const useSetToken = (token: string) => {
