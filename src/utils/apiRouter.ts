@@ -33,7 +33,7 @@ export const getUserApi = `${host}/user/:id`;
 
 //friend
 export const postMakeFriendApi = `${host}/friend`;
-export const patchAcceptedFriendApi = `${host}/friend/requests/:id/accepted`;
+export const patchAcceptedFriendApi = `${host}/friend/requests/:id`;
 export const getListFriendApi = `${host}/friend/lists`
 export const deleteFriendApi = `${host}/friend/requests/:id`;
 export const getListReqFriendApi = `${host}/friend/requests/lists`;

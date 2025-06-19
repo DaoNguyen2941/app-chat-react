@@ -79,7 +79,10 @@ export default function HomePage(props: DemoProps) {
     friendInvitations,
     chatList,
   } = useHomePageData();
-
+  
+  function ToolbarSlot() {
+    return <ToolbarActionsSearch router={router} />;
+  }
   // Chỉ kết nối socket khi component mount
   useEffect(() => {
     dispatch(connectSocket());
@@ -87,9 +90,6 @@ export default function HomePage(props: DemoProps) {
       dispatch(disconnectSocket());
     };
   }, []);
-  function ToolbarSlot() {
-    return <ToolbarActionsSearch router={router} />;
-  }
   // Logout
   const { mutate: logOut } = useMutation({
     mutationFn: logOutService,
