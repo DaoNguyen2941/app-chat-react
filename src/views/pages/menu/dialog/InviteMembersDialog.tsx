@@ -25,7 +25,7 @@ const InviteMembersDialog: React.FC<InviteMembersDialogProps> = ({
     const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const { data: friends = [], isLoading } = useFriendList(open);
+    const { data: friends = [] } = useFriendList(open);
 
 
     const selectableUsers = useMemo(
@@ -52,14 +52,12 @@ const InviteMembersDialog: React.FC<InviteMembersDialogProps> = ({
         setSelectedUserIds((prev) => prev.filter((id) => id !== userId));
     };
 
-    const { mutate: addMember, isPending } = useMutation({
+    const { mutate: addMember } = useMutation({
         mutationFn: () => addMemberToGroupService(groupId, selectedUserIds),
-        onSuccess(data, variables, context) {
-            console.log('đã gửi lời mời vào nhóm đến các người dùng khác');
+        onSuccess() {
             setSelectedUserIds([])
             setSearchTerm('')
             onClose();
-
         },
     })
 

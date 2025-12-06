@@ -1,6 +1,5 @@
 
 import http from "../utils/httpclient";
-import { AxiosResponse } from 'axios';
 import {
     searchUserApi,
     getUserProfileApi,

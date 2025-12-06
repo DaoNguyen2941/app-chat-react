@@ -21,7 +21,7 @@ const FriendRequest: React.FC = () => {
   const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
   const numberNotification = useAppSelector(notification);
-  const { data: friendData, isLoading, error } = useFriendInvitations();
+  const { data: friendData, isLoading } = useFriendInvitations();
 
 
   const handleClickFriend = (userId: string) => {

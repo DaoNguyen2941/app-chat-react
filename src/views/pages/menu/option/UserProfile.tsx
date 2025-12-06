@@ -22,7 +22,7 @@ const UserProfile: React.FC = () => {
 
     const avatarInputRef = useRef<HTMLInputElement | null>(null);
 
-    const { data: userProfile, isLoading, isError } = useQuery({
+    const { data: userProfile} = useQuery({
         queryKey: ['user-profile'],
         queryFn: getUserProfile,
         select: (userData) => userData,

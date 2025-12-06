@@ -24,7 +24,7 @@ import InviteMembersDialog from '../dialog/InviteMembersDialog';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 
 const GroupDetailPage: React.FC = () => {
-    const { groupId: groupId } = useParams();
+    const { groupId } = useParams();
     const dataUser = useAppSelector(userData);
     const queryClient = useQueryClient();
     const navigate = useNavigate();
@@ -35,7 +35,6 @@ const GroupDetailPage: React.FC = () => {
     const {
         data: groupInfo,
         isLoading,
-        refetch,
     } = useQuery<IChatGroupInfo>({
         queryKey: ['groupInfo', groupId],
         queryFn: () => getChatGroupDataInfoService(groupId!),

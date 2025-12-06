@@ -5,7 +5,7 @@ import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { QueryClient, useQueryClient, useMutation } from '@tanstack/react-query';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { deleteChatService } from '../../../../../services/chatService';
 import { IChat } from '../../../../../type/chat.type';
 import { ChatIsOpent } from '../../../../../store/socketSlice';

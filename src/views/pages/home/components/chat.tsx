@@ -113,9 +113,9 @@ export default function Chat({ chatId }: { chatId: string }) {
         if (presentChat?.unreadCount && presentChat.unreadCount > 0) {
             readMessage();
         }
-    }, [chatId]);
+    }, [chatId, dispatch,queryClient, readMessage]);
 
-    const { mutate: sendMessage, isPending } = useMutation({
+    const { mutate: sendMessage } = useMutation({
         mutationFn: (keyword: string) => postMessageService(chatId, keyword),
         onSuccess(res) {
             const extractId = chatId.split("/").filter(Boolean).pop() || "";
@@ -178,7 +178,7 @@ export default function Chat({ chatId }: { chatId: string }) {
         if (isNewMessage && !isOwn && !isAtBottomRef.current) {
             setHasNewMessage(true); // hiện nút
         }
-    }, [chatData?.message]);
+    }, [chatData?.message,dataUser.id]);
 
 
 

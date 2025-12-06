@@ -4,14 +4,12 @@ import { getOtpForgotPasswordService } from '../../../services/authService';
 import backgroundImage from '../../../assets/images/backgroundBoCongAnh.jpg';
 import { urlPublicPage } from '../../../router/constants';
 
-import { useState } from 'react';
 import {
   Avatar,
   Box,
   Button,
   Typography,
   Paper,
-  Alert,
   CircularProgress
 } from '@mui/material';
 
@@ -20,7 +18,6 @@ const ConfirmAccount = () => {
   const navigate = useNavigate();
   const user = location.state?.user;
   const token = location.state?.token;
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   function maskEmail(email: string): string {
     const [username, domain] = email.split('@');
@@ -55,8 +52,6 @@ const ConfirmAccount = () => {
         <Typography variant="h5" textAlign="center" gutterBottom>
           Xác nhận tài khoản
         </Typography>
-
-        {errorMessage && <Alert severity="error" sx={{ mb: 2 }}>{errorMessage}</Alert>}
 
         <Box display="flex" flexDirection="column" alignItems="center" mb={2}>
           <Avatar src={user.avatar || ''} sx={{ width: 80, height: 80, mb: 1 }} />

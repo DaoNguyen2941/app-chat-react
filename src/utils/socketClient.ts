@@ -9,7 +9,7 @@ import { queryClient } from "../services/cacheService";
 import { readMessageService } from "../services/chatService";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { IDataFriendReqType, IDataFriendType } from "../type/friend.type";
+import { IDataFriendReqType } from "../type/friend.type";
 class SocketClient {
     private socket: Socket | null = null;
     private readonly baseURL: string;

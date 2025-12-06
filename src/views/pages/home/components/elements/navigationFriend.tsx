@@ -10,7 +10,7 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
 import Avatar from '@mui/material/Avatar';
 import { useEffect, useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import {
   acceptedFriend,
@@ -52,7 +52,7 @@ export default function NavigationFriends({ value, setOpentDialog, router }: Nav
   const numberNotification = useAppSelector(notification);
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
-  const { data: friendRequestsData, isLoading: isLoadingRequests, error } = useFriendInvitations();
+  const { data: friendRequestsData, isLoading: isLoadingRequests } = useFriendInvitations();
   const { data: friendsData, isLoading: isLoadingFriends } = useFriendList(value === 1);
 
   useEffect(() => {

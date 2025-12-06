@@ -11,15 +11,15 @@ import {  deleteFriend } from '../../../../services/friendService';
 import { IDataFriendType } from '../../../../type/friend.type';
 import TimeAgo from '../../home/components/elements/TimeAgo';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { IChat } from '../../../../type/chat.type';
-import { createChatService } from '../../../../services/chatService';
-import { useNavigate } from 'react-router-dom';
+// import { IChat } from '../../../../type/chat.type';
+// import { createChatService } from '../../../../services/chatService';
+// import { useNavigate } from 'react-router-dom';
 import { useFriendList } from '../../../../hooks/friends/useFriendList';
 const FriendsList: React.FC = () => {
 
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const {data: friendData,isLoading,} = useFriendList(true)
 
@@ -42,40 +42,41 @@ const FriendsList: React.FC = () => {
 
   const friends: IDataFriendType[] = friendData || [];
 
-  const { mutate: reqCreateChat } = useMutation({
-    mutationFn: async (userId: string) => {
-      const listChat: IChat[] = queryClient.getQueryData(['listChat']) || [];
-      const existingChat = listChat.find(chat => chat.user.id === userId);
-      if (existingChat) {
-        const updatedChatList = [existingChat, ...listChat.filter(chat => chat.user.id !== userId)];
-        queryClient.setQueryData(['listChat'], updatedChatList);
-        // router.navigate(existingChat.id);
-        navigate('/home', { state: { chatId: existingChat.id } });
-        throw new Error('Chat already exists');
-      }
-      return createChatService(userId);
-    },
-    onSuccess: (res) => {
-      if (!res) return;
-      const chatData: IChat = res.data;
-      queryClient.setQueryData(['listChat'], (oldChats: IChat[] = []) => [chatData, ...oldChats]);
-      // router.navigate(chatData.id);
-      navigate('/home', { state: { chatId: chatData.id } });
-    },
-  });
-  const handleCreateChat = (userId: string) => {
-    const listChat: IChat[] = queryClient.getQueryData(['listChat']) || [];
-    const existingChat = listChat.find(chat => chat.user.id === userId);
+  // const { mutate: reqCreateChat } = useMutation({
+  //   mutationFn: async (userId: string) => {
+  //     const listChat: IChat[] = queryClient.getQueryData(['listChat']) || [];
+  //     const existingChat = listChat.find(chat => chat.user.id === userId);
+  //     if (existingChat) {
+  //       const updatedChatList = [existingChat, ...listChat.filter(chat => chat.user.id !== userId)];
+  //       queryClient.setQueryData(['listChat'], updatedChatList);
+  //       // router.navigate(existingChat.id);
+  //       navigate('/home', { state: { chatId: existingChat.id } });
+  //       throw new Error('Chat already exists');
+  //     }
+  //     return createChatService(userId);
+  //   },
+  //   onSuccess: (res) => {
+  //     if (!res) return;
+  //     const chatData: IChat = res.data;
+  //     queryClient.setQueryData(['listChat'], (oldChats: IChat[] = []) => [chatData, ...oldChats]);
+  //     // router.navigate(chatData.id);
+  //     navigate('/home', { state: { chatId: chatData.id } });
+  //   },
+  // });
+  
+  // const handleCreateChat = (userId: string) => {
+  //   const listChat: IChat[] = queryClient.getQueryData(['listChat']) || [];
+  //   const existingChat = listChat.find(chat => chat.user.id === userId);
 
-    if (existingChat) {
-      const updatedList = [existingChat, ...listChat.filter(chat => chat.user.id !== userId)];
-      queryClient.setQueryData(['listChat'], updatedList);
-      // router.navigate(`${existingChat.id}`);
-      navigate('/home', { state: { chatId: existingChat.id } });
-    } else {
-      reqCreateChat(userId);
-    }
-  };
+  //   if (existingChat) {
+  //     const updatedList = [existingChat, ...listChat.filter(chat => chat.user.id !== userId)];
+  //     queryClient.setQueryData(['listChat'], updatedList);
+  //     // router.navigate(`${existingChat.id}`);
+  //     navigate('/home', { state: { chatId: existingChat.id } });
+  //   } else {
+  //     reqCreateChat(userId);
+  //   }
+  // };
 
   return (
     <Box sx={{ width: '100%', padding: 2 }}>

@@ -1,10 +1,8 @@
 import {
     Dialog,
     DialogContent,
-    Box,
     Button,
     DialogActions,
-    Typography,
     Avatar
 } from '@mui/material';
 // import { updateUserAvatar } from '../../../../services/userService'; // bạn cần tạo hàm này

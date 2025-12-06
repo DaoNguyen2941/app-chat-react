@@ -1,5 +1,5 @@
 // hooks/useChatList.ts
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getListChatService } from '../../services/chatService'; // điều chỉnh path cho đúng
 
 export function useChatList() {

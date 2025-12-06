@@ -5,7 +5,6 @@ import {
   DialogContent,
   DialogActions,
   Button,
-  TextField,
   IconButton,
   Tooltip,
   Typography,
@@ -41,7 +40,7 @@ const EditNameDialog: React.FC<EditNameDialogProps> = ({ initialName }) => {
     control,
     reset,
     handleSubmit,
-    formState: { errors },
+    // formState: { errors },
   } = useForm<IFormUpdateNameUser>({
     defaultValues: { name: initialName },
     resolver: yupResolver(schema),

@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { IUserType } from '../../type/user.type';
 import { getUserDataService } from '../../services/userService';
-import { useMutation, useQueryClient, } from '@tanstack/react-query';
+import { useMutation, } from '@tanstack/react-query';
 
 interface UserInfoDialogProps {
     userId: string;
@@ -28,10 +28,9 @@ const UserInfoDialog: React.FC<UserInfoDialogProps> = ({ userId, open, onClose }
 
     useEffect(() => {
         if (open && userId) {
-            console.log(userId);
             mutate(userId);
         }
-    }, [userId, open]);
+    }, [userId, open, mutate]);
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>

@@ -8,7 +8,7 @@ import ConfirmAccount from '../views/pages/forgotPassword/ConfirmAccount';
 import ConfirmOtp from '../views/pages/forgotPassword/ConfirmOtp';
 import { urlPublicPage, urlPrivatepPage } from './constants';
 import ResetPassword from '../views/pages/forgotPassword/ResetPassword';
-import NotFoundPage from '../views/pages/notFoundPage/NotFoundPage';
+// import NotFoundPage from '../views/pages/notFoundPage/NotFoundPage';
 import MenusLayout from '../views/pages/menu/layout/menuLayout';
 import UserProfile from '../views/pages/menu/option/UserProfile';
 import FriendsList from '../views/pages/menu/option/friendsList';

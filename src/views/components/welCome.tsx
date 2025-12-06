@@ -8,7 +8,7 @@ export default function WelCome() {
 
     useEffect(() => {
         dispatch(setChatOpent(""))
-    }, [])
+    }, [dispatch])
 
     const images = [
         'https://pub-5c96059ac5534e72b75bf2db6c189f0c.r2.dev/welCome.png',

@@ -35,7 +35,6 @@ const UpdatePassword: React.FC = () => {
 
   const {
     control,
-    setError,
     reset,
     handleSubmit,
     formState: { errors },
@@ -45,9 +44,9 @@ const UpdatePassword: React.FC = () => {
     resolver: yupResolver(schema),
   });
 
-  const { mutate, error, isSuccess, data } = useMutation({
+  const { mutate, error, isSuccess } = useMutation({
     mutationFn: (value: IFormChangePassword) => changeUserPasswordService(value),
-    onSuccess: (res) => {
+    onSuccess: () => {
       reset();
     },
   });

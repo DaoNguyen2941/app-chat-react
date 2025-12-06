@@ -13,7 +13,7 @@ import backgroundImage from '../../../assets/images/backgroundBoCongAnh.jpg';
 
 const OtpVerificationPage: React.FC = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState(localStorage.getItem('email-register') || 'null'); 
+  const [email] = useState(localStorage.getItem('email-register') || 'null'); 
   
   useEffect(() => {
     if (email) {
@@ -39,7 +39,7 @@ const OtpVerificationPage: React.FC = () => {
     resolver: yupResolver(schema),
   });
 
-  const { mutate, isError, error } = useMutation({
+  const { mutate, isError } = useMutation({
     mutationFn: (value: IFormOtp) => {
       if (email) {
         value.email = email
@@ -71,7 +71,7 @@ const OtpVerificationPage: React.FC = () => {
         </p>
         <div>
           {isError && <MessageErr message="OTP không hợp lệ hoặc đã hết hạn." />}
-          {errors.OTP  && <MessageErr message={errors.OTP .message} />}
+          {errors.OTP && <MessageErr message={errors.OTP.message} />}
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4">

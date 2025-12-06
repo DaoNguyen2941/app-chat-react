@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import backgroundImage from '../../../assets/images/backgroundBoCongAnh.jpg';
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
@@ -6,7 +6,7 @@ import { IFormLogin } from '../../../type/form.type';
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import Input from '../../components/Input';
-import { useMutation, QueryClient, } from '@tanstack/react-query';
+import { useMutation, } from '@tanstack/react-query';
 import { loginService } from '../../../services/authService';
 import { isAxiosError } from 'axios';
 import { IRequestErr } from '../../../type/type';
@@ -15,7 +15,6 @@ import { useSetToken } from '../../../hooks/authHook';
 import { useAppDispatch } from '../../../hooks/reduxHook';
 import { setAuth } from '../../../store/authSlice';
 import { setUserData } from '../../../store/userSlice';
-import { useEffect } from 'react';
 import { urlPublicPage } from '../../../router/constants';
 
 const LoginPage: React.FC = () => {
@@ -38,7 +37,6 @@ const LoginPage: React.FC = () => {
   // useForm hook
   const {
     control,
-    setError,
     reset,
     handleSubmit,
     formState: { errors },

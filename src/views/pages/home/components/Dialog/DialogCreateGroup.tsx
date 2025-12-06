@@ -61,7 +61,7 @@ export default function DialogCreateGroup() {
         setSearch("");
     };
 
-    const { data: friends, isLoading } = useFriendList(open);
+    const { data: friends } = useFriendList(open);
 
     const toggleFriendSelection = (id: string) => {
         setSelectedFriends((prev) =>

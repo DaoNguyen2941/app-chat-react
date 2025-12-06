@@ -1,20 +1,17 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
 import Tooltip from '@mui/material/Tooltip';
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import List from '@mui/material/List';
-import { useDemoRouter } from '@toolpad/core/internal';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
@@ -25,9 +22,9 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { SearchUserService } from '../../../../../services/userService';
 import { useDebounce } from '../../../../../hooks/debouncehook';
-import { QueryClient, useQueryClient, useMutation } from '@tanstack/react-query';
+import {  useQueryClient, useMutation } from '@tanstack/react-query';
 import { ISearchUser, IFriendStatus } from '../../../../../type/user.type';
-import type { Navigation, Router } from '@toolpad/core/AppProvider';
+import type { Router } from '@toolpad/core/AppProvider';
 import { IChat } from '../../../../../type/chat.type';
 import { makeFriendService, acceptedFriend, deleteFriend } from '../../../../../services/friendService';
 import { useAppSelector } from '../../../../../hooks/reduxHook';
@@ -77,7 +74,7 @@ const AddFriend: React.FC<ToolbarActionsSearchProps> = ({ router }) => {
     const dataUser = useAppSelector(userData)
     const queryClient = useQueryClient();
 
-    const { mutate: makeFriend, isPending: pendingMakeFriend, isSuccess: makeFriendSuccess, } = useMutation({
+    const { mutate: makeFriend, isPending: pendingMakeFriend, } = useMutation({
         mutationFn: (userId: string) => {
             return makeFriendService(userId);
         },
@@ -97,7 +94,7 @@ const AddFriend: React.FC<ToolbarActionsSearchProps> = ({ router }) => {
         }
     });
 
-    const { mutate: onAcceptRequest, isPending: pendingAccept, isSuccess: AcceptSuccess, } = useMutation({
+    const { mutate: onAcceptRequest} = useMutation({
         mutationFn: (friendId: string) => {
             return acceptedFriend(friendId);
         },
@@ -119,7 +116,7 @@ const AddFriend: React.FC<ToolbarActionsSearchProps> = ({ router }) => {
 
     });
 
-    const { mutate: cancelInvitation, isPending: pendingUnfriend, isSuccess } = useMutation({
+    const { mutate: cancelInvitation } = useMutation({
         mutationFn: (friendId: string) => {
             return deleteFriend(friendId);
         },
@@ -181,7 +178,7 @@ const AddFriend: React.FC<ToolbarActionsSearchProps> = ({ router }) => {
     };
 
 
-    const { mutate: searcUser, isPending: pendingShearch, isError: searchUserError, isSuccess: searchSuccess } = useMutation({
+    const { mutate: searcUser, isPending: pendingShearch, isError: searchUserError } = useMutation({
         mutationFn: (keyword: string) => {
             return SearchUserService(keyword.trim());
         },
@@ -196,7 +193,7 @@ const AddFriend: React.FC<ToolbarActionsSearchProps> = ({ router }) => {
         } else {
             setUsers([]);
         }
-    }, [debouncedQuery]);
+    }, [debouncedQuery, searcUser]);
 
     const handleClickOpen = () => {
         setOpen(true);

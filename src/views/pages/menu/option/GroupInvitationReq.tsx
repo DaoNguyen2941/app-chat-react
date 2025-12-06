@@ -31,7 +31,7 @@ const GroupInvationReq: React.FC = () => {
         navigate(url)
     };
 
-    const { mutate: actionPatch, isPending: acceptPending } = useMutation({
+    const { mutate: actionPatch } = useMutation({
         mutationFn: (data: {
             invitationId: string,
             status: enumInvitationStatus

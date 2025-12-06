@@ -33,7 +33,7 @@ const ForgotPassword: React.FC = () => {
     control,
     reset,
     handleSubmit,
-    formState: { errors },
+    // formState: { errors },
   } = useForm<IFormIdentify>({
     defaultValues,
     mode: 'onSubmit',

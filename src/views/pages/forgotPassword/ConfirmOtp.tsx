@@ -67,7 +67,7 @@ const ConfirmOtp: React.FC = () => {
         </p>
         <div>
           {isError && <MessageErr message="OTP không hợp lệ hoặc đã hết hạn." />}
-          {errors.OTP  && <MessageErr message={errors.OTP .message} />}
+          {errors.OTP  && <MessageErr message={errors.OTP.message} />}
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4">

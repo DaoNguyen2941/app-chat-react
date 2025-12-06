@@ -1,10 +1,7 @@
 import { UseDecodeToken } from '../hooks/authHook';
-import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IDecodedToken } from '../type/type';
 import { RootState } from '.';
-import { refreshTokenService } from '../services/authService';
-import { jwtDecode } from "jwt-decode";
-import { UseCheckExpirationToken } from "../hooks/authHook";
 
 function checkLogin(): boolean {
     const token: string | null = localStorage.getItem('token');
@@ -14,7 +11,6 @@ function checkLogin(): boolean {
     }
     return false;
   }
-
 
 interface IAuthState {
   isAuth: boolean;

@@ -14,21 +14,21 @@ import { useQueryClient } from '@tanstack/react-query';
 import { IUser } from '../../../../type/user.type';
 import { GenderType } from '../../../../type/user.type';
 
-const initialData = {
-  avatarUrl: '',
-  backgroundUrl: '',
-  name: '',
-  username: '',
-  email: '',
-  phone: '',
-  gender: '',
-  birthday: '',
-};
+// const initialData = {
+//   avatarUrl: '',
+//   backgroundUrl: '',
+//   name: '',
+//   username: '',
+//   email: '',
+//   phone: '',
+//   gender: '',
+//   birthday: '',
+// };
 
 const background = 'https://chiemtaimobile.vn/images/companies/1/%E1%BA%A2nh%20Blog/anh-bia-facebook-dep/anh-bia-facebook-dep-nature-bai-bien-binh-minh.jpg?1705621183343'
 
 const UserProfileForm: React.FC = () => {
-  const [formData, setFormData] = useState(initialData);
+  // const [formData, setFormData] = useState(initialData);
   const avatarInputRef = useRef<HTMLInputElement | null>(null);
   const backgroundInputRef = useRef<HTMLInputElement | null>(null);
   const queryClient = useQueryClient();
@@ -47,10 +47,10 @@ const UserProfileForm: React.FC = () => {
     phone: '0123456789'
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const { name, value } = e.target;
+  //   setFormData(prev => ({ ...prev, [name]: value }));
+  // };
 
   const schema = yup.object().shape({
     avatar: yup
@@ -79,10 +79,8 @@ const UserProfileForm: React.FC = () => {
 
   const {
     control,
-    setError,
-    reset,
     handleSubmit,
-    formState: { errors },
+    // formState: { errors },
   } = useForm<IFormProfileUser>({
     defaultValues,
     mode: 'onSubmit',
@@ -90,11 +88,11 @@ const UserProfileForm: React.FC = () => {
   });
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>, key: 'avatarUrl' | 'backgroundUrl') => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setFormData(prev => ({ ...prev, [key]: url }));
-    }
+    // const file = e.target.files?.[0];
+    // if (file) {
+    //   const url = URL.createObjectURL(file);
+    //   setFormData(prev => ({ ...prev, [key]: url }));
+    // }
   };
 
   const onSubmit: SubmitHandler<IFormProfileUser> = (data) => {
@@ -132,42 +130,42 @@ const UserProfileForm: React.FC = () => {
         />
 
         {/* Avatar */}
-       <Avatar
-  src={avatarPreview}
-  sx={{
-    width: 120,
-    height: 120,
-    border: '3px solid white',
-    position: 'absolute',
-    bottom: -60,
-    left: 24,
-    cursor: 'pointer',
-  }}
-  onClick={() => avatarInputRef.current?.click()}
- />
+        <Avatar
+          src={avatarPreview}
+          sx={{
+            width: 120,
+            height: 120,
+            border: '3px solid white',
+            position: 'absolute',
+            bottom: -60,
+            left: 24,
+            cursor: 'pointer',
+          }}
+          onClick={() => avatarInputRef.current?.click()}
+        />
 
-<Controller
-  name="avatar"
-  control={control}
-  render={({ field }) => (
-    <input
-      type="file"
-      accept="image/*"
-      hidden
-      ref={(e) => {
-        field.ref(e); // React Hook Form
-        avatarInputRef.current = e; // Custom ref for triggering click
-      }}
-      onChange={(e) => {
-        const file = e.target.files?.[0];
-        if (file) {
-          field.onChange(file); // Gửi file vào react-hook-form
-          handleAvatarChange(file); // Để bạn preview ảnh
-        }
-      }}
-    />
-  )}
-/>
+        <Controller
+          name="avatar"
+          control={control}
+          render={({ field }) => (
+            <input
+              type="file"
+              accept="image/*"
+              hidden
+              ref={(e) => {
+                field.ref(e); // React Hook Form
+                avatarInputRef.current = e; // Custom ref for triggering click
+              }}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  field.onChange(file); // Gửi file vào react-hook-form
+                  handleAvatarChange(file); // Để bạn preview ảnh
+                }
+              }}
+            />
+          )}
+        />
 
       </Box>
 

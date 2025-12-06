@@ -25,12 +25,7 @@ import TimeAgo from './components/elements/TimeAgo';
 import { logOutService } from '../../../services/authService';
 import ChatPopoverAction from './components/elements/ChatPopoverAction';
 import { urlPublicPage } from '../../../router/constants';
-import { useChatList } from '../../../hooks/chat/useChatList';
-import { useFriendInvitations } from '../../../hooks/friends/useFriendInvitations';
-import { useFriendList } from '../../../hooks/friends/useFriendList';
-import { useGroupInvitations } from '../../../hooks/chat/useGroupInvation';
 import { SidebarFooterAccount } from './components/SidebarFooterAccount';
-import { SidebarFooterAccountPopover } from './components/SidebarFooterAccountPopover';
 import { ToolbarActionsSearch } from './components/ToolbarActionsSearch';
 import { useHomePageData } from '../../../hooks/useHomePageData';
 // Styled Badge for online status (green dot)
@@ -74,9 +69,6 @@ export default function HomePage(props: DemoProps) {
   const queryClient = new QueryClient();
 
   const {
-    groupInvitation,
-    friendList,
-    friendInvitations,
     chatList,
   } = useHomePageData();
   
@@ -89,7 +81,7 @@ export default function HomePage(props: DemoProps) {
     return () => {
       dispatch(disconnectSocket());
     };
-  }, []);
+  }, [dispatch]);
   // Logout
   const { mutate: logOut } = useMutation({
     mutationFn: logOutService,
@@ -131,7 +123,7 @@ export default function HomePage(props: DemoProps) {
       logOut();
     }
 
-  }), []);
+  }), [dataUser.avatar,dataUser.name, logOut]);
 
   const router = useDemoRouter('/');
   const demoWindow = window ? window() : undefined;
@@ -172,7 +164,7 @@ export default function HomePage(props: DemoProps) {
       router={router}
       theme={demoTheme}
       window={demoWindow}
-      branding={{ logo: <img src="https://pub-5c96059ac5534e72b75bf2db6c189f0c.r2.dev/logo.png" />, title: 'ViVUChat' }}
+      branding={{ logo: <img src="https://pub-5c96059ac5534e72b75bf2db6c189f0c.r2.dev/logo.png" alt="ViVUChat"/>, title: 'ViVUChat' }}
     >
       <DashboardLayout
         slots={{

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import backgroundImage from '../../../assets/images/backgroundBoCongAnh.jpg';
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
@@ -13,11 +13,8 @@ import { isAxiosError } from 'axios';
 import { IRequestErr } from '../../../type/type';
 import { urlPublicPage } from '../../../router/constants';
 
-
-
 const RegisterPage: React.FC = () => {
     const navigate = useNavigate();
-    const [userEmail, setUserEmail] = useState(null)
 
     const schema = yup.object().shape({
         // username: yup.string().required('Không được để trống username!'),
@@ -44,7 +41,7 @@ const RegisterPage: React.FC = () => {
         resolver: yupResolver(schema)
     });
 
-    const { mutate, isError, error, isSuccess } = useMutation({
+    const { mutate, error,  } = useMutation({
         mutationFn: (value: IFormRegister) => {
             return registerService(value);
         },
