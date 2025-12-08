@@ -17,7 +17,7 @@ import { userData } from '../../../store/userSlice';
 import { useAppSelector } from '../../../hooks/reduxHook';
 import { useNavigate } from 'react-router-dom';
 import AvatarGroup from '@mui/material/AvatarGroup';
-import { connectSocket, disconnectSocket } from "../../../store/socketSlice";
+import { connectSocket,disconnectSocket } from "../../../store/socketSlice";
 import { useSetToken } from '../../../hooks/authHook';
 import { setAuth } from '../../../store/authSlice';
 import { deleteUserData } from '../../../store/userSlice';
@@ -82,6 +82,7 @@ export default function HomePage(props: DemoProps) {
       dispatch(disconnectSocket());
     };
   }, [dispatch]);
+
   // Logout
   const { mutate: logOut } = useMutation({
     mutationFn: logOutService,

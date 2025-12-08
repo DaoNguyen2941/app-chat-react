@@ -1,11 +1,9 @@
 import React from 'react';
-import './App.css';
 import { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
 import { routerPublic, routerPrivate } from './router';
 import { useAppSelector } from './hooks/reduxHook';
 import { isAuth } from './store/authSlice';
-
 
 interface DirectionalProps {
   islogin: boolean;
