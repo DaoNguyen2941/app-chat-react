@@ -18,17 +18,14 @@ export interface IFormIdentify {
 const ForgotPassword: React.FC = () => {
   const navigate = useNavigate();
 
-  // Schema validation
   const schema = yup.object().shape({
     keyword: yup.string().required('Không được để trống trường Email!'),
   });
 
-  // Default values
   const defaultValues: IFormIdentify = {
     keyword: '',
   };
 
-  // useForm hook
   const {
     control,
     reset,
@@ -43,7 +40,6 @@ const ForgotPassword: React.FC = () => {
   const { mutate, error } = useMutation({
     mutationFn: (value: IFormIdentify) => identifyService(value),
     onSuccess: (res) => {
-      console.log(res.data);
       navigate(urlPublicPage.CONFIRM_ACCOUNT, { state: { user: res.data.user, token: res.data.token } });
       reset();
     },

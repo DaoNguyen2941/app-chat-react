@@ -4,7 +4,6 @@ import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-route
 import { routerPublic, routerPrivate } from './router';
 import { useAppSelector } from './hooks/reduxHook';
 import { isAuth } from './store/authSlice';
-
 interface DirectionalProps {
   islogin: boolean;
 }
@@ -18,7 +17,6 @@ const Directional: React.FC<DirectionalProps> = ({ islogin }) => {
       navigate('/login');
     }
   }, [islogin, navigate]);
-  // Đưa navigate vào dependencies để tránh cảnh báo
   return null;
 };
 

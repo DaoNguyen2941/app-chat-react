@@ -9,7 +9,7 @@ import { store } from "../store/index";
 const isTokenExpired = (token: string): boolean => {
     try {
         const decoded: IDecodedToken = jwtDecode(token);
-        if (!decoded.exp) return true; // Nếu không có exp, coi như hết hạn
+        if (!decoded.exp) return true;
         return decoded.exp * 1000 < Date.now();
     } catch (error) {
         console.error("❌ Lỗi khi decode token:", error);
@@ -26,8 +26,8 @@ const handleLogout = async () => {
 
 class HttpClient {
     instance: AxiosInstance;
-    isRefreshing: boolean = false;  // Biến kiểm tra xem có đang refresh token không
-    failedQueue: any[] = []; // Mảng lưu các request bị lỗi chờ refresh token
+    isRefreshing: boolean = false; 
+    failedQueue: any[] = []; 
 
     constructor() {
         this.instance = axios.create({
@@ -39,23 +39,6 @@ class HttpClient {
     }
 
     private setupInterceptors(): void {
-
-        // phương thức này đăng gắn token vào header.
-        // Nhưng máy chủ của tôi đã tự gắn token vào cookie nên không cần cái này.
-        //Mã này để ở đây để tham khảo.
-        // this.instance.interceptors.request.use(
-        //     (config: InternalAxiosRequestConfig) => {
-        //         const token = localStorage.getItem('token');
-        //         if (token) {
-        //             config.headers['Authorization'] = `Bearer ${token}`;
-        //         }
-        //         return config;
-        //     },
-        //     (error) => {
-        //         return Promise.reject(error);
-        //     }
-        // );
-
         this.instance.interceptors.response.use(
             (response: AxiosResponse) => response,
             async (error) => {

@@ -28,13 +28,13 @@ import { urlPublicPage } from '../../../router/constants';
 import { SidebarFooterAccount } from './components/SidebarFooterAccount';
 import { ToolbarActionsSearch } from './components/ToolbarActionsSearch';
 import { useHomePageData } from '../../../hooks/useHomePageData';
-// Styled Badge for online status (green dot)
+
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-dot': {
     border: '2px solid white',
-    width: 12, // Tăng chiều rộng chấm tròn
-    height: 12, // Tăng chiều cao chấm tròn
-    borderRadius: '50%', // Đảm bảo chấm luôn tròn
+    width: 12, 
+    height: 12,
+    borderRadius: '50%', 
   },
 }));
 
@@ -75,7 +75,6 @@ export default function HomePage(props: DemoProps) {
   function ToolbarSlot() {
     return <ToolbarActionsSearch router={router} />;
   }
-  // Chỉ kết nối socket khi component mount
   useEffect(() => {
     dispatch(connectSocket());
     return () => {
@@ -83,7 +82,6 @@ export default function HomePage(props: DemoProps) {
     };
   }, [dispatch]);
 
-  // Logout
   const { mutate: logOut } = useMutation({
     mutationFn: logOutService,
     onSuccess: () => {
@@ -98,7 +96,6 @@ export default function HomePage(props: DemoProps) {
   });
 
 
-  // Kiểm tra dataUser trước khi set
   const [session, setSession] = React.useState<Session | null>(
     dataUser?.name ? {
       user: {
@@ -108,13 +105,11 @@ export default function HomePage(props: DemoProps) {
     } : null
   );
 
-  // Xử lý authentication
   const authentication = React.useMemo(() => ({
     signIn: () => {
       setSession({
         user: {
           name: dataUser.name,
-          // email: dataUser.account,
           image: dataUser.avatar,
         },
       });
@@ -128,7 +123,7 @@ export default function HomePage(props: DemoProps) {
 
   const router = useDemoRouter('/');
   const demoWindow = window ? window() : undefined;
-  // Tạo danh sách chat
+
   const listChats = chatList?.map((chat: IChat) => ({
     segment: chat.IsGroup ? `group/${chat.id}` : `${chat?.id}`,
     title: (

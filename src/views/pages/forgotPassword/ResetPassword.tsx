@@ -24,11 +24,10 @@ const ResetPassword: React.FC = () => {
 
   useEffect(() => {
     if (!isComfirmOtp) {
-      navigate('/login/identify'); // hoặc nơi bắt đầu quy trình
+      navigate('/login/identify'); 
     }
   }, [isComfirmOtp, navigate]);
 
-    // Schema validation
     const schema = yup.object().shape({
         password: yup
             .string()
@@ -41,13 +40,11 @@ const ResetPassword: React.FC = () => {
             .oneOf([yup.ref('password')], 'Mật khẩu xác nhận không khớp'),
     });
 
-    // Default values
     const defaultValues: IFormResetPassword = {
         password: '',
         confirmPassword: ''
     };
 
-    // useForm hook
     const {
         control,
         reset,
@@ -59,7 +56,6 @@ const ResetPassword: React.FC = () => {
         resolver: yupResolver(schema),
     });
 
-    // Mutation để gọi API login
     const { mutate, error } = useMutation({
         mutationFn: (value: IFormResetPassword) => resetPasswordService(value),
         onSuccess: (res) => {
@@ -96,15 +92,9 @@ const ResetPassword: React.FC = () => {
         >
             <div className="bg-white p-8 rounded-lg shadow-lg w-96">
                 <h2 className="text-2xl font-bold mb-6 text-center">Hãy nhập mật khẩu mới</h2>
-
-                {/* Hiển thị lỗi */}
                 {errorMessage && <MessageErr message={errorMessage} />}
-
-                {/* Form reset password */}
                 <form onSubmit={handleSubmit(onSubmit)}>
-
                     <div className="mb-4">
-
                         {!errors.password ? (
                             <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                                 Mật khẩu mới
@@ -118,9 +108,7 @@ const ResetPassword: React.FC = () => {
                             render={({ field }) => <Input field={field} type="password" placeholder="password" />}
                         />
                     </div>
-
                     <div className="mb-4">
-
                         {!errors.confirmPassword ? (
                             <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
                                 Nhập lại mật khẩu mới
@@ -134,8 +122,6 @@ const ResetPassword: React.FC = () => {
                             render={({ field }) => <Input field={field} type="password" placeholder="confirm password" />}
                         />
                     </div>
-
-
                     <button
                         type="submit"
                         className="w-full py-2 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -143,8 +129,6 @@ const ResetPassword: React.FC = () => {
                         Đặt lại mật khẩu
                     </button>
                 </form>
-
-                {/* Chuyển đến trang đăng nhập*/}
                 <div className="mt-4 text-center">
                     <Link to={urlPublicPage.LOGIN} className="text-blue-500 hover:underline">
                         Quay lại Đang nhập

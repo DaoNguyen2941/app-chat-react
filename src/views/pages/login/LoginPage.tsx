@@ -22,19 +22,16 @@ const LoginPage: React.FC = () => {
   const setToken = useSetToken;
   const dispatch = useAppDispatch();
 
-  // Schema validation
   const schema = yup.object().shape({
     account: yup.string().required('Không được để trống account!'),
     password: yup.string().required('Không được để trống password!'),
   });
 
-  // Default values
   const defaultValues: IFormLogin = {
     account: '',
     password: '',
   };
 
-  // useForm hook
   const {
     control,
     reset,
@@ -46,7 +43,6 @@ const LoginPage: React.FC = () => {
     resolver: yupResolver(schema),
   });
 
-  // Mutation để gọi API login
   const { mutate, error } = useMutation({
     mutationFn: (value: IFormLogin) => loginService(value),
     onSuccess: (res) => {
@@ -81,10 +77,8 @@ const LoginPage: React.FC = () => {
       <div className="bg-white p-8 rounded-lg shadow-lg w-96">
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
 
-        {/* Hiển thị lỗi */}
         {errorMessage && <MessageErr message={errorMessage} />}
 
-        {/* Form Login */}
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4">
             <label htmlFor="account" className="block text-sm font-medium text-gray-700">
@@ -114,14 +108,12 @@ const LoginPage: React.FC = () => {
           </button>
         </form>
 
-        {/* Chuyển đến trang đăng ký */}
         <div className="mt-4 text-center">
           <Link to={urlPublicPage.REGISTER} className="text-blue-500 hover:underline">
             Bạn không có tài khoản? Đang ký!
           </Link>
         </div>
 
-        {/* Quên mật khẩu */}
         <div className="mt-2 text-center">
           <Link to={urlPublicPage.FORGOT_PASSWORD} className="text-blue-500 hover:underline">
             Bạn quên mật khẩu?

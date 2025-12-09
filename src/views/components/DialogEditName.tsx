@@ -63,7 +63,7 @@ const EditNameDialog: React.FC<EditNameDialogProps> = ({ initialName }) => {
   });
 
   const handleOpen = () => {
-    reset({ name: initialName }); // reset lại form khi mở
+    reset({ name: initialName });
     setOpen(true);
   };
 

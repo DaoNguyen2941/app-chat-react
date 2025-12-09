@@ -43,7 +43,6 @@ const SettingsLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =
     const params = new URLSearchParams(location.search);
     const selected = params.get('tab') || 'account';
 
-    // Lấy theme từ localStorage (mặc định 'light' nếu chưa có)
     const theme = localStorage.getItem('toolpad-mode')
     const isDark = theme === 'dark';
 
@@ -57,8 +56,8 @@ const SettingsLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =
                 display="flex"
                 height="100vh"
                 p={2}
-                bgcolor={isDark ? '#121212' : 'white'} // nền tối hoặc sáng
-                color={isDark ? 'white' : 'black'} // màu chữ tương ứng
+                bgcolor={isDark ? '#121212' : 'white'} 
+                color={isDark ? 'white' : 'black'} 
             >
                 <Paper
                     sx={{

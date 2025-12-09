@@ -45,8 +45,6 @@ export const confirmOtpResetPasswordService = async (tocken: string, otp: string
 export const getOtpForgotPasswordService = async (tocken: string): Promise<AxiosResponse> => {
     try {
         const url = getOtpForgotPasswordApi.replace(":token", tocken);
-        console.log(url);
-
         const response = await http.get(url);
         return response
     } catch (error) {

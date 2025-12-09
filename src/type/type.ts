@@ -1,12 +1,3 @@
-import {JwtPayload } from "jwt-decode";
-
-// export interface IDecodedToken extends JwtPayload {
-//     sub: string;
-//     account: string;
-//     iat: number;
-//     exp: number
-// }
-
 export interface IRequestErr {
     status: number;
     message: string[],

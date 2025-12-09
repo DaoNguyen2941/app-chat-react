@@ -91,7 +91,6 @@ export default function NavigationFriends({ value, setOpentDialog, router }: Nav
   const { mutate: onAcceptRequest, isPending: pendingAccept } = useMutation({
     mutationFn: acceptedFriend,
     onSuccess: (_, friendId) => {
-      // Cập nhật danh sách hiển thị local 
       setFriendList(prev => {
         const updated = [...prev];
         const index = updated.findIndex(f => f.id === friendId);
@@ -101,18 +100,15 @@ export default function NavigationFriends({ value, setOpentDialog, router }: Nav
         return updated;
       });
 
-      // Cập nhật thủ công cache danh sách lời mời
       queryClient.setQueryData<IDataFriendReqType[]>(['friend-requests'], old => {
         if (!old) return [];
         return old.filter(friend => friend.id !== friendId);
       });
 
-      // Cập nhật thủ công cache danh sách bạn bè
       queryClient.setQueryData<IDataFriendType[]>(['friends'], old => {
         if (!old) return [];
         const foundFriend = old.find(f => f.id === friendId);
         if (foundFriend) return old;
-        // Nếu chưa có, thêm mới
         const accepted = friendList.find(f => f.id === friendId);
         if (accepted && accepted.status === FriendStatus.Pending) {
           return [...old, { ...accepted, status: FriendStatus.Accepted } as IDataFriendType];
@@ -120,7 +116,6 @@ export default function NavigationFriends({ value, setOpentDialog, router }: Nav
         return old;
       });
 
-      // Cập nhật số lượng thông báo
       dispatch(setFriendInvitation(numberNotification.friendInvitation - 1));
     },
   });
@@ -128,16 +123,13 @@ export default function NavigationFriends({ value, setOpentDialog, router }: Nav
   const { mutate: declineInvitation } = useMutation({
     mutationFn: deleteFriend,
     onSuccess: (_, friendId) => {
-      // Cập nhật UI local
       setFriendList(prev => prev.filter(friend => friend.id !== friendId));
 
-      // Cập nhật cache lời mời
       queryClient.setQueryData<IDataFriendReqType[]>(['friend-requests'], old => {
         if (!old) return [];
         return old.filter(friend => friend.id !== friendId);
       });
 
-      // Cập nhật số lượng thông báo
       dispatch(setFriendInvitation(numberNotification.friendInvitation - 1));
     },
   });
@@ -146,10 +138,8 @@ export default function NavigationFriends({ value, setOpentDialog, router }: Nav
   const { mutate: unFriend } = useMutation({
     mutationFn: deleteFriend,
     onSuccess: (_, friendId) => {
-      // Cập nhật UI local
       setFriendList(prev => prev.filter(friend => friend.id !== friendId));
 
-      // Cập nhật cache bạn bè
       queryClient.setQueryData<IDataFriendType[]>(['friends'], old => {
         if (!old) return [];
         return old.filter(friend => friend.id !== friendId);
@@ -160,12 +150,8 @@ export default function NavigationFriends({ value, setOpentDialog, router }: Nav
 
   const handleCreateChat = (userId: string) => {
     const listChat: IChat[] = queryClient.getQueryData(['listChat']) || [];
-
-    // Tìm chat đã tồn tại với userId (nếu có)
     const existingChat = listChat.find(chat => chat.user?.id === userId);
-
     if (existingChat?.id) {
-      // Đưa chat này lên đầu danh sách
       const updatedList = [
         existingChat,
         ...listChat.filter(chat => chat.user?.id !== userId)
@@ -176,7 +162,6 @@ export default function NavigationFriends({ value, setOpentDialog, router }: Nav
         router.navigate(`${existingChat.id}`);
       }, 200);
     } else {
-      // Không có chat, tạo mới
       reqCreateChat(userId);
     }
   };
@@ -188,7 +173,7 @@ export default function NavigationFriends({ value, setOpentDialog, router }: Nav
     <Box>
       <CssBaseline />
       {isLoading ? (
-        <div>Loading...</div> //  thay bằng Skeleton hoặc CircularProgress
+        <div>Loading...</div> 
       ) : (
         <List>
           {friendList.map((friend) => (
@@ -199,7 +184,7 @@ export default function NavigationFriends({ value, setOpentDialog, router }: Nav
                     size="small"
                     variant="outlined"
                     onClick={(e) => {
-                      e.stopPropagation(); // Ngăn click lan ra ngoài
+                      e.stopPropagation(); 
                       value === 0
                         ? onAcceptRequest(friend.id)
                         : unFriend(friend.id);

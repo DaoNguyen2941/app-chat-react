@@ -3,7 +3,7 @@ import { IUserType } from "./user.type";
 export enum FriendStatus {
     Pending = "Pending",
     Accepted = "Accepted",
-    Rejected = "Rejected" // (nếu cần thêm trạng thái)
+    Rejected = "Rejected"
 }
 export interface IFriendType {
     id: string;

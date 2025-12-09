@@ -30,12 +30,10 @@ const UserProfile: React.FC = () => {
 
     const [avatarPreview, setAvatarPreview] = useState<string | undefined>(userProfile?.avatar);
 
-    // Khi userProfile thay đổi thì cập nhật lại avatarPreview (ví dụ lúc load data lần đầu)
     useEffect(() => {
         setAvatarPreview(userProfile?.avatar);
     }, [userProfile]);
 
-    // Mở dialog xem ảnh (background hoặc avatar)
     const handleImageClick = (url: string | null) => {
         if (url) {
             setPreviewImage(url);
@@ -43,18 +41,16 @@ const UserProfile: React.FC = () => {
         }
     };
 
-    // Chọn file ảnh đại diện mới
     const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
             const previewUrl = URL.createObjectURL(file);
             setTempAvatar(previewUrl);
             setSelectedFile(file);
-            setOpenConfirmAvatar(true); // mở dialog xác nhận
+            setOpenConfirmAvatar(true); 
         }
     };
 
-    // Hủy đổi ảnh đại diện
     const handleCancelAvatar = () => {
         setOpenConfirmAvatar(false);
         setTempAvatar(null);
