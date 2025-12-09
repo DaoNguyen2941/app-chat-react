@@ -12,7 +12,6 @@
 * **trò chuyện trực tuyến**: tạo và xóa cuộc hội thoại
 * **trò chuyện nhóm**: tạo nhóm, thêm thành viên, rời nhóm, giải tán nhóm
 * **Gửi emoji**
-* **Cập nhật hồ sơ người dùng**: avatar, tên
 * **Tìm kiếm người dùng & kết bạn** : gửi kết bạn,chấp nhận, từ chối
 * **Thông báo thời gian thực**
 * **Giao diện đẹp, responsive, hỗ trợ light/dark mode**
@@ -21,18 +20,18 @@
 
 ## 🧱🏼‍💻 Kiến Trúc Công Nghệ
 
-| Công Nghệ            | Mục Đích                       |
-| -------------------- | ------------------------------ |
-| ReactJS              | Xây dựng giao diện             |
-| React Router         | Điều hướng trang SPA           |
-| React Query          | Quản lý dữ liệu bất đồng bộ    |
-| Redux Toolkit        | Quản lý state toàn cục         |
-| Socket.IO Client     | Kết nối thời gian thực         |
-| React Hook Form      | Quản lý và validate form       |
-| Yup                  | Xác thực dữ liệu form          |
-| MUI (Material UI)    | Giao diện hiện đại & linh hoạt |
-| Axios                | Gọi REST API                   |
-| emoji-picker         | Thêm emoji vào tin nhắn        |
+| Công Nghệ         | Mục Đích                       |
+| ----------------- | ------------------------------ |
+| ReactJS           | Xây dựng giao diện             |
+| React Router      | Điều hướng trang SPA           |
+| React Query       | Quản lý dữ liệu bất đồng bộ    |
+| Redux Toolkit     | Quản lý state toàn cục         |
+| Socket.IO Client  | Kết nối thời gian thực         |
+| React Hook Form   | Quản lý và validate form       |
+| Yup               | Xác thực dữ liệu form          |
+| MUI (Material UI) | Giao diện hiện đại & linh hoạt |
+| Axios             | Gọi REST API                   |
+| emoji-picker      | Thêm emoji vào tin nhắn        |
 
 ---
 
@@ -97,6 +96,34 @@ npm run start        # Chạy development server
 npm run build      # Build production
 ```
 
+
+## 🐳 Build container (Docker)
+vì không copy .env khi đóng gói dự án bàng docker nên cần cung cấp thêm REACT_APP_API_URL và REACT_APP_SOCKET_URL
+
+1. Build image
+   
+```bash
+docker build \
+  --build-arg REACT_APP_API_URL="<YOUR_API_URL>" \
+  --build-arg REACT_APP_SOCKET_URL="<YOUR_SOCKET_URL>" \
+  -t <YOUR_DOCKER_IMAGE_NAME> .
+```
+
+Ví dụ chạy local
+
+```bash
+docker build \
+  --build-arg REACT_APP_API_URL="http://localhost:3001" \
+  --build-arg REACT_APP_SOCKET_URL="http://localhost:3001" \
+  -t chat-frontend:dev .
+```
+
+1. Run container
+   
+```bash
+docker run -p 3000:80 chat-frontend:dev
+```
+
 ## 📦 Backend Gợi Ý
 
 backend tương thích:
@@ -113,16 +140,6 @@ backend tương thích:
 ![Giao diện chat](public/imges/message.png)
 ![Giao diện chat group](public/imges/groupChat.png)
 ![Giao diện menu](public/imges/menu.png)
-
----
-
-## 👨‍💼 Đóng Góp
-
-Mọ i ý tưởng, lỗi phát hiện, hoặc tính năng mới đều được chào đón!
-
-* Fork repository
-* Tạo branch mới (`feature/your-feature`)
-* Tạo pull request 🚀
 
 ---
 
