@@ -1,5 +1,3 @@
-// src/hooks/useAuth.ts
-
 import { IDecodedToken } from '../type/type';
 import { jwtDecode } from "jwt-decode";
 

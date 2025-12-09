@@ -14,11 +14,8 @@ import { IFormChangePassword, IFormUpdateNameUser } from "../type/form.type";
 
 export const getUserDataService = async (userId: string): Promise<IUserType> => {
     try {
-        console.log(userId);
         const url = getUserApi.replace(":id", userId);
-        const response = await http.get(url)
-        console.log(response);
-        
+        const response = await http.get(url)        
         return response.data;
     } catch (error) {
         throw error;

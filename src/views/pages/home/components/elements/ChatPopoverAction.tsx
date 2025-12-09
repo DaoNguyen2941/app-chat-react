@@ -1,5 +1,3 @@
-// components/chat/ChatPopoverAction.tsx
-
 import React, { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';

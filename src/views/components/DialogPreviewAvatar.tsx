@@ -5,7 +5,6 @@ import {
     DialogActions,
     Avatar
 } from '@mui/material';
-// import { updateUserAvatar } from '../../../../services/userService'; // bạn cần tạo hàm này
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { changeUserAvatarService } from '../../services/userService';
 import { IUser } from '../../type/user.type';

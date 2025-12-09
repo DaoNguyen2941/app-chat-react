@@ -39,10 +39,10 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
         padding: theme.spacing(1),
     },
     '& .MuiPaper-root': {
-        width: '800px', // Đặt chiều rộng
-        maxWidth: '60%', // Đặt giới hạn tối đa chiều rộng
-        height: '600px', // Đặt chiều cao
-        maxHeight: '90%', // Đặt giới hạn tối đa chiều cao
+        width: '800px',
+        maxWidth: '60%',
+        height: '600px',
+        maxHeight: '90%',  
     },
 }));
 
@@ -107,7 +107,7 @@ const AddFriend: React.FC<ToolbarActionsSearchProps> = ({ router }) => {
                             statusFriend: user.statusFriend
                                 ? { ...user.statusFriend, status: "Accepted" }
                                 : { id: friendId, senderId: user.id, status: "Accepted" }
-                        } as ISearchUser; // Ép kiểu rõ ràng
+                        } as ISearchUser;
                     }
                     return user;
                 })
@@ -157,11 +157,9 @@ const AddFriend: React.FC<ToolbarActionsSearchProps> = ({ router }) => {
     const handleCreateChat = (userId: string) => {
         const listChat: IChat[] = queryClient.getQueryData(['listChat']) || [];
 
-        // Tìm chat đã tồn tại với userId (nếu có)
         const existingChat = listChat.find(chat => chat.user?.id === userId);
 
         if (existingChat?.id) {
-            // Đưa chat này lên đầu danh sách
             const updatedList = [
                 existingChat,
                 ...listChat.filter(chat => chat.user?.id !== userId)
@@ -172,7 +170,6 @@ const AddFriend: React.FC<ToolbarActionsSearchProps> = ({ router }) => {
                 router.navigate(`${existingChat.id}`);
             }, 200);
         } else {
-            // Không có chat, tạo mới
             reqCreateChat(userId);
         }
     };
@@ -205,12 +202,12 @@ const AddFriend: React.FC<ToolbarActionsSearchProps> = ({ router }) => {
 
     const handleFriendAction = (user: ISearchUser, dataUser: { id: string, account: string }) => {
         if (!user.statusFriend) {
-            makeFriend(user.id); // Gửi lời mời kết bạn
+            makeFriend(user.id); 
         } else if (user.statusFriend.status === "Pending") {
             if (user.statusFriend.senderId === dataUser.id) {
-                cancelInvitation(user.statusFriend.id); // Hủy lời mời kết bạn
+                cancelInvitation(user.statusFriend.id);
             } else {
-                onAcceptRequest(user.statusFriend.id); // Xác nhận lời mời kết bạn
+                onAcceptRequest(user.statusFriend.id); 
             }
         }
     };

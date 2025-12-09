@@ -141,7 +141,7 @@ const GroupDetailPage: React.FC = () => {
                         flexGrow: 1,
                         overflowY: 'auto',
                         mb: 2,
-                        pr: 1, // tránh scroll bar đè lên nội dung
+                        pr: 1, 
                     }}>
                         <Typography variant="h6" gutterBottom>
                             Thành viên ({groupInfo.members.length})
@@ -163,7 +163,7 @@ const GroupDetailPage: React.FC = () => {
                                                         right: -4,
                                                         width: 16,
                                                         height: 16,
-                                                        color: '#fbc02d', // màu vàng đậm
+                                                        color: '#fbc02d',
                                                         backgroundColor: 'white',
                                                         borderRadius: '50%',
                                                         boxShadow: 1,

@@ -7,7 +7,7 @@ function checkLogin(): boolean {
     const token: string | null = localStorage.getItem('token');
     if (token !== null) {
       const decodedToken: IDecodedToken | null = UseDecodeToken(token);
-      return !!decodedToken; // Sử dụng !! để chuyển đổi giá trị thành kiểu boolean
+      return !!decodedToken;
     }
     return false;
   }

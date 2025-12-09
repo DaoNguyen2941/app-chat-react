@@ -57,12 +57,9 @@ export default function Chat({ chatId }: { chatId: string }) {
         mutationFn: () => getMessageService(chatId, { startCursor: chatData?.pagination?.nextCursor, limit: 20 }),
         onSuccess: (data) => {
             setIsFetchingMore(false);
-
             const chatContainer = chatBoxRef.current;
             if (!chatContainer) return;
-
             const previousScrollHeight = chatContainer.scrollHeight;
-
             const extractId = chatId.split("/").filter(Boolean).pop() || "";
             queryClient.setQueryData(["chatData", extractId], (oldData?: IChatData) => {
                 if (!oldData) return oldData;
@@ -73,7 +70,6 @@ export default function Chat({ chatId }: { chatId: string }) {
                 };
             });
 
-            // Sau khi cập nhật state → chờ DOM render xong rồi chỉnh lại scroll
             setTimeout(() => {
                 if (!chatContainer) return;
                 const newScrollHeight = chatContainer.scrollHeight;
@@ -161,22 +157,17 @@ export default function Chat({ chatId }: { chatId: string }) {
         // Nếu ID cuối khác với lần trước → mới thực sự là tin nhắn mới
         const isNewMessage =
             currentLastMessageId && currentLastMessageId !== lastMessageIdRef.current;
-
-        // Cập nhật ref
         lastMessageIdRef.current = currentLastMessageId;
-
         const isOwn = lastMessage?.author?.id === dataUser.id;
-
         if (isNewMessage && (isOwn || isAtBottomRef.current)) {
             const timer = setTimeout(() => {
                 messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
             }, 0);
-            setHasNewMessage(false); // ẩn nút
+            setHasNewMessage(false); 
             return () => clearTimeout(timer);
         }
-
         if (isNewMessage && !isOwn && !isAtBottomRef.current) {
-            setHasNewMessage(true); // hiện nút
+            setHasNewMessage(true); 
         }
     }, [chatData?.message,dataUser.id]);
 
@@ -212,8 +203,8 @@ export default function Chat({ chatId }: { chatId: string }) {
                 sx={{
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'flex-start', // đẩy về trái
-                    gap: 1,  // khoảng cách avatar - tên, bạn giảm nhỏ nếu muốn
+                    justifyContent: 'flex-start',
+                    gap: 1, 
                     py: 2,
                     px: 3,
                     borderBottom: '1px solid #eee',

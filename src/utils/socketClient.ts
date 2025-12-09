@@ -8,7 +8,6 @@ import { IChatData, Imessage, IChat } from "../type/chat.type";
 import { queryClient } from "../services/cacheService";
 import { readMessageService } from "../services/chatService";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { IDataFriendReqType } from "../type/friend.type";
 class SocketClient {
     private socket: Socket | null = null;
@@ -26,14 +25,13 @@ class SocketClient {
         if (!this.socket) {
             this.socket = io(this.baseURL, {
                 auth: {
-                    token: `${token}`, // Gắn token vào auth
+                    token: `${token}`, 
                 },
-                transports: ["websocket"], // Tùy chọn các giao thức
-                // Timeout cho kết nối
+                transports: ["websocket"],
                 timeout: 5000,
-                reconnection: true, // Tự động kết nối lại
-                reconnectionAttempts: 3, // Thử lại tối đa 5 lần
-                reconnectionDelay: 2000, // Thời gian chờ giữa các lần thử
+                reconnection: true,
+                reconnectionAttempts: 3,
+                reconnectionDelay: 2000,
             });
 
             this.setupListeners();
@@ -51,9 +49,6 @@ class SocketClient {
 
         // Xử lý lỗi kết nối
         this.socket.on("connect_error", async (error: any) => {
-            console.error("🚨 Lỗi kết nối:");
-            console.log(error);
-
             if (error.message.includes("jwt expired")) { // Kiểm tra lỗi do token hết hạn
                 try {
                     console.warn("🔄 Token hết hạn, thử refresh...");
@@ -110,9 +105,7 @@ class SocketClient {
         if (!this.socket?.hasListeners("new-message")) {
             this.socket?.on("new-message", (data: { messageData: Imessage, chatId: string, isNewChat: boolean, isGroup: boolean }) => {
                 const { messageData, chatId, isNewChat, isGroup } = data;
-                const chatISOpent = store.getState().socket.chatIsOpent;
-                console.log(messageData);
-                
+                const chatISOpent = store.getState().socket.chatIsOpent;                
                 if (isNewChat) {
                     queryClient.refetchQueries({ queryKey: ['listChat'] });
                 } else {
@@ -166,16 +159,11 @@ class SocketClient {
     private listenToNotificationsFromFriends() {
         if (!this.socket?.hasListeners("Notifications-from-friends")) {
             this.socket?.on('Notifications-from-friends', (data: IDataFriendReqType) => {
-                console.log(data);
-
-                // Cập nhật số lượng thông báo trong Redux
                 const newNumberInvitation = store.getState().notification.friendInvitation;
                 store.dispatch(setFriendInvitation(newNumberInvitation + 1));
-
-                // Cập nhật cache friend-requests
                 queryClient.setQueryData<IDataFriendReqType[]>(["friend-requests"], (oldData) => {
-                    if (!oldData) return [data]; // Nếu chưa có dữ liệu cũ, khởi tạo mảng mới
-                    return [data, ...oldData];   // Thêm phần tử mới vào đầu
+                    if (!oldData) return [data]; 
+                    return [data, ...oldData];  
                 });
             });
         }

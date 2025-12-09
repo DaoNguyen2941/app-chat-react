@@ -62,7 +62,6 @@ const InviteMembersDialog: React.FC<InviteMembersDialogProps> = ({
     })
 
     const handleInvite = () => {
-        console.log('Inviting users:', selectedUserIds);
         addMember()
     };
 

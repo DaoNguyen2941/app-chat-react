@@ -4,7 +4,6 @@ import { postMakeFriendApi, deleteFriendApi, patchAcceptedFriendApi, getListFrie
 export const getListReqFriend = async () => {
     try {
         const response = await http.get(getListReqFriendApi)
-        console.log(response);
         return response.data;
     } catch (error) {
         throw error;
@@ -32,11 +31,9 @@ export const makeFriendService = async (userId: string) => {
 export const acceptedFriend = async (friendId: string) => {
   const url = patchAcceptedFriendApi.replace(":id", friendId);
   try {
-    const response = await http.patch(url, { status: 'Accepted' }); // lowercase nếu backend dùng enum
+    const response = await http.patch(url, { status: 'Accepted' });
     return response.data;
   } catch (error: any) {
-    // Gợi ý log chi tiết để dễ debug
-    console.error('Accept friend request failed:', error.response?.data || error.message);
     throw error;
   }
 };

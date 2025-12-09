@@ -7,8 +7,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Input from '../../components/Input';
 import MessageErr from '../../components/messageErr';
 import { useMutation } from '@tanstack/react-query';
-import { registerService } from '../../../services/authService'; // Giả sử bạn có service cho đăng ký
-import { IFormRegister } from './intreface'; // Tạo interface tương ứng cho form đăng ký
+import { registerService } from '../../../services/authService';
+import { IFormRegister } from './intreface';
 import { isAxiosError } from 'axios';
 import { IRequestErr } from '../../../type/type';
 import { urlPublicPage } from '../../../router/constants';
@@ -41,7 +41,7 @@ const RegisterPage: React.FC = () => {
         resolver: yupResolver(schema)
     });
 
-    const { mutate, error,  } = useMutation({
+    const { mutate, error, } = useMutation({
         mutationFn: (value: IFormRegister) => {
             return registerService(value);
         },

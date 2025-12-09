@@ -16,7 +16,7 @@ const TimeAgo = ({ timestamp }: { timestamp: Date | null }) => {
     };
 
     updateTime();
-    const interval = setInterval(updateTime, 60000); // Cập nhật mỗi phút
+    const interval = setInterval(updateTime, 60000);
 
     return () => clearInterval(interval);
   }, [timestamp]);

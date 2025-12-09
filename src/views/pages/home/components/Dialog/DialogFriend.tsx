@@ -24,10 +24,10 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
         padding: theme.spacing(1),
     },
     '& .MuiPaper-root': {
-        width: '500px', // Đặt chiều rộng
-        maxWidth: '60%', // Đặt giới hạn tối đa chiều rộng
-        height: '600px', // Đặt chiều cao
-        maxHeight: '90%', // Đặt giới hạn tối đa chiều cao
+        width: '500px',
+        maxWidth: '60%',
+        height: '600px', 
+        maxHeight: '90%',
     },
 }));
 
@@ -72,7 +72,7 @@ export default function FriendFunction(props: IProps) {
                 open={open}
             >
                 <DialogTitle sx={{ m: 0, p: 2, justifyContent: "center" }} id="customized-dialog-title">
-                    Modal title
+                    Bạn bè
                 </DialogTitle>
                 <IconButton
                     aria-label="close"
@@ -87,7 +87,7 @@ export default function FriendFunction(props: IProps) {
                     <CloseIcon />
                 </IconButton>
                 <DialogContent dividers>
-                    <NavigationFriends value={value} setOpentDialog={setOpen} router={router}/>
+                    <NavigationFriends value={value} setOpentDialog={setOpen} router={router} />
                 </DialogContent>
                 <DialogActions sx={{ justifyContent: "center" }}>
                     <BottomNavigation

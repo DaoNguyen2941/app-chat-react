@@ -6,7 +6,7 @@ import {
 import { green, red } from '@mui/material/colors';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import UserInfoDialog from '../../../components/UserInfoDialog'; // 👉 sửa đúng path
+import UserInfoDialog from '../../../components/UserInfoDialog';
 import {  deleteFriend } from '../../../../services/friendService';
 import { IDataFriendType } from '../../../../type/friend.type';
 import TimeAgo from '../../home/components/elements/TimeAgo';
