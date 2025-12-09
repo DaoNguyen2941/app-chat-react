@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-route
 import { routerPublic, routerPrivate } from './router';
 import { useAppSelector } from './hooks/reduxHook';
 import { isAuth } from './store/authSlice';
+import { useAppDispatch } from './hooks/reduxHook';
+import { connectSocket,disconnectSocket } from './store/socketSlice';
 interface DirectionalProps {
   islogin: boolean;
 }
@@ -22,6 +24,15 @@ const Directional: React.FC<DirectionalProps> = ({ islogin }) => {
 
 function App() {
   const isLogin = useAppSelector(isAuth);
+  const dispatch = useAppDispatch();
+
+  useEffect(()=> {
+    if (isLogin) {
+      dispatch(connectSocket());
+    }else {
+      dispatch(disconnectSocket());
+    }
+  }, [isLogin, dispatch])
 
   return (
     <Router>

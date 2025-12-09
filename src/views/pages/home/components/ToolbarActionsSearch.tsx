@@ -5,7 +5,7 @@ import { notification } from '../../../../store/notificationSlice';
 import { urlPrivatepPage } from '../../../../router/constants';
 import Stack from '@mui/material/Stack';
 import AddFriend from '.././components/Dialog/DialogAddFriend';
-import FriendFunction from '.././components/Dialog/DialogFriend';
+// import FriendFunction from '.././components/Dialog/DialogFriend';
 import DialogCreateGroup from '.././components/Dialog/DialogCreateGroup';
 import IconButton from '@mui/material/IconButton';
 import Badge from '@mui/material/Badge';
