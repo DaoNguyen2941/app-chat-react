@@ -28,7 +28,7 @@ export const ToolbarActionsSearch: React.FC<ToolbarActionsSearchProps> = ({ rout
   return (
     <Stack direction="row">
       <AddFriend router={router} />
-      <FriendFunction router={router} />
+      {/* <FriendFunction router={router} /> */}
       <DialogCreateGroup />
       <>
         <IconButton onClick={goToSettings}>
