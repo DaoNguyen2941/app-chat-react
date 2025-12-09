@@ -9,7 +9,6 @@ import Chat from './components/chat';
 import { createTheme } from '@mui/material/styles';
 import { useMutation, QueryClient } from '@tanstack/react-query';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
-import { useEffect } from 'react';
 import { IChat } from '../../../type/chat.type';
 import WelCome from '../../components/welCome';
 import { useAppDispatch } from '../../../hooks/reduxHook';
@@ -17,7 +16,7 @@ import { userData } from '../../../store/userSlice';
 import { useAppSelector } from '../../../hooks/reduxHook';
 import { useNavigate } from 'react-router-dom';
 import AvatarGroup from '@mui/material/AvatarGroup';
-import { connectSocket,disconnectSocket } from "../../../store/socketSlice";
+import { disconnectSocket } from "../../../store/socketSlice";
 import { useSetToken } from '../../../hooks/authHook';
 import { setAuth } from '../../../store/authSlice';
 import { deleteUserData } from '../../../store/userSlice';
@@ -75,12 +74,12 @@ export default function HomePage(props: DemoProps) {
   function ToolbarSlot() {
     return <ToolbarActionsSearch router={router} />;
   }
-  useEffect(() => {
-    dispatch(connectSocket());
-    return () => {
-      dispatch(disconnectSocket());
-    };
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(connectSocket());
+  //   return () => {
+  //     dispatch(disconnectSocket());
+  //   };
+  // }, [dispatch]);
 
   const { mutate: logOut } = useMutation({
     mutationFn: logOutService,
